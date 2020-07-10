@@ -1,5 +1,5 @@
 # higor
-Dataframe for Golang, simple but powerfull
+Dataframe for Golang, simple but powerful
 
 
 # Install
