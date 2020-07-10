@@ -22,7 +22,7 @@ type df [][]string
 // Shape
 func (d df) Shape() [2]int {
 
-	return [2]int{len(d), len(d[0])}
+	return [2]int{len(d)-1, len(d[0])}
 }
 
 // ReadCSV load CSV and print
