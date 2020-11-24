@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 )
@@ -34,9 +35,9 @@ func printDataFrame(columns []string, values [][]string) {
 
 	// Print values
 	var value string
-	for i, v := range values {
+	for _, v := range values {
 		value = strings.Join(v[:], "\t")
-		fmt.Fprintf(w, "%d\t%v\n", i, value)
+		fmt.Fprintf(w, "%v\n", value)
 	}
 
 	w.Flush()
@@ -84,7 +85,7 @@ func (df *DataFrame) ReadCSV() {
 	// Set custom parameters
 	reader.Comma = df.Sep
 	var values [][]string
-
+	index := 0
 	for {
 		var lines []string
 		// Read in a row. Check if we are at the end of the line
@@ -93,12 +94,19 @@ func (df *DataFrame) ReadCSV() {
 			break
 		}
 
+		// Addd index value
+		if index >= 1 {
+			lines = append(lines, strconv.Itoa(index))
+		}
+
 		for _, value := range record {
 			lines = append(lines, value)
 
 		}
 
 		values = append(values, lines)
+
+		index++
 
 	}
 
