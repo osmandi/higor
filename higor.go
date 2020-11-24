@@ -47,6 +47,12 @@ func (df DataFrame) Head() {
 	printDataFrame(df.Columns, df.Values[:5])
 }
 
+// Tail to get the last 5 rows
+func (df DataFrame) Tail() {
+	tail := df.Values[len(df.Values)-5 : len(df.Values)]
+	printDataFrame(df.Columns, tail)
+}
+
 // String Return string to print it
 func (df DataFrame) String() string {
 	printDataFrame(df.Columns, df.Values)
