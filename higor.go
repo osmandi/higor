@@ -20,6 +20,7 @@ type DataFrame struct {
 	Shape    [2]int
 	Sep      rune
 	Filename string
+	Index    []int
 }
 
 // PrintHelloHigor To get greets from higor library
@@ -97,21 +98,21 @@ func (df DataFrame) Tail() {
 
 // String Return string to print it
 func (df DataFrame) String() string {
-	printDataFrame(df.Columns, df.Values)
+	printDataFrame(df.Columns, df.Values, df.Index)
 
 	return ""
 }
 
-func printDataFrame(columns []string, values book) {
+func printDataFrame(columns []string, values book, index []int) {
 
 	const padding = 3
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent|tabwriter.Debug)
 
 	// Print Header
 	header := strings.Join(columns, "\t")
-	fmt.Fprintf(w, "%v\n", header)
+	fmt.Fprintf(w, "index\t%v\n", header)
 
-	for i := 0; i <= 10; i++ {
+	for i := range index {
 		var line []string
 		for _, col := range columns {
 			stringValue := fmt.Sprintf("%v", values[col][i])
@@ -119,7 +120,7 @@ func printDataFrame(columns []string, values book) {
 		}
 		// Print on the table
 		value := strings.Join(line[:], "\t")
-		fmt.Fprintf(w, "%v\n", value)
+		fmt.Fprintf(w, "%d\t%v\n", i, value)
 	}
 
 	defer w.Flush()
@@ -149,7 +150,9 @@ func (df *DataFrame) ReadCSV() {
 	// Set custom parameters
 	reader.Comma = df.Sep
 	var values [][]string
-	//index := 0
+	var indexList []int
+	index := 0
+	indexList = append(indexList, index)
 	for {
 		var lines []string
 		// Read in a row. Check if we are at the end of the line
@@ -164,10 +167,14 @@ func (df *DataFrame) ReadCSV() {
 		}
 
 		values = append(values, lines)
+
+		index++
+		indexList = append(indexList, index)
 	}
 
 	// Set dataframe columns
 	df.Columns = values[0]
+	df.Index = indexList[:len(indexList)-2]
 
 	// Set values
 	valuesPerColumn := make(map[string][]interface{})
