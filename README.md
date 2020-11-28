@@ -14,8 +14,8 @@ go get -v -u github.com/osmandi/higor
 package main
 
 func main() {
-	dfHigor := higor.NewDataFrame("csv_path.csv")
-	dfHigor.Sep = ',' // Set only if the comma separator is different to ','
+    dfHigor := higor.NewDataFrame("csv_path.csv")
+    dfHigor.Sep = ',' // Set only if the comma separator is different to ','
     dfHigor.ReadCSV()
     fmt.Println(dfHigor)
 }
