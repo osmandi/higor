@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
+type book map[string][]interface{}
+
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
 	Columns  []string
-	Values   map[string][]interface{}
+	Values   book
 	Shape    [2]int
 	Sep      rune
 	Filename string
@@ -89,12 +91,32 @@ func (df DataFrame) Tail() {
 	tail := df.Values[len(df.Values)-5 : len(df.Values)]
 	printDataFrame(df.Columns, tail)
 }
+*/
 
+/*
 // String Return string to print it
 func (df DataFrame) String() string {
 	printDataFrame(df.Columns, df.Values)
 
 	return ""
+}
+
+func printDataFrame(columns []string, values [][]string) {
+	const padding = 3
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
+
+	// Print Header
+	header := strings.Join(columns, "\t")
+	fmt.Fprintf(w, "%s\t%v\n", " ", header)
+
+	// Print values
+	var value string
+	for _, v := range values {
+		value = strings.Join(v[:], "\t")
+		fmt.Fprintf(w, "%v\n", value)
+	}
+
+	w.Flush()
 }
 */
 
