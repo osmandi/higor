@@ -105,7 +105,7 @@ func (df DataFrame) String() string {
 func printDataFrame(columns []string, values book) {
 
 	const padding = 3
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent|tabwriter.Debug)
 
 	// Print Header
 	header := strings.Join(columns, "\t")
