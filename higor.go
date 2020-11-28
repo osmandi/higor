@@ -9,9 +9,23 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"gonum.org/v1/gonum/stat"
 )
 
-type book map[string][]interface{}
+type bookmine []interface{}
+
+type book map[string]bookmine
+
+func (b bookmine) Mean() float64 {
+	var valuesFloat []float64
+	for _, v := range b {
+		valuesFloat = append(valuesFloat, v.(float64))
+	}
+	// Calculate the mean
+	mean := stat.Mean(valuesFloat, nil)
+	return mean
+}
 
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
@@ -177,7 +191,7 @@ func (df *DataFrame) ReadCSV() {
 	df.Index = indexList[:len(indexList)-2]
 
 	// Set values
-	valuesPerColumn := make(map[string][]interface{})
+	valuesPerColumn := make(book)
 	for i, v := range df.Columns {
 		for _, r := range values[1:] {
 			valuesPerColumn[v] = append(valuesPerColumn[v], stringToType(r[i]))
