@@ -2,19 +2,17 @@ package higor
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-	"text/tabwriter"
 )
 
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
 	Columns  []string
-	Values   [][]string
+	Values   map[string][]interface{}
 	Shape    [2]int
 	Sep      rune
 	Filename string
@@ -62,6 +60,7 @@ func stringToType(a string) interface{} {
 	return v
 }
 
+/*
 func printDataFrame(columns []string, values [][]string) {
 	const padding = 3
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
@@ -97,6 +96,7 @@ func (df DataFrame) String() string {
 
 	return ""
 }
+*/
 
 // NewDataFrame set default variables to read dataframe
 func NewDataFrame(filename string) *DataFrame {
@@ -139,9 +139,17 @@ func (df *DataFrame) ReadCSV() {
 		values = append(values, lines)
 	}
 
-	// Set DataFrame parameters
+	// Set dataframe columns
 	df.Columns = values[0]
-	df.Values = values[1:]
+
+	// Set values
+	valuesPerColumn := make(map[string][]interface{})
+	for i, v := range df.Columns {
+		for _, r := range values[1:] {
+			valuesPerColumn[v] = append(valuesPerColumn[v], stringToType(r[i]))
+		}
+	}
+	df.Values = valuesPerColumn
 	df.Shape = [2]int{len(df.Columns), len(df.Values)}
 
 }
