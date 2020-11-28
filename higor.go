@@ -131,20 +131,12 @@ func (df *DataFrame) ReadCSV() {
 			break
 		}
 
-		// Addd index value
-		//if index >= 1 {
-		//	lines = append(lines, strconv.Itoa(index))
-		//}
-
 		for _, value := range record {
 			lines = append(lines, value)
 
 		}
 
 		values = append(values, lines)
-
-		//index++
-
 	}
 
 	// Set DataFrame parameters
