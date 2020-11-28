@@ -25,6 +25,43 @@ func PrintHelloHigor() string {
 	return "Hello from higor"
 }
 
+func stringToType(a string) interface{} {
+	// Remove whitespace
+	aStrim := strings.TrimSpace(a)
+
+	// try if it's empty
+	if aStrim == "" {
+		return nil
+	}
+
+	// Try intent convert to Int type
+	v, err := strconv.Atoi(aStrim)
+	if err != nil {
+
+		// If there is an error, try to convert to float64
+		v, err := strconv.ParseFloat(aStrim, 64)
+
+		// If there is an error, try bool
+		if err != nil {
+			v, err := strconv.ParseBool(aStrim)
+
+			// If there is an error, return as string
+			if err != nil {
+				return aStrim
+			}
+
+			// Return if it's bool
+			return v
+		}
+
+		// Return if it's float
+		return v
+	}
+
+	// Return it it's int
+	return v
+}
+
 func printDataFrame(columns []string, values [][]string) {
 	const padding = 3
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
@@ -85,7 +122,7 @@ func (df *DataFrame) ReadCSV() {
 	// Set custom parameters
 	reader.Comma = df.Sep
 	var values [][]string
-	index := 0
+	//index := 0
 	for {
 		var lines []string
 		// Read in a row. Check if we are at the end of the line
@@ -95,9 +132,9 @@ func (df *DataFrame) ReadCSV() {
 		}
 
 		// Addd index value
-		if index >= 1 {
-			lines = append(lines, strconv.Itoa(index))
-		}
+		//if index >= 1 {
+		//	lines = append(lines, strconv.Itoa(index))
+		//}
 
 		for _, value := range record {
 			lines = append(lines, value)
@@ -106,7 +143,7 @@ func (df *DataFrame) ReadCSV() {
 
 		values = append(values, lines)
 
-		index++
+		//index++
 
 	}
 
