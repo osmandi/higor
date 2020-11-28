@@ -16,7 +16,7 @@ package main
 func main() {
 
 	dfHigor := higor.NewDataFrame("csv_path.csv")
-	dfHigor.Sep = ',' // Set only if the comma separaor is different to ','
+	dfHigor.Sep = ',' // Set only if the comma separator is different to ','
     dfHigor.ReadCSV()
     fmt.Println(dfHigor)
 }
