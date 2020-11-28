@@ -2,11 +2,13 @@ package higor
 
 import (
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+	"text/tabwriter"
 )
 
 type book map[string][]interface{}
@@ -93,7 +95,6 @@ func (df DataFrame) Tail() {
 }
 */
 
-/*
 // String Return string to print it
 func (df DataFrame) String() string {
 	printDataFrame(df.Columns, df.Values)
@@ -101,24 +102,28 @@ func (df DataFrame) String() string {
 	return ""
 }
 
-func printDataFrame(columns []string, values [][]string) {
+func printDataFrame(columns []string, values book) {
+
 	const padding = 3
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, '-', tabwriter.TabIndent|tabwriter.Debug)
 
 	// Print Header
 	header := strings.Join(columns, "\t")
-	fmt.Fprintf(w, "%s\t%v\n", " ", header)
+	fmt.Fprintf(w, "%v\n", header)
 
-	// Print values
-	var value string
-	for _, v := range values {
-		value = strings.Join(v[:], "\t")
+	for i := 0; i <= 10; i++ {
+		var line []string
+		for _, col := range columns {
+			stringValue := fmt.Sprintf("%v", values[col][i])
+			line = append(line, stringValue)
+		}
+		// Print on the table
+		value := strings.Join(line[:], "\t")
 		fmt.Fprintf(w, "%v\n", value)
 	}
 
-	w.Flush()
+	defer w.Flush()
 }
-*/
 
 // NewDataFrame set default variables to read dataframe
 func NewDataFrame(filename string) *DataFrame {
