@@ -35,6 +35,7 @@ type DataFrame struct {
 	Sep      rune
 	Filename string
 	Index    []int
+	SafeMode bool // To know if should skip with the first error
 }
 
 // PrintHelloHigor To get greets from higor library
@@ -110,6 +111,39 @@ func (df DataFrame) Tail() {
 }
 */
 
+// Drop columns
+func (df *DataFrame) Drop(columns ...string) {
+
+	for _, column := range columns {
+		// Check if that column exists
+		_, ok := df.Values[column]
+
+		// If exists, delete the column
+		if ok == true {
+			for i, col := range df.Columns {
+				if column == col {
+					// Delete from the values
+					delete(df.Values, column)
+
+					// Exclude the column
+					newColumns := append(df.Columns[:i], df.Columns[i+1:]...)
+					df.Columns = newColumns
+				}
+			}
+
+		} else {
+			messageError := fmt.Sprintf("The column '%s' don't exists on the DataFrame\n", column)
+			if df.SafeMode {
+				// If SafeMode is active
+				log.Fatal(messageError)
+			}
+			fmt.Println(messageError)
+			continue
+		}
+	}
+
+}
+
 // String Return string to print it
 func (df DataFrame) String() string {
 	printDataFrame(df.Columns, df.Values, df.Index)
@@ -145,6 +179,7 @@ func NewDataFrame(filename string) *DataFrame {
 	return &DataFrame{
 		Sep:      ',',
 		Filename: filename,
+		SafeMode: false,
 	}
 }
 
