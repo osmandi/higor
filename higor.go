@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -49,7 +50,7 @@ func stringToType(a string) interface{} {
 
 	// try if it's empty
 	if aStrim == "" {
-		return nil
+		return math.NaN()
 	}
 
 	// Try intent convert to Int type
