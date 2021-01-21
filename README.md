@@ -14,7 +14,7 @@ go get -v -u github.com/osmandi/higor
 package main
 
 func main() {
-    dfHigor := higor.NewDataFrame("exampleData/example1.csv")
+    dfHigor := higor.NewDataFrame("examples/data/example1.csv")
     dfHigor.ReadCSV()
     dfHigor.Head(2)
 }
