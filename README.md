@@ -13,6 +13,10 @@ go get -v -u github.com/osmandi/higor
 ```Go
 package main
 
+import (
+	"higor"
+)
+
 func main() {
     dfHigor := higor.NewDataFrame("examples/data/example1.csv")
     dfHigor.ReadCSV()
