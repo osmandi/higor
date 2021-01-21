@@ -14,11 +14,11 @@ import (
 	"gonum.org/v1/gonum/stat"
 )
 
-type bookmine []interface{}
+type page []interface{}
 
-type book map[string]bookmine
+type book map[string]page
 
-func (b bookmine) Mean() float64 {
+func (b page) Mean() float64 {
 	var valuesFloat []float64
 	for _, v := range b {
 		valuesFloat = append(valuesFloat, v.(float64))
