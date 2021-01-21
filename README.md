@@ -14,6 +14,27 @@ go get -v -u github.com/osmandi/higor
 package main
 
 import (
+	"fmt"
+
+	"github.com/osmandi/higor"
+)
+
+func main() {
+	fmt.Println(higor.PrintHelloHigor())
+}
+```
+
+`Output:`
+```Bash
+Hello from higor
+```
+
+## Read a CSV
+
+```Go
+package main
+
+import (
 	"github.com/osmandi/higor"
 )
 
