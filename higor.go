@@ -81,37 +81,6 @@ func stringToType(a string) interface{} {
 	return v
 }
 
-/*
-func printDataFrame(columns []string, values [][]string) {
-	const padding = 3
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent)
-
-	// Print Header
-	header := strings.Join(columns, "\t")
-	fmt.Fprintf(w, "%s\t%v\n", " ", header)
-
-	// Print values
-	var value string
-	for _, v := range values {
-		value = strings.Join(v[:], "\t")
-		fmt.Fprintf(w, "%v\n", value)
-	}
-
-	w.Flush()
-}
-
-// Head to get the first 5 rows
-func (df DataFrame) Head() {
-	printDataFrame(df.Columns, df.Values[:5])
-}
-
-// Tail to get the last 5 rows
-func (df DataFrame) Tail() {
-	tail := df.Values[len(df.Values)-5 : len(df.Values)]
-	printDataFrame(df.Columns, tail)
-}
-*/
-
 // Drop columns
 func (df *DataFrame) Drop(columns ...string) {
 
