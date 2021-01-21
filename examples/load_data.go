@@ -1,7 +1,7 @@
 package main
 
 import (
-	"higor"
+	"github.com/osmandi/higor"
 )
 
 func main() {
