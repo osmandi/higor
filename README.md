@@ -10,16 +10,20 @@ go get -v -u github.com/osmandi/higor
 
 ## Hellow Gorld
 
-- From CSV files
-
 ```Go
 package main
 
 func main() {
     dfHigor := higor.NewDataFrame("exampleData/example1.csv")
     dfHigor.ReadCSV()
-    fmt.Println(dfHigor)
+    dfHigor.Head(2)
 }
+```
+`Output:`
+```Bash
+index   |id   |name     |work_remotely   |salary     |age   |country_code
+0       |1    |Hamish   |false           |$4528.90   |96    |PE
+1       |2    |Anson    |NaN             |$1418.86   |NaN   |NaN
 ```
 
 Credits to [mockaroo](https://www.mockaroo.com/) by CSV generator content on `examples/data` folder
