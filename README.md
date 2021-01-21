@@ -8,13 +8,13 @@ Dataframe for Golang, simple but powerful
 go get -v -u github.com/osmandi/higor
 ```
 
-## Hellow Gorld
+## Hello Gorld
 
 ```Go
 package main
 
 import (
-	"higor"
+	"github.com/osmandi/higor"
 )
 
 func main() {
