@@ -184,6 +184,23 @@ func NewDataFrame(filename string) *DataFrame {
 	}
 }
 
+// Head Print the first five dataframe rows
+// if to to input, print that quantities rows
+func (df DataFrame) Head(limit ...int) {
+
+	switch {
+	case len(limit) > 1:
+		log.Fatal("Only input one integer number")
+	case len(limit) == 0:
+		printDataFrame(df.Columns, df.Values, df.Index[:5])
+	case len(limit) == 1:
+		printDataFrame(df.Columns, df.Values, df.Index[:limit[0]])
+	default:
+		log.Fatal("There is an error with the input parameter on Head function")
+	}
+
+}
+
 // ReadCSV to read CSV files
 func (df *DataFrame) ReadCSV() {
 
