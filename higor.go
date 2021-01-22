@@ -82,7 +82,7 @@ func stringToType(a string) interface{} {
 	return v
 }
 
-// Drop columns
+// Drop Eliminate 1 or more columns permanently
 func (df *DataFrame) Drop(columns ...string) {
 
 	for _, column := range columns {

@@ -104,3 +104,19 @@ func TestTail(t *testing.T) {
 	}
 
 }
+
+func TestDrop(t *testing.T) {
+
+	// Result expected
+	expectedColumns := []string{"id", "work_remotely", "salary", "country_code"}
+
+	// Get result
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+	dfHigor.Drop("name", "age")
+
+	if !reflect.DeepEqual(expectedColumns, dfHigor.Columns) {
+		t.Errorf("Columns error, expected: %v recived: %v", expectedColumns, dfHigor.Columns)
+	}
+
+}
