@@ -14,10 +14,11 @@ import (
 	"gonum.org/v1/gonum/stat"
 )
 
-type page []interface{}
+// Page It's one column
+type Page []interface{}
 
 // Book It's to have all columns with its values
-type Book map[string]page
+type Book map[string]Page
 
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
@@ -231,7 +232,11 @@ func (df *DataFrame) ReadCSV() {
 
 }
 
-// STATITICS FUNCTIONS
+/////////////////////////
+// STATITICS FUNCTIONS //
+/////////////////////////
+
+// Mean It's a function to calculate the Mean for one spefic column
 func (b page) Mean() float64 {
 	var valuesFloat []float64
 	for _, v := range b {
