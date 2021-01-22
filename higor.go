@@ -74,39 +74,6 @@ func stringToType(a string) interface{} {
 	return v
 }
 
-// Drop Eliminate 1 or more columns permanently
-func (df *DataFrame) Drop(columns ...string) {
-
-	for _, column := range columns {
-		// Check if that column exists
-		_, ok := df.Values[column]
-
-		// If exists, delete the column
-		if ok == true {
-			for i, col := range df.Columns {
-				if column == col {
-					// Delete from the values
-					delete(df.Values, column)
-
-					// Exclude the column
-					newColumns := append(df.Columns[:i], df.Columns[i+1:]...)
-					df.Columns = newColumns
-				}
-			}
-
-		} else {
-			messageError := fmt.Sprintf("The column '%s' don't exists on the DataFrame\n", column)
-			if df.SafeMode {
-				// If SafeMode is active
-				log.Fatal(messageError)
-			}
-			fmt.Println(messageError)
-			continue
-		}
-	}
-
-}
-
 // String Return string to print it
 func (df DataFrame) String() string {
 	printDataFrame(df.Columns, df.Values, df.Index)
@@ -230,6 +197,43 @@ func (df *DataFrame) ReadCSV() {
 	}
 	df.Values = valuesPerColumn
 	df.Shape = [2]int{len(df.Columns), len(df.Values)}
+
+}
+
+////////////////////////////
+// DataFrame manipulation //
+////////////////////////////
+
+// Drop Eliminate 1 or more columns permanently
+func (df *DataFrame) Drop(columns ...string) {
+
+	for _, column := range columns {
+		// Check if that column exists
+		_, ok := df.Values[column]
+
+		// If exists, delete the column
+		if ok == true {
+			for i, col := range df.Columns {
+				if column == col {
+					// Delete from the values
+					delete(df.Values, column)
+
+					// Exclude the column
+					newColumns := append(df.Columns[:i], df.Columns[i+1:]...)
+					df.Columns = newColumns
+				}
+			}
+
+		} else {
+			messageError := fmt.Sprintf("The column '%s' don't exists on the DataFrame\n", column)
+			if df.SafeMode {
+				// If SafeMode is active
+				log.Fatal(messageError)
+			}
+			fmt.Println(messageError)
+			continue
+		}
+	}
 
 }
 
