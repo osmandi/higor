@@ -121,12 +121,23 @@ func TestDrop(t *testing.T) {
 
 }
 
-/*
 func TestMean(t *testing.T) {
 	dfHigor := NewDataFrame("examples/data/example1.csv")
 	dfHigor.ReadCSV()
 
-	value := dfHigor.Values["id"].Mean()
+	// Test float64 number
+	valueResult := dfHigor.Values["salary"].Mean()
+	valueExpected := 2963.707882352941
 
+	if valueResult != valueExpected {
+		t.Errorf("Median error, expected: %v, result: %v", valueExpected, valueResult)
+	}
+
+	// Test int
+	valueIntResult := math.Round(dfHigor.Values["id"].Mean()*100) / 100
+	valueIntExpected := 49.54
+
+	if valueIntResult != valueIntExpected {
+		t.Errorf("Median error, expected: %v, result: %v", valueIntExpected, valueIntResult)
+	}
 }
-*/

@@ -240,9 +240,20 @@ func (df *DataFrame) ReadCSV() {
 func (b Page) Mean() float64 {
 	var valuesFloat []float64
 	for _, v := range b {
-		valuesFloat = append(valuesFloat, v.(float64))
+		switch v.(type) {
+		case float64:
+			if !math.IsNaN(v.(float64)) {
+				valuesFloat = append(valuesFloat, v.(float64))
+			}
+		case int:
+			valuesFloat = append(valuesFloat, float64(v.(int)))
+		default:
+			log.Fatal("This column is not float64 or int type")
+		}
+
 	}
 	// Calculate the mean
 	mean := stat.Mean(valuesFloat, nil)
+
 	return mean
 }
