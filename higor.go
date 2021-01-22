@@ -237,6 +237,24 @@ func (df *DataFrame) Drop(columns ...string) {
 
 }
 
+// AddColumn Add a specific column
+func (df *DataFrame) AddColumn(index int, columnName string, values Page) DataFrame {
+
+	// Insert on columns
+	columns := df.Columns
+	columns = append(columns, columnName)
+	copy(columns[index+1:], columns[index:])
+	columns[index] = columnName
+
+	// Add values
+	df.Values[columnName] = values
+
+	// Add to DataFrame
+	df.Columns = columns
+
+	return *df
+}
+
 /////////////////////////
 // STATITICS FUNCTIONS //
 /////////////////////////
@@ -340,6 +358,10 @@ func (df DataFrame) Describe() DataFrame {
 		Values:  book,
 		Index:   index,
 	}
+
+	// Add Stats column
+	rows := Page{"Mean", "Max", "Min"}
+	dfDescribe.AddColumn(0, "stats", rows)
 
 	return dfDescribe
 }

@@ -214,8 +214,9 @@ func TestDescribe(t *testing.T) {
 
 	// Order
 	// [Mean, Max, Min]
-	columns := []string{"id", "name", "work_remotely", "salary", "age", "country_code"}
+	columns := []string{"stats", "id", "name", "work_remotely", "salary", "age", "country_code"}
 	book := Book{}
+	book["stats"] = Page{"Mean", "Max", "Min"}
 	book["id"] = Page{49.53932584269663, 100, 1}
 	book["name"] = Page{math.NaN(), math.NaN(), math.NaN()}
 	book["work_remotely"] = Page{math.NaN(), math.NaN(), math.NaN()}
@@ -232,6 +233,11 @@ func TestDescribe(t *testing.T) {
 	// Comparative Index
 	if !reflect.DeepEqual(dfHigorDescribe.Index, df.Index) {
 		t.Errorf("Index error=> Expected: %v, Result: %v", df.Index, dfHigorDescribe.Index)
+	}
+
+	// Comparative columns
+	if !reflect.DeepEqual(columns, dfHigorDescribe.Columns) {
+		t.Errorf("Add column (column - Describe) error => Expected: %v, Result: %v", columns, dfHigor.Columns)
 	}
 
 	// Comparative Values
@@ -265,6 +271,27 @@ func TestDescribe(t *testing.T) {
 				}
 			}
 		}
+	}
+
+}
+
+func TestAddColumn(t *testing.T) {
+	columnsExpected := []string{"stats", "id", "name", "work_remotely", "salary", "age", "country_code"}
+	rowsExpected := Page{"Mean", "Max", "Min"}
+
+	// Get Data
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+	dfHigor.AddColumn(0, "stats", rowsExpected)
+
+	// Column test
+	if !reflect.DeepEqual(columnsExpected, dfHigor.Columns) {
+		t.Errorf("Add column (column) error => Expected: %v, Result: %v", columnsExpected, dfHigor.Columns)
+	}
+
+	// Rows test
+	if !reflect.DeepEqual(rowsExpected, dfHigor.Values["stats"]) {
+		t.Errorf("Add column (values) error => Expected: %s, Result: %s", rowsExpected, dfHigor.Values["stats"])
 	}
 
 }
