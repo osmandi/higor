@@ -237,7 +237,7 @@ func (df *DataFrame) ReadCSV() {
 /////////////////////////
 
 // Mean It's a function to calculate the Mean for one spefic column
-func (b page) Mean() float64 {
+func (b Page) Mean() float64 {
 	var valuesFloat []float64
 	for _, v := range b {
 		valuesFloat = append(valuesFloat, v.(float64))
