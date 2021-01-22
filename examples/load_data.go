@@ -12,4 +12,6 @@ func main() {
 
 	fmt.Println(dfHigor.Head())
 
+	fmt.Println(dfHigor.Tail())
+
 }

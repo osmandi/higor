@@ -131,7 +131,7 @@ func printDataFrame(columns []string, values Book, index []int) {
 	header := strings.Join(columns, "\t")
 	fmt.Fprintf(w, "index\t%v\n", header)
 
-	for i := range index {
+	for i, v := range index {
 		var line []string
 		for _, col := range columns {
 			stringValue := fmt.Sprintf("%v", values[col][i])
@@ -139,7 +139,7 @@ func printDataFrame(columns []string, values Book, index []int) {
 		}
 		// Print on the table
 		value := strings.Join(line[:], "\t")
-		fmt.Fprintf(w, "%d\t%v\n", i, value)
+		fmt.Fprintf(w, "%d\t%v\n", v, value)
 	}
 
 	defer w.Flush()
@@ -154,7 +154,7 @@ func NewDataFrame(filename string) *DataFrame {
 	}
 }
 
-// Head Print the first five dataframe rows
+// Head Get DataFrame with the first 5 rows
 func (df DataFrame) Head() DataFrame {
 	interbalBook := Book{}
 
@@ -166,6 +166,23 @@ func (df DataFrame) Head() DataFrame {
 	internalDataFrame.Values = interbalBook
 	internalDataFrame.Columns = df.Columns
 	internalDataFrame.Index = df.Index[:5]
+
+	return internalDataFrame
+}
+
+// Tail Get DataFrame with the last 5 rows
+func (df DataFrame) Tail() DataFrame {
+	interbalBook := Book{}
+	totalRows := len(df.Index)
+
+	for k, v := range df.Values {
+		interbalBook[k] = v[totalRows-5:]
+	}
+
+	internalDataFrame := DataFrame{}
+	internalDataFrame.Values = interbalBook
+	internalDataFrame.Columns = df.Columns
+	internalDataFrame.Index = df.Index[totalRows-5:]
 
 	return internalDataFrame
 }

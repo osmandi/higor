@@ -2,6 +2,7 @@ package higor
 
 import (
 	"math"
+	"reflect"
 	"testing"
 )
 
@@ -49,4 +50,57 @@ func TestHead(t *testing.T) {
 
 		}
 	}
+}
+
+func TestTail(t *testing.T) {
+
+	// Values expected
+	valuesExpected := Book{}
+	valuesExpected["id"] = page{96, 97, 98, 99, 100}
+	valuesExpected["name"] = page{math.NaN(), "Novelia", "Maegan", "Andreana", "Freeman"}
+	valuesExpected["work_remotely"] = page{false, true, false, true, false}
+	valuesExpected["salary"] = page{math.NaN(), "$3948.23", "$2905.48", "$3732.29", "$2850.99"}
+	valuesExpected["age"] = page{54, math.NaN(), 48, 73, 39}
+	valuesExpected["country_code"] = page{"GF", "JP", "UA", "CN", "TH"}
+
+	// Index expected
+	indexExpected := []int{95, 96, 97, 98, 99}
+
+	// Get Result
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+	dfHigorTail := dfHigor.Tail()
+	valuesResult := dfHigorTail.Values
+	indexResult := dfHigorTail.Index
+
+	// Values test
+	for k, v := range valuesResult {
+		for i, element := range v {
+			switch element.(type) {
+			case float64:
+
+				if math.IsNaN(element.(float64)) {
+					if !math.IsNaN(valuesExpected[k][i].(float64)) {
+						t.Errorf("Column: \"%s\", expected: %v recived: %v", k, valuesExpected[k], v)
+					}
+				} else if element != valuesExpected[k][i] {
+
+					t.Errorf("Column: \"%s\", expected: %v recived: %v", k, valuesExpected[k], v)
+				}
+			default:
+
+				if element != valuesExpected[k][i] {
+
+					t.Errorf("Column: \"%s\", expected: %v recived: %v", k, valuesExpected[k], v)
+				}
+			}
+
+		}
+	}
+
+	// Index test
+	if !reflect.DeepEqual(indexExpected, indexResult) {
+		t.Errorf("Index error, expected: %v recived: %v", indexExpected, indexResult)
+	}
+
 }
