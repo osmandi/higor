@@ -205,3 +205,66 @@ func TestMin(t *testing.T) {
 	}
 
 }
+
+func TestDescribe(t *testing.T) {
+	// Get data
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+	dfHigorDescribe := dfHigor.Describe()
+
+	// Order
+	// [Mean, Max, Min]
+	columns := []string{"id", "name", "work_remotely", "salary", "age", "country_code"}
+	book := Book{}
+	book["id"] = Page{49.53932584269663, 100, 1}
+	book["name"] = Page{math.NaN(), math.NaN(), math.NaN()}
+	book["work_remotely"] = Page{math.NaN(), math.NaN(), math.NaN()}
+	book["salary"] = Page{2963.707882352941, 4971.74, 217.69}
+	book["age"] = Page{48.916666666666664, 100, 2}
+	book["country_code"] = Page{math.NaN(), math.NaN(), math.NaN()}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  book,
+		Index:   []int{0, 1, 2},
+	}
+
+	// Comparative Index
+	if !reflect.DeepEqual(dfHigorDescribe.Index, df.Index) {
+		t.Errorf("Index error=> Expected: %v, Result: %v", df.Index, dfHigorDescribe.Index)
+	}
+
+	// Comparative Values
+	for columnName, columnValues := range df.Values {
+		for index, element := range columnValues {
+			switch element.(type) {
+			case float64:
+				if math.IsNaN(element.(float64)) {
+					if !math.IsNaN(dfHigorDescribe.Values[columnName][index].(float64)) {
+						t.Errorf("Column: \"%s\", expected: %v recived: %v", columnName, element, dfHigorDescribe.Values[columnName][index])
+					}
+				} else if element != dfHigorDescribe.Values[columnName][index].(float64) {
+
+					t.Errorf("Column: \"%s\", expected: %v recived: %v", columnName, element, dfHigorDescribe.Values[columnName][index])
+				}
+			case int:
+				if float64(element.(int)) != dfHigorDescribe.Values[columnName][index] {
+
+					t.Errorf("Column: \"%s\", expected: %v (%T) recived: %v (%T)", columnName, element, element, dfHigorDescribe.Values[columnName][index], dfHigorDescribe.Values[columnName][index])
+				}
+			case string:
+
+				if element != dfHigorDescribe.Values[columnName][index].(string) {
+
+					t.Errorf("Column: \"%s\", expected: %v recived: %v", columnName, element, dfHigorDescribe.Values[columnName][index])
+				}
+			case bool:
+				if element != dfHigorDescribe.Values[columnName][index].(bool) {
+
+					t.Errorf("Column: \"%s\", expected: %v recived: %v", columnName, element, dfHigorDescribe.Values[columnName][index])
+				}
+			}
+		}
+	}
+
+}

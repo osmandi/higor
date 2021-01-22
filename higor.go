@@ -314,3 +314,28 @@ func (b Page) Min() float64 {
 
 	return minValue
 }
+
+// Describe Get a DataFrame with a sumary
+// about the original DataFrame
+func (df DataFrame) Describe() DataFrame {
+
+	book := Book{}
+	index := []int{0, 1, 2}
+
+	for name := range df.Values {
+		mean := df.Values[name].Mean()
+		max := df.Values[name].Max()
+		min := df.Values[name].Min()
+
+		book[name] = Page{mean, max, min}
+
+	}
+
+	dfDescribe := DataFrame{
+		Columns: df.Columns,
+		Values:  book,
+		Index:   index,
+	}
+
+	return dfDescribe
+}

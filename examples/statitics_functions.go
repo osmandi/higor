@@ -24,4 +24,7 @@ func main() {
 	fmt.Println(dfHigor.Values["id"].Max())     // Int
 	fmt.Println(dfHigor.Values["salary"].Max()) // Float64
 	fmt.Println(dfHigor.Values["name"].Max())   // String
+
+	// Describe
+	fmt.Println(dfHigor.Describe())
 }
