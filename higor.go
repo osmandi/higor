@@ -16,7 +16,8 @@ import (
 
 type page []interface{}
 
-type book map[string]page
+// Book It's to have all columns with its values
+type Book map[string]page
 
 func (b page) Mean() float64 {
 	var valuesFloat []float64
@@ -31,7 +32,7 @@ func (b page) Mean() float64 {
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
 	Columns  []string
-	Values   book
+	Values   Book
 	Shape    [2]int
 	Sep      rune
 	Filename string
@@ -121,7 +122,7 @@ func (df DataFrame) String() string {
 	return ""
 }
 
-func printDataFrame(columns []string, values book, index []int) {
+func printDataFrame(columns []string, values Book, index []int) {
 
 	const padding = 3
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', tabwriter.TabIndent|tabwriter.Debug)
@@ -154,20 +155,19 @@ func NewDataFrame(filename string) *DataFrame {
 }
 
 // Head Print the first five dataframe rows
-// if to to input, print that quantities rows
-func (df DataFrame) Head(limit ...int) {
+func (df DataFrame) Head() DataFrame {
+	interbalBook := Book{}
 
-	switch {
-	case len(limit) > 1:
-		log.Fatal("Only input one integer number")
-	case len(limit) == 0:
-		printDataFrame(df.Columns, df.Values, df.Index[:5])
-	case len(limit) == 1:
-		printDataFrame(df.Columns, df.Values, df.Index[:limit[0]])
-	default:
-		log.Fatal("There is an error with the input parameter on Head function")
+	for k, v := range df.Values {
+		interbalBook[k] = v[:5]
 	}
 
+	internalDataFrame := DataFrame{}
+	internalDataFrame.Values = interbalBook
+	internalDataFrame.Columns = df.Columns
+	internalDataFrame.Index = df.Index[:5]
+
+	return internalDataFrame
 }
 
 // ReadCSV to read CSV files
@@ -213,7 +213,7 @@ func (df *DataFrame) ReadCSV() {
 	df.Index = indexList[:len(indexList)-2]
 
 	// Set values
-	valuesPerColumn := make(book)
+	valuesPerColumn := make(Book)
 	for i, v := range df.Columns {
 		for _, r := range values[1:] {
 			valuesPerColumn[v] = append(valuesPerColumn[v], stringToType(r[i]))
