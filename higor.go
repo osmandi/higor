@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -248,7 +249,7 @@ func (b Page) Mean() float64 {
 		case int:
 			valuesFloat = append(valuesFloat, float64(v.(int)))
 		default:
-			log.Fatal("This column is not float64 or int type")
+			break
 		}
 
 	}
@@ -256,4 +257,60 @@ func (b Page) Mean() float64 {
 	mean := stat.Mean(valuesFloat, nil)
 
 	return mean
+}
+
+// Max Calculate the max value in a specific column
+func (b Page) Max() float64 {
+	var valuesFloat []float64
+	for _, v := range b {
+		switch v.(type) {
+		case float64:
+			if !math.IsNaN(v.(float64)) {
+				valuesFloat = append(valuesFloat, v.(float64))
+			}
+		case int:
+			valuesFloat = append(valuesFloat, float64(v.(int)))
+		default:
+			break
+		}
+
+	}
+
+	sort.Float64s(valuesFloat)
+	var maxValue float64
+	if len(valuesFloat) > 1 {
+		maxValue = valuesFloat[len(valuesFloat)-1]
+	} else {
+		maxValue = math.NaN()
+	}
+
+	return maxValue
+}
+
+// Min Calculate the min value in a specific column
+func (b Page) Min() float64 {
+	var valuesFloat []float64
+	for _, v := range b {
+		switch v.(type) {
+		case float64:
+			if !math.IsNaN(v.(float64)) {
+				valuesFloat = append(valuesFloat, v.(float64))
+			}
+		case int:
+			valuesFloat = append(valuesFloat, float64(v.(int)))
+		default:
+			break
+		}
+
+	}
+
+	sort.Float64s(valuesFloat)
+	var minValue float64
+	if len(valuesFloat) > 1 {
+		minValue = valuesFloat[0]
+	} else {
+		minValue = math.NaN()
+	}
+
+	return minValue
 }

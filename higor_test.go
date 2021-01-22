@@ -138,6 +138,70 @@ func TestMean(t *testing.T) {
 	valueIntExpected := 49.54
 
 	if valueIntResult != valueIntExpected {
-		t.Errorf("Median error, expected: %v, result: %v", valueIntExpected, valueIntResult)
+		t.Errorf("Mean error, expected: %v, result: %v", valueIntExpected, valueIntResult)
 	}
+
+	// Test string
+	valueStringResult := dfHigor.Values["name"].Mean()
+	if !math.IsNaN(valueStringResult) {
+		t.Errorf("Mean error, String not calculate corretly")
+	}
+
+}
+
+func TestMax(t *testing.T) {
+
+	// Load data
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+
+	// Int test
+	valueIntExpected := 100.0
+	valueIntResult := dfHigor.Values["id"].Max()
+
+	if valueIntExpected != valueIntResult {
+		t.Errorf("Max value error, expected: %v, result: %v", valueIntExpected, valueIntResult)
+	}
+
+	// Float test
+	valueFloatExpected := 4971.74
+	valueFloatResult := dfHigor.Values["salary"].Max()
+
+	if valueFloatExpected != valueFloatResult {
+		t.Errorf("Max value error, expected: %v, result: %v", valueFloatExpected, valueFloatResult)
+	}
+
+	// Test string
+	valueStringResult := dfHigor.Values["name"].Max()
+	if !math.IsNaN(valueStringResult) {
+		t.Errorf("Mean error, String not calculate corretly")
+	}
+}
+
+func TestMin(t *testing.T) {
+	// Load data
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+
+	// Float test
+	valueFloatExpected := 217.69
+	valueFloatResult := dfHigor.Values["salary"].Min()
+	if valueFloatExpected != valueFloatResult {
+		t.Errorf("Min value error, expected: %v, result: %v", valueFloatExpected, valueFloatResult)
+	}
+
+	// Int test
+	valueIntExpected := 1.0
+	valueIntResult := dfHigor.Values["id"].Min()
+
+	if valueIntExpected != valueIntResult {
+		t.Errorf("Min value error, expected: %v, result: %v", valueIntExpected, valueIntResult)
+	}
+
+	// Test string
+	valueStringResult := dfHigor.Values["name"].Min()
+	if !math.IsNaN(valueStringResult) {
+		t.Errorf("Min error, String not calculate corretly")
+	}
+
 }
