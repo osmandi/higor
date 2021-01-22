@@ -15,12 +15,12 @@ func TestPrintHelloHigor(t *testing.T) {
 
 func TestHead(t *testing.T) {
 	valuesExpected := Book{}
-	valuesExpected["id"] = page{1, 2, 3, 4, 5}
-	valuesExpected["name"] = page{"Hamish", "Anson", "Willie", "Eimile", "Rawley"}
-	valuesExpected["work_remotely"] = page{false, math.NaN(), true, true, true}
-	valuesExpected["salary"] = page{"$4528.90", "$1418.86", "$1311.34", "$3895.20", "$2350.92"}
-	valuesExpected["age"] = page{96, math.NaN(), math.NaN(), 80, math.NaN()}
-	valuesExpected["country_code"] = page{"PE", math.NaN(), "PH", "ID", "ZA"}
+	valuesExpected["id"] = Page{1, 2, 3, 4, 5}
+	valuesExpected["name"] = Page{"Hamish", "Anson", "Willie", "Eimile", "Rawley"}
+	valuesExpected["work_remotely"] = Page{false, math.NaN(), true, true, true}
+	valuesExpected["salary"] = Page{4528.90, 1418.86, 1311.34, 3895.20, 2350.92}
+	valuesExpected["age"] = Page{96, math.NaN(), math.NaN(), 80, math.NaN()}
+	valuesExpected["country_code"] = Page{"PE", math.NaN(), "PH", "ID", "ZA"}
 
 	dfHigor := NewDataFrame("examples/data/example1.csv")
 	dfHigor.ReadCSV()
@@ -56,12 +56,12 @@ func TestTail(t *testing.T) {
 
 	// Values expected
 	valuesExpected := Book{}
-	valuesExpected["id"] = page{96, 97, 98, 99, 100}
-	valuesExpected["name"] = page{math.NaN(), "Novelia", "Maegan", "Andreana", "Freeman"}
-	valuesExpected["work_remotely"] = page{false, true, false, true, false}
-	valuesExpected["salary"] = page{math.NaN(), "$3948.23", "$2905.48", "$3732.29", "$2850.99"}
-	valuesExpected["age"] = page{54, math.NaN(), 48, 73, 39}
-	valuesExpected["country_code"] = page{"GF", "JP", "UA", "CN", "TH"}
+	valuesExpected["id"] = Page{96, 97, 98, 99, 100}
+	valuesExpected["name"] = Page{math.NaN(), "Novelia", "Maegan", "Andreana", "Freeman"}
+	valuesExpected["work_remotely"] = Page{false, true, false, true, false}
+	valuesExpected["salary"] = Page{math.NaN(), 3948.23, 2905.48, 3732.29, 2850.99}
+	valuesExpected["age"] = Page{54, math.NaN(), 48, 73, 39}
+	valuesExpected["country_code"] = Page{"GF", "JP", "UA", "CN", "TH"}
 
 	// Index expected
 	indexExpected := []int{95, 96, 97, 98, 99}
@@ -120,3 +120,13 @@ func TestDrop(t *testing.T) {
 	}
 
 }
+
+/*
+func TestMean(t *testing.T) {
+	dfHigor := NewDataFrame("examples/data/example1.csv")
+	dfHigor.ReadCSV()
+
+	value := dfHigor.Values["id"].Mean()
+
+}
+*/
