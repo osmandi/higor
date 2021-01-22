@@ -19,16 +19,6 @@ type page []interface{}
 // Book It's to have all columns with its values
 type Book map[string]page
 
-func (b page) Mean() float64 {
-	var valuesFloat []float64
-	for _, v := range b {
-		valuesFloat = append(valuesFloat, v.(float64))
-	}
-	// Calculate the mean
-	mean := stat.Mean(valuesFloat, nil)
-	return mean
-}
-
 // DataFrame contain the dataFrames methods and atributes
 type DataFrame struct {
 	Columns  []string
@@ -239,4 +229,15 @@ func (df *DataFrame) ReadCSV() {
 	df.Values = valuesPerColumn
 	df.Shape = [2]int{len(df.Columns), len(df.Values)}
 
+}
+
+// STATITICS FUNCTIONS
+func (b page) Mean() float64 {
+	var valuesFloat []float64
+	for _, v := range b {
+		valuesFloat = append(valuesFloat, v.(float64))
+	}
+	// Calculate the mean
+	mean := stat.Mean(valuesFloat, nil)
+	return mean
 }
