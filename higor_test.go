@@ -2,6 +2,7 @@ package higor
 
 import (
 	"math"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -237,7 +238,7 @@ func TestDescribe(t *testing.T) {
 
 	// Comparative columns
 	if !reflect.DeepEqual(columns, dfHigorDescribe.Columns) {
-		t.Errorf("Add column (column - Describe) error => Expected: %v, Result: %v", columns, dfHigor.Columns)
+		t.Errorf("Add column (column - Describe) error => Expected: %v, Result: %v", columns, dfHigorDescribe.Columns)
 	}
 
 	// Comparative Values
@@ -282,16 +283,45 @@ func TestAddColumn(t *testing.T) {
 	// Get Data
 	dfHigor := NewDataFrame("examples/data/example1.csv")
 	dfHigor.ReadCSV()
-	dfHigor.AddColumn(0, "stats", rowsExpected)
+	dfHigorAdd := dfHigor.AddColumn(0, "stats", rowsExpected)
 
 	// Column test
-	if !reflect.DeepEqual(columnsExpected, dfHigor.Columns) {
-		t.Errorf("Add column (column) error => Expected: %v, Result: %v", columnsExpected, dfHigor.Columns)
+	if !reflect.DeepEqual(columnsExpected, dfHigorAdd.Columns) {
+		t.Errorf("Add column (column) error => Expected: %v, Result: %v", columnsExpected, dfHigorAdd.Columns)
 	}
 
 	// Rows test
-	if !reflect.DeepEqual(rowsExpected, dfHigor.Values["stats"]) {
-		t.Errorf("Add column (values) error => Expected: %s, Result: %s", rowsExpected, dfHigor.Values["stats"])
+	if !reflect.DeepEqual(rowsExpected, dfHigorAdd.Values["stats"]) {
+		t.Errorf("Add column (values) error => Expected: %s, Result: %s", rowsExpected, dfHigorAdd.Values["stats"])
+	}
+
+}
+
+func TestExportToCSV(t *testing.T) {
+
+	// Load data
+	filenamePath := "exportExample/describe.csv"
+	dfHigor := NewDataFrame(filenamePath)
+	dfHigor.ReadCSV()
+
+	// Export data
+	dfHigor.ExportToCSV(filenamePath)
+
+	// Test file generator
+	if _, err := os.Stat(filenamePath); err != nil {
+		if os.IsNotExist(err) {
+			t.Errorf("ExportToCSV error: The file doesn't exists")
+		}
+	}
+	// TODO: Create a function to check equals on DataFrames
+
+	// Test equal DataFrame
+	dfExported := NewDataFrame(filenamePath)
+	dfExported.ReadCSV()
+
+	if !EqualDataFrame(dfHigor, dfExported) {
+		t.Errorf("Both DataFrame are distincts")
+
 	}
 
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -237,22 +238,75 @@ func (df *DataFrame) Drop(columns ...string) {
 
 }
 
+// ExportToCSV Function to save a DataFrame on CSV format
+func (df DataFrame) ExportToCSV(filenamePath string) {
+
+	var records [][]string
+	records = append(records, df.Columns)
+
+	for i := range df.Index {
+		var record []string
+		for _, columnName := range df.Columns {
+			value := df.Values[columnName][i]
+			valueString := fmt.Sprintf("%v", value)
+			record = append(record, valueString)
+		}
+		records = append(records, record)
+	}
+
+	// Create CSV
+	f, err := os.Create(filenamePath)
+
+	defer f.Close()
+
+	if err != nil {
+
+		log.Fatalln("Failed to open file", err)
+	}
+
+	w := csv.NewWriter(f)
+	defer w.Flush()
+
+	for _, record := range records {
+		if err := w.Write(record); err != nil {
+			log.Fatalln("Error writing record to file", err)
+		}
+	}
+
+}
+
 // AddColumn Add a specific column
-func (df *DataFrame) AddColumn(index int, columnName string, values Page) DataFrame {
+func (df DataFrame) AddColumn(index uint, columnName string, values Page) DataFrame {
 
 	// Insert on columns
 	columns := df.Columns
-	columns = append(columns, columnName)
-	copy(columns[index+1:], columns[index:])
-	columns[index] = columnName
+
+	var newColumns []string
+	if index == 0 {
+		newColumns = append(newColumns, columnName)
+		newColumns = append(newColumns, columns...)
+	} else {
+		newColumns = append(newColumns, columns[:index]...)
+		newColumns = append(newColumns, columnName)
+		newColumns = append(newColumns, columns[index:]...)
+	}
 
 	// Add values
 	df.Values[columnName] = values
 
 	// Add to DataFrame
-	df.Columns = columns
+	df.Columns = newColumns
 
-	return *df
+	return df
+}
+
+// EqualDataFrame To know if two DataFrame are equals
+func EqualDataFrame(df1, df2 *DataFrame) bool {
+	if reflect.TypeOf(*df1) == reflect.TypeOf(*df2) {
+		return true
+	}
+
+	return false
 }
 
 /////////////////////////
@@ -361,7 +415,7 @@ func (df DataFrame) Describe() DataFrame {
 
 	// Add Stats column
 	rows := Page{"Mean", "Max", "Min"}
-	dfDescribe.AddColumn(0, "stats", rows)
+	dfDescribe = dfDescribe.AddColumn(0, "stats", rows)
 
 	return dfDescribe
 }

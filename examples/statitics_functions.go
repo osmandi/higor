@@ -27,4 +27,13 @@ func main() {
 
 	// Describe
 	fmt.Println(dfHigor.Describe())
+
+	// Export Describe
+	describe := dfHigor.Describe()
+	describe.ExportToCSV("exportExample/describe.csv")
+
+	// Read again
+	dfDescribe := higor.NewDataFrame("exportExample/describe.csv")
+	dfDescribe.ReadCSV()
+	fmt.Println(dfDescribe)
 }
