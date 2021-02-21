@@ -16,3 +16,7 @@
 
 # Sample Data
 exportExample/*
+
+# Vim files
+*.swo
+*.swp
