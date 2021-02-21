@@ -7,6 +7,10 @@ import (
 	"github.com/osmandi/higor/dataframe/csv"
 )
 
+////////////
+// Header /
+//////////
+
 // Check the header
 func checkerHeader(expectedHeader, resultHeader []string, t *testing.T) {
 	if !reflect.DeepEqual(expectedHeader, resultHeader) {
