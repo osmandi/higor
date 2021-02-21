@@ -16,6 +16,8 @@ import (
 	"gonum.org/v1/gonum/stat"
 )
 
+var Version string = "v0.2.0"
+
 // Page It's one column
 type Page []interface{}
 
@@ -31,6 +33,14 @@ type DataFrame struct {
 	Filename string
 	Index    []int
 	SafeMode bool // To know if should skip with the first error
+}
+
+// HelloHigor Print a simple message to check if Higor are installed correctly
+// and print the version installed
+func HelloHigor() string {
+
+	helloMessage := fmt.Sprintf("Hello from Higor :), %s", Version)
+	return helloMessage
 }
 
 // PrintHelloHigor To get greets from higor library
