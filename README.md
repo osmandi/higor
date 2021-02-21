@@ -2,30 +2,24 @@
 
 # Higor
 
-Dataframe for Golang, simple but powerful
+Dataframe for Golang, simple but powerful.
 
-<!--
-
-## Why Golang to Data Engineering?
+## Why Golang for Data Engineering?
 
 Go has a multiple features that help on this topic, for example:
-- It's very easy implement the concurrency to processing a lot of data with nativie way (without external libraries)
-- His compilation is fast.
-- Has your native library to implement tests.
-- His sintax is simple such as Python but powerfull as C language.
+- It's very easy implement the concurrency to processing a lot of data using native resources (without external libraries)
+- Its compilation is fast.
+- It has a native library to implement tests.
+- Its sintax is simple such as Python but powerfull as C language.
 - Its mascot is very cute (this is a personal opinion)
 
 ## Why Higor?
 
-Actualy Python is used in all steps for a Machine Learning project, from Data Engineering to Machine Learning model train, to adapt this Python doesn't to do native instead use precompiled code to another language, for this way Python change syntax depending of the external libraly. For example: Numpy use C and Spark uses Scala.
+Currently, Python is used in all steps for a Machine Learning project, from Data Engineering to Machine Learning model train. However, to make this possible, Python uses precompiled code (i.e. Numpy uses C and Spark uses Scala) instead a native way. Doing this, causes syntaxis changes, depending on the external library used.
 
-Depending how much data do you have in Python you need different libraries (Pandas -> Dask -> PySpark)
+The aim of Higor is to provide a library that allows you to work with different amounts of data using Golang with having a simple interface.
 
-The proposal with `Higor` is uses Golang during Data Engineering process no matter how much data do you have with the same library for that keeping the same syntax code.
-
-If you are a Data Engineer or Golang developer this question is for you: If Docker y Kubernetes están hechos en Go, ¿qué hace falta para implementar Go para Big Data?
-
--->
+> Remember, Kubernetes is made in Golang. Can you imagine that power in Data Engineering and Big Data?
 
 ## Install
 
