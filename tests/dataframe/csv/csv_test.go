@@ -85,3 +85,27 @@ func TestCSVReadHeaderEnter(t *testing.T) {
 
 	checkerHeader(expectedHeader, resultHeader, t)
 }
+
+//////////
+// Rows /
+////////
+
+// Rows - Normal row
+
+// Rows - Missing values
+
+// Rows - Lazy Quotes
+
+// Rows - More values than expected
+
+//////////////////////
+// Matrix of values /
+////////////////////
+
+///////////////////////
+// Read CSV filepath /
+/////////////////////
+
+////////////////
+// Export CSV /
+//////////////
