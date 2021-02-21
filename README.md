@@ -4,6 +4,8 @@
 
 Dataframe for Golang, simple but powerful
 
+<!--
+
 ## Why Golang to Data Engineering?
 
 Go has a multiple features that help on this topic, for example:
@@ -21,7 +23,9 @@ Depending how much data do you have in Python you need different libraries (Pand
 
 The proposal with `Higor` is uses Golang during Data Engineering process no matter how much data do you have with the same library for that keeping the same syntax code.
 
-If you are a Data Engineer or Golang developer this question is for you: If Docker y Kubernetes están echos en Go, ¿qué hace falta para implementar Go para Big Data?
+If you are a Data Engineer or Golang developer this question is for you: If Docker y Kubernetes están hechos en Go, ¿qué hace falta para implementar Go para Big Data?
+
+-->
 
 ## Install
 
