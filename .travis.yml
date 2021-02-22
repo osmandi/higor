@@ -7,3 +7,6 @@ script:
 
 after_success:
  - bash <(curl -s https://codecov.io/bash)
+
+- name: Codecov
+  uses: codecov/codecov-action@v1.2.1
