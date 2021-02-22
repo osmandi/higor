@@ -3,8 +3,6 @@ package csv
 import (
 	"reflect"
 	"testing"
-
-	"github.com/osmandi/higor/dataframe/csv"
 )
 
 ////////////
@@ -23,7 +21,7 @@ func checkerHeader(expectedHeader, resultHeader []string, t *testing.T) {
 func TestCSVReadHeaderNormal(t *testing.T) {
 	csvHeaderLineNormal := "col1,col2,col3,col4"
 	expectedHeader := []string{"col1", "col2", "col3", "col4"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLineNormal))
+	resultHeader := CSVReadHeader(Line(csvHeaderLineNormal))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 
@@ -33,7 +31,7 @@ func TestCSVReadHeaderNormal(t *testing.T) {
 func TestCSVReadHeaderWithOtherSeparator(t *testing.T) {
 	csvHeaderLineNormal := "col1|col2|col3|col4"
 	expectedHeader := []string{"col1", "col2", "col3", "col4"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLineNormal), csv.Sep('|'))
+	resultHeader := CSVReadHeader(Line(csvHeaderLineNormal), Sep('|'))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 }
@@ -42,7 +40,7 @@ func TestCSVReadHeaderWithOtherSeparator(t *testing.T) {
 func TestCSVReadHeaderMissingValues(t *testing.T) {
 	csvHeaderLine := "col1,col2,,col4"
 	expectedHeader := []string{"col1", "col2", "", "col4"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLine))
+	resultHeader := CSVReadHeader(Line(csvHeaderLine))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 }
@@ -51,7 +49,7 @@ func TestCSVReadHeaderMissingValues(t *testing.T) {
 func TestCSVReadHeaderNumbers(t *testing.T) {
 	csvHeaderLine := "col1,2,col3,col4"
 	expectedHeader := []string{"col1", "2", "col3", "col4"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLine))
+	resultHeader := CSVReadHeader(Line(csvHeaderLine))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 
@@ -61,7 +59,7 @@ func TestCSVReadHeaderNumbers(t *testing.T) {
 func TestCSVReadHeaderLazy(t *testing.T) {
 	csvHeaderLine := "col1\",col2,col3,col4"
 	expectedHeader := []string{"col1\"", "col2", "col3", "col4"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLine), csv.LazyQuotes(true))
+	resultHeader := CSVReadHeader(Line(csvHeaderLine), LazyQuotes(true))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 
@@ -71,7 +69,7 @@ func TestCSVReadHeaderLazy(t *testing.T) {
 func TestCSVReadHeaderEmpty(t *testing.T) {
 	csvHeaderLine := ""
 	expectedHeader := []string{}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLine))
+	resultHeader := CSVReadHeader(Line(csvHeaderLine))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 
@@ -81,7 +79,7 @@ func TestCSVReadHeaderEmpty(t *testing.T) {
 func TestCSVReadHeaderEnter(t *testing.T) {
 	csvHeaderLine := "col1,col2,col3\n,col4"
 	expectedHeader := []string{"col1", "col2", "col3"}
-	resultHeader := csv.CSVReadHeader(csv.Line(csvHeaderLine))
+	resultHeader := CSVReadHeader(Line(csvHeaderLine))
 
 	checkerHeader(expectedHeader, resultHeader, t)
 }
