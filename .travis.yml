@@ -2,16 +2,5 @@ language: go
 go: 
  - 1.15.6
 
-before_install:
- - go get golang.org/x/tools/cmd/vet
- - go get github.com/modocache/gover
- - go get github.com/osmandi/higor
-
 script:
- - go vet github.com/osmandi/higor
- - go test ./tests/...
- - go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -i sh -c {}
- - gover . coverprofile.txt
-
-after_success:
- - bash < (curl -s https://codecov.io/bash) -f coverprofile.txt
+ - go test ./tests/... 
