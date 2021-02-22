@@ -3,4 +3,7 @@ go:
  - 1.15.6
 
 script:
- - go test ./tests/...
+ - go test -race -coverprofile=coverage.txt -covermode=atomic ./tests/...
+
+after_success:
+ - bash <(curl -s https://codecov.io/bash)
