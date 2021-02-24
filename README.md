@@ -13,11 +13,11 @@ Dataframe for Golang, simple but powerful.
 ## Why Golang for Data Engineering?
 
 Go has a multiple features that help on this topic, for example:
-- It's very easy implement the concurrency to processing a lot of data using native resources (without external libraries)
+- It's very easy implement the concurrency to processing a lot of data using native resources (without external libraries).
 - Its compilation is fast.
 - It has a native library to implement tests.
 - Its sintax is simple such as Python but powerfull as C language.
-- Its mascot is very cute (this is a personal opinion)
+- Its mascot is very cute (this is a personal opinion).
 
 ## Why Higor?
 
