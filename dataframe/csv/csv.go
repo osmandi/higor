@@ -7,9 +7,10 @@ import (
 )
 
 type CSV struct {
-	Sep        rune
-	LineString string
-	LazyQuotes bool
+	Sep           rune
+	LineString    string
+	LazyQuotes    bool
+	RemoveNewLine bool
 }
 
 // CSV Options
@@ -37,6 +38,17 @@ func LazyQuotes(lazy bool) CSVOption {
 	}
 }
 
+// RemoveNewLine To remove \n on the string line
+func RemoveNewLine(RemoveNewLine bool) CSVOption {
+	return func(c *CSV) {
+		c.RemoveNewLine = RemoveNewLine
+	}
+}
+
+/////////////////////////////
+// Header (Read to String) /
+///////////////////////////
+
 // CSVReadHeader Read the first column has a header
 func CSVReadHeader(opts ...CSVOption) []string {
 	csvInternal := &CSV{}
@@ -61,4 +73,38 @@ func CSVReadHeader(opts ...CSVOption) []string {
 
 	return columns
 
+}
+
+//////////////////////////
+// Row (Read to String) /
+////////////////////////
+
+// CSVReadRowNormal Read a line from CSV and convert it to []string
+func CSVReadRowNormal(opts ...CSVOption) []string {
+	csvInternal := &CSV{}
+	csvInternal.Sep = ','
+
+	for _, opt := range opts {
+		opt(csvInternal)
+	}
+
+	if len(csvInternal.LineString) == 0 {
+		return []string{}
+	}
+
+	if csvInternal.RemoveNewLine {
+		csvInternal.LineString = strings.Replace(csvInternal.LineString, "\n", "", -1)
+	}
+
+	reader := csv.NewReader(strings.NewReader(csvInternal.LineString))
+	reader.Comma = csvInternal.Sep
+	reader.LazyQuotes = csvInternal.LazyQuotes
+
+	columns, err := reader.Read()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return columns
 }
