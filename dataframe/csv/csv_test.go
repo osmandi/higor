@@ -165,11 +165,17 @@ func TestCSVReadRowEmpty(t *testing.T) {
 
 }
 
-//////////////////////
-// Matrix of values /
-////////////////////
+///////////////////////////////////////////////////
+// Matrix of values exported lines to [][]string /
+/////////////////////////////////////////////////
 
-// Matrix - More values than expected
+// Matrix - Header and Rows sush as expected
+// Matrix - Header empty
+// Matrix - Rows empty
+// Matrix - Header most columns than expected
+// Matrix - Header less columns than expected
+// Matrix - Row most columns than expected
+// Matrix - Row less columns than expected
 
 ///////////////////////
 // Read CSV filepath /
