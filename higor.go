@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var Version string = "v0.2.0"
+var Version string = "v0.2.1"
 
 // HelloHigor Print a simple message to check if Higor are installed correctly
 // and print the version installed

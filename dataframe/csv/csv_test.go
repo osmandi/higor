@@ -17,6 +17,14 @@ func checkerHeader(expectedHeader, resultHeader []string, t *testing.T) {
 
 }
 
+// Check the Row
+func checkerRow(expectedRow, resultRow []string, t *testing.T) {
+	if !reflect.DeepEqual(expectedRow, resultRow) {
+		t.Errorf("Header with errors. Expected %s, but received: %s", expectedRow, resultRow)
+	}
+
+}
+
 // Columns Normal - Columns as expected
 func TestCSVReadHeaderNormal(t *testing.T) {
 	csvHeaderLineNormal := "col1,col2,col3,col4"
@@ -87,18 +95,81 @@ func TestCSVReadHeaderEnter(t *testing.T) {
 //////////
 // Rows /
 ////////
+// Split row to []string without parsing
+// Row example: Name (string), age (int), live(bool), salary(float)
 
 // Rows - Normal row
+func TestCSVReadRowNormal(t *testing.T) {
+	csvRowLine := "Harry Potter,21,true,1000.3"
+	expectedRow := []string{"Harry Potter", "21", "true", "1000.3"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine))
+
+	checkerRow(expectedRow, resultRow, t)
+}
 
 // Rows - Missing values
+func TestCSVReadRowMissingValues(t *testing.T) {
+	csvRowLine := "Harry Potter,21,,1000.3"
+	expectedRow := []string{"Harry Potter", "21", "", "1000.3"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine))
+
+	checkerRow(expectedRow, resultRow, t)
+}
+
+// Rows - Another separator
+func TestCSVReadRowAnotherSeparator(t *testing.T) {
+	csvRowLine := "Harry Potter|21|true|1000.3"
+	expectedRow := []string{"Harry Potter", "21", "true", "1000.3"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine), Sep('|'))
+
+	checkerRow(expectedRow, resultRow, t)
+}
 
 // Rows - Lazy Quotes
+func TestCSVReadRowLazyQuotes(t *testing.T) {
+	//csvHeaderLine := "col1\",col2,col3,col4"
+	csvRowLine := "Harry Potter\",21,true,1000.3"
+	expectedRow := []string{"Harry Potter\"", "21", "true", "1000.3"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine), LazyQuotes(true))
 
-// Rows - More values than expected
+	checkerRow(expectedRow, resultRow, t)
+}
+
+// Rows - With \n (Not removing)
+func TestCSVReadRowNotNewLine(t *testing.T) {
+	csvRowLine := "Harry Potter,21,true\n,1000.3"
+	expectedRow := []string{"Harry Potter", "21", "true"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine), LazyQuotes(true))
+
+	checkerRow(expectedRow, resultRow, t)
+
+}
+
+// Rows - With \n (Yes removing)
+func TestCSVReadRowRemoveNewLine(t *testing.T) {
+	csvRowLine := "Harry Potter,21,true\n,1000.3"
+	expectedRow := []string{"Harry Potter", "21", "true", "1000.3"}
+	resultRow := CSVReadRowNormal(Line(csvRowLine), LazyQuotes(true), RemoveNewLine(true))
+
+	checkerRow(expectedRow, resultRow, t)
+
+}
+
+// Rows - Empty row
+func TestCSVReadRowEmpty(t *testing.T) {
+	csvRowLine := ""
+	expectedRow := []string{}
+	resultRow := CSVReadRowNormal(Line(csvRowLine), LazyQuotes(true), RemoveNewLine(true))
+
+	checkerRow(expectedRow, resultRow, t)
+
+}
 
 //////////////////////
 // Matrix of values /
 ////////////////////
+
+// Matrix - More values than expected
 
 ///////////////////////
 // Read CSV filepath /
