@@ -8,6 +8,9 @@ import (
 /////////////////////////////////////////////////
 // CSV Options - To create optional parameters /
 ///////////////////////////////////////////////
+func TestErrorChecker(t *testing.T) {
+	errorChecker(nil)
+}
 
 func TestSep(t *testing.T) {
 	separator := ';'

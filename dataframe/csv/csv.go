@@ -13,8 +13,13 @@ type CSV struct {
 	RemoveNewLine bool
 }
 
-// CSV Options
+func errorChecker(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
+// CSV Options
 type CSVOption func(c *CSV)
 
 // Sep CSV separator in rune type: ',', ';', '|', etc...
@@ -67,9 +72,7 @@ func CSVReadHeader(opts ...CSVOption) []string {
 
 	columns, err := reader.Read()
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorChecker(err)
 
 	return columns
 
@@ -102,9 +105,7 @@ func CSVReadRowNormal(opts ...CSVOption) []string {
 
 	columns, err := reader.Read()
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	errorChecker(err)
 
 	return columns
 }
