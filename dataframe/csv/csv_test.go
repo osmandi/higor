@@ -5,6 +5,56 @@ import (
 	"testing"
 )
 
+/////////////////////////////////////////////////
+// CSV Options - To create optional parameters /
+///////////////////////////////////////////////
+
+func TestSep(t *testing.T) {
+	separator := ';'
+	csvResult := &CSV{}
+	csvOptionInternal := Sep(separator)
+	csvOptionInternal(csvResult)
+
+	if csvResult.Sep != ';' {
+		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
+	}
+
+}
+
+func TestLine(t *testing.T) {
+	line := "textLine"
+	csvResult := &CSV{}
+	csvOptionInternal := Line(line)
+	csvOptionInternal(csvResult)
+
+	if csvResult.LineString != line {
+		t.Errorf("Line error. Expected %s. But received: %v", line, csvResult.LineString)
+	}
+}
+
+func TestLazyQuotes(t *testing.T) {
+	lazyQuotes := true
+	csvResult := &CSV{}
+	csvOptionInternal := LazyQuotes(true)
+	csvOptionInternal(csvResult)
+
+	if csvResult.LazyQuotes != lazyQuotes {
+		t.Errorf("Lazy Quotes error. Expected: %v. But received: %v", lazyQuotes, csvResult.LazyQuotes)
+	}
+}
+
+func TestRemoveNewLine(t *testing.T) {
+	removeNewLine := true
+	csvResult := &CSV{}
+	csvOptionInternal := RemoveNewLine(removeNewLine)
+	csvOptionInternal(csvResult)
+
+	if csvResult.RemoveNewLine != removeNewLine {
+		t.Errorf("Remove new line error. Expected: %v. But received: %v", removeNewLine, csvResult.RemoveNewLine)
+	}
+
+}
+
 ////////////
 // Header /
 //////////
