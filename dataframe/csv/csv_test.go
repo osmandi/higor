@@ -218,21 +218,18 @@ func TestCSVReadRowEmpty(t *testing.T) {
 
 }
 
-///////////////////////////////////////////////////
-// Matrix of values exported lines to [][]string /
-/////////////////////////////////////////////////
+///////////////////////////////////////////
+// Read CSV filepath - Return [][]string /
+/////////////////////////////////////////
 
-// Matrix - Header and Rows sush as expected
-// Matrix - Header empty
-// Matrix - Rows empty
-// Matrix - Header most columns than expected
-// Matrix - Header less columns than expected
-// Matrix - Row most columns than expected
-// Matrix - Row less columns than expected
-
-///////////////////////
-// Read CSV filepath /
-/////////////////////
+// Normal CSV
+// Normal CSV with another separator ('|')
+// CSV with empty Header
+// CSV with missing values on the Header
+// CSV with empty rows
+// CSV with missing values on rows
+// CSV with new line on rows
+// CSV with lazy quotes on row
 
 ////////////////
 // Export CSV /
