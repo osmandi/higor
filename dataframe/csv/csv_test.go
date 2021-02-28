@@ -1,6 +1,10 @@
 package csv
 
 import (
+	"encoding/csv"
+	"io/ioutil"
+	"log"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -221,16 +225,181 @@ func TestCSVReadRowEmpty(t *testing.T) {
 ///////////////////////////////////////////
 // Read CSV filepath - Return [][]string /
 /////////////////////////////////////////
+func csvCheker(dataExpected, dataResult [][]string, t *testing.T) {
+	if !reflect.DeepEqual(dataExpected, dataResult) {
+		t.Errorf("Header with errors. Expected %s, but received: %s", dataExpected, dataResult)
+	}
+}
+
+func csvCreatorMock(data [][]string, separator rune) *os.File {
+	// Temp file
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTest-*.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	writer := csv.NewWriter(tmpFile)
+	writer.Comma = separator
+	for _, value := range data {
+		err := writer.Write(value)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	writer.Flush()
+
+	//defer os.Remove((tmpFile.Name()))
+
+	if err := tmpFile.Close(); err != nil {
+		log.Fatal(err)
+	}
+	return tmpFile
+
+}
 
 // Normal CSV
+func TestReadCSV(t *testing.T) {
+	// Mock data
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	tmpCSV := csvCreatorMock(dataExpected, ',')
+	defer os.Remove((tmpCSV.Name()))
+
+	// Test
+	dataResult := ReadCSV(tmpCSV.Name())
+	csvCheker(dataExpected, dataResult, t)
+
+}
+
 // Normal CSV with another separator ('|')
-// CSV with empty Header
-// CSV with missing values on the Header
-// CSV with empty rows
-// CSV with missing values on rows
+func TestReadCSVAnotherSeparator(t *testing.T) {
+	// Mock data
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	tmpCSV := csvCreatorMock(dataExpected, '|')
+	tmpCSVFilename := tmpCSV.Name()
+	defer os.Remove(tmpCSVFilename)
+
+	// Test
+	dataResult := ReadCSV(tmpCSVFilename, Sep('|'))
+	csvCheker(dataExpected, dataResult, t)
+
+}
+
 // CSV with new line on rows
+func TestReadCSVNewLine(t *testing.T) {
+	// Mock data
+	dataExpected := [][]string{{"col1", "col2\n", "col3"}, {"row11\n", "row12", "row13"}, {"row21", "row22", "row23"}}
+	tmpCSV := csvCreatorMock(dataExpected, ',')
+	tmpCSVFilename := tmpCSV.Name()
+	defer os.Remove(tmpCSVFilename)
+
+	// Test
+	dataResult := ReadCSV(tmpCSVFilename)
+	csvCheker(dataExpected, dataResult, t)
+}
+
 // CSV with lazy quotes on row
+func TestReadCSVLazyQuotes(t *testing.T) {
+	// Mock data
+	dataExpected := [][]string{{"col1", "col2\"", "col3"}, {"row11\"", "row12", "row13"}, {"row21", "row22", "row23"}}
+	tmpCSV := csvCreatorMock(dataExpected, ',')
+	tmpCSVFilename := tmpCSV.Name()
+	defer os.Remove(tmpCSVFilename)
+
+	// Test
+	dataResult := ReadCSV(tmpCSVFilename)
+	csvCheker(dataExpected, dataResult, t)
+}
 
 ////////////////
 // Export CSV /
 //////////////
+// Export - Normal CSV
+func TestExportCSVFileExists(t *testing.T) {
+	// Temp file
+
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTestExport-*.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	filename := tmpFile.Name()
+
+	if err := tmpFile.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Export to CSV
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	ExportCSV(filename, dataExpected)
+
+	// Read the CSV content
+	csvOpen, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer csvOpen.Close()
+	csvReader := csv.NewReader(csvOpen)
+	dataResult, err := csvReader.ReadAll()
+	csvCheker(dataExpected, dataResult, t)
+	defer os.Remove(filename)
+}
+
+// Export - File doesn't exists
+func TestExportCSVDoesNotExists(t *testing.T) {
+	filename := "higorCSVTestExport-DoesNotExists.csv"
+
+	// Export to CSV
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	ExportCSV(filename, dataExpected)
+
+	// Read the CSV content
+	csvOpen, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer csvOpen.Close()
+	csvReader := csv.NewReader(csvOpen)
+	dataResult, err := csvReader.ReadAll()
+	csvCheker(dataExpected, dataResult, t)
+
+	// Delete file created
+	defer os.Remove(filename)
+
+}
+
+// Export - With another separator
+func TestExportCSVAnotherSeparator(t *testing.T) {
+	// Separator
+	sep := '|'
+
+	// Temp file
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTestExport-*.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	filename := tmpFile.Name()
+
+	if err := tmpFile.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Export to CSV
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	ExportCSV(filename, dataExpected, Sep(sep))
+
+	// Read the CSV content
+	csvOpen, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer csvOpen.Close()
+	csvReader := csv.NewReader(csvOpen)
+	csvReader.Comma = sep
+	dataResult, err := csvReader.ReadAll()
+	csvCheker(dataExpected, dataResult, t)
+	defer os.Remove(filename)
+}
+
+// Export - Without index
+// Export - With index
+// Export - Without Header
