@@ -300,3 +300,36 @@ func TestDifferentlDataFrame(t *testing.T) {
 		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")
 	}
 }
+
+// Print DataFrame with Index (TODO)
+// Print a DataFrame
+func TestPrintDataFrame(t *testing.T) {
+	columns := []string{"col1", "col2", "col3"}
+	chapters := book{
+		"col1": {"row11", "row21"},
+		"col2": {"row12", "row22"},
+		"col3": {"row13", "row23"},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+
+	tableExpectedFormat := "   COL1  |  COL2  |  COL3   \n---------|--------|---------\n  row11  | row12  | row13   \n  row21  | row22  | row23   \n---------|--------|---------\n  STRING | STRING | STRING  \n---------|--------|---------\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+// Print a large DataFrame
+
+// Print header DataFrame
+
+// Print tail dataframe
+
+// Print DataFrame with unknown format

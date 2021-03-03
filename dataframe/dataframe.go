@@ -5,6 +5,9 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strings"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 type book map[string][]interface{}
@@ -111,4 +114,24 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 	err = csvWriter.WriteAll(data)
 	errorChecker(err)
 
+}
+
+func (df DataFrame) String() string {
+	tableString := &strings.Builder{}
+
+	data := [][]string{
+		{"row11", "row12", "row13"},
+		{"row21", "row22", "row23"},
+	}
+
+	table := tablewriter.NewWriter(tableString)
+	table.SetHeader(df.Columns)
+	table.SetFooter([]string{"", "", ""})
+	table.AppendBulk(data)
+	table.SetBorder(false)
+	table.SetCenterSeparator("|")
+
+	table.Render()
+
+	return tableString.String()
 }
