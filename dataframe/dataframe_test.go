@@ -64,12 +64,19 @@ func TestPrintDataFrame(t *testing.T) {
 		"col3": {"row13", "row23"},
 	}
 
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
 	}
 
-	tableExpectedFormat := "   COL1  |  COL2  |  COL3   \n---------|--------|---------\n  row11  | row12  | row13   \n  row21  | row22  | row23   \n---------|--------|---------\n  STRING | STRING | STRING  \n---------|--------|---------\n"
+	df := DataFrame{
+		Columns:  columns,
+		Values:   chapters,
+		DataType: typeColumnsExpected,
+	}
+
+	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n	S   |   S   |   S    \n--------|-------|--------\n"
 
 	tableResultFormat := df.String()
 
@@ -78,6 +85,8 @@ func TestPrintDataFrame(t *testing.T) {
 	}
 
 }
+
+// TestPrintDataFrameMultiplesTypes
 
 func TestTrasposeRowsString(t *testing.T) {
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}

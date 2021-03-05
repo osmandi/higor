@@ -183,11 +183,16 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 func (df DataFrame) String() string {
 	tableString := &strings.Builder{}
 	data := trasposeRows(df)
+	fmt.Println(data)
 	footer := []string{}
 	for _, colName := range df.Columns {
 		keys := reflect.ValueOf(df.DataType[colName]).MapKeys()
-		keysString := strings.TrimSpace(fmt.Sprintf("%v", keys))
-		footer = append(footer, keysString)
+		keysString := []string{}
+		for _, v := range keys {
+			keysString = append(keysString, fmt.Sprintf("%v", v))
+		}
+
+		footer = append(footer, strings.Join(keysString, ","))
 	}
 
 	table := tablewriter.NewWriter(tableString)
@@ -198,6 +203,7 @@ func (df DataFrame) String() string {
 	table.SetCenterSeparator("|")
 
 	table.Render()
+	fmt.Println(tableString.String())
 
 	return tableString.String()
 }
