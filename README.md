@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/osmandi/higor)](https://goreportcard.com/report/github.com/osmandi/higor)
 [![codecov](https://codecov.io/gh/osmandi/higor/branch/master/graph/badge.svg)](https://codecov.io/gh/osmandi/higor)
 
-
+![higor_logo](higor_logo.jpg)
 
 # Higor
 
