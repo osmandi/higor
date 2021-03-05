@@ -6,6 +6,8 @@
 
 ![higor_logo](higor_logo.jpg)
 
+------
+
 # Higor
 
 Dataframe for Golang, simple but powerful.
