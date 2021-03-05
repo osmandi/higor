@@ -157,17 +157,6 @@ func TestSep(t *testing.T) {
 // ReadCSV /
 ///////////
 
-func TestLazyQuotes(t *testing.T) {
-	lazyQuotesBool := true
-	csvResult := &CSV{}
-	csvOptionInternal := LazyQuotes(lazyQuotesBool)
-	csvOptionInternal(csvResult)
-
-	if csvResult.LazyQuotes != lazyQuotesBool {
-		t.Errorf("Lazy Quotes error. Expected: %v. But received: %v", lazyQuotesBool, csvResult.LazyQuotes)
-	}
-}
-
 func TestReadCSVNormal(t *testing.T) {
 	// Mockup
 	data := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
@@ -223,36 +212,6 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	}
 
 	dfResult := ReadCSV(csvTempFilename, Sep('|'))
-
-	dataFrameChecker(dfExpected, dfResult, t)
-
-}
-
-func TestReadCSVWithLazyQuotes(t *testing.T) {
-	// Mockup
-	data := [][]string{{"col1\"", "col2", "col3"}, {"row11\"", "row12", "row13"}, {"row21", "row22", "row23"}}
-	separator := ','
-	csvTempFile := csvCreatorMock(data, separator)
-	csvTempFilename := csvTempFile.Name()
-	defer os.Remove(csvTempFilename)
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1\"", "col2", "col3"},
-		Values: book{
-			"col1\"": {"row11\"", "row21"},
-			"col2":   {"row12", "row22"},
-			"col3":   {"row13", "row23"},
-		},
-		DataType: typeColumnsExpected,
-	}
-
-	dfResult := ReadCSV(csvTempFilename, LazyQuotes(true))
 
 	dataFrameChecker(dfExpected, dfResult, t)
 

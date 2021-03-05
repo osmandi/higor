@@ -59,13 +59,6 @@ func Sep(separator rune) CSVOption {
 	}
 }
 
-// LazyQuotes Interpreting internal quotes
-func LazyQuotes(lazy bool) CSVOption {
-	return func(c *CSV) {
-		c.LazyQuotes = lazy
-	}
-}
-
 // ReadCSV Read a CSV file and save it as a DataFrame
 func ReadCSV(filename string, opts ...CSVOption) DataFrame {
 	csvInternal := &CSV{}
@@ -83,7 +76,6 @@ func ReadCSV(filename string, opts ...CSVOption) DataFrame {
 	// Read CSV
 	csvReader := csv.NewReader(csvFile)
 	csvReader.Comma = csvInternal.Sep
-	csvReader.LazyQuotes = csvInternal.LazyQuotes
 
 	// Convert CSV to [][]string
 	csv, err := csvReader.ReadAll()
