@@ -9,43 +9,18 @@ import (
 	"testing"
 )
 
-/////////////////////////////////////////////////
-// CSV - CSVOptions ////////////////////////////
-///////////////////////////////////////////////
 func TestErrorChecker(t *testing.T) {
 	errorChecker(nil)
 }
 
-func TestSep(t *testing.T) {
-	separator := ';'
-	csvResult := &CSV{}
-	csvOptionInternal := Sep(separator)
-	csvOptionInternal(csvResult)
+//////////////////////////
+// Dataframe functions //
+////////////////////////
 
-	if csvResult.Sep != ';' {
-		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
-	}
-
-}
-
-func TestLazyQuotes(t *testing.T) {
-	lazyQuotesBool := true
-	csvResult := &CSV{}
-	csvOptionInternal := LazyQuotes(lazyQuotesBool)
-	csvOptionInternal(csvResult)
-
-	if csvResult.LazyQuotes != lazyQuotesBool {
-		t.Errorf("Lazy Quotes error. Expected: %v. But received: %v", lazyQuotesBool, csvResult.LazyQuotes)
-	}
-}
-
-///////////////////
-// CSV - ReadCSV /
-/////////////////
-
+// Utilities DataFrame
 func csvCheker(dataExpected, dataResult [][]string, t *testing.T) {
 	if !reflect.DeepEqual(dataExpected, dataResult) {
-		t.Errorf("Header with errors. Expected %s, but received: %s", dataExpected, dataResult)
+		t.Errorf("Header with errors. \nExpected: \n%s. \nReceived: \n%s", dataExpected, dataResult)
 	}
 }
 
@@ -82,7 +57,72 @@ func dataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
 
 }
 
-// Read a normal DataFrame
+func TestPrintDataFrame(t *testing.T) {
+	columns := []string{"col1", "col2", "col3"}
+	chapters := book{
+		"col1": {"row11", "row21"},
+		"col2": {"row12", "row22"},
+		"col3": {"row13", "row23"},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+
+	tableExpectedFormat := "   COL1  |  COL2  |  COL3   \n---------|--------|---------\n  row11  | row12  | row13   \n  row21  | row22  | row23   \n---------|--------|---------\n  STRING | STRING | STRING  \n---------|--------|---------\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+func TestTrasposeRows(t *testing.T) {
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+
+	dfExpected := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: book{
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
+			"col3": {"row13", "row23"},
+		},
+	}
+
+	dataResult := trasposeRows(dfExpected)
+
+	csvCheker(dataExpected, dataResult, t)
+
+}
+
+func TestSep(t *testing.T) {
+	separator := ';'
+	csvResult := &CSV{}
+	csvOptionInternal := Sep(separator)
+	csvOptionInternal(csvResult)
+
+	if csvResult.Sep != ';' {
+		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
+	}
+
+}
+
+// ReadCSV
+
+func TestLazyQuotes(t *testing.T) {
+	lazyQuotesBool := true
+	csvResult := &CSV{}
+	csvOptionInternal := LazyQuotes(lazyQuotesBool)
+	csvOptionInternal(csvResult)
+
+	if csvResult.LazyQuotes != lazyQuotesBool {
+		t.Errorf("Lazy Quotes error. Expected: %v. But received: %v", lazyQuotesBool, csvResult.LazyQuotes)
+	}
+}
+
 func TestReadCSVNormal(t *testing.T) {
 	// Mockup
 	data := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
@@ -106,7 +146,6 @@ func TestReadCSVNormal(t *testing.T) {
 
 }
 
-// Read with another separator
 func TestReadCSVAnoterSeparator(t *testing.T) {
 	// Mockup
 	data := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
@@ -130,7 +169,6 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 
 }
 
-// Read with LazyQuotes
 func TestReadCSVWithLazyQuotes(t *testing.T) {
 	// Mockup
 	data := [][]string{{"col1\"", "col2", "col3"}, {"row11\"", "row12", "row13"}, {"row21", "row22", "row23"}}
@@ -154,11 +192,7 @@ func TestReadCSVWithLazyQuotes(t *testing.T) {
 
 }
 
-//////////////////////
-// CSV - Export CSV /
-////////////////////
-
-// Export - Normal CSV
+// ExportCSV
 func TestExportCSVFileExists(t *testing.T) {
 
 	// Temp file
@@ -188,7 +222,6 @@ func TestExportCSVFileExists(t *testing.T) {
 	defer os.Remove(filename)
 }
 
-// Export - File doesn't exists
 func TestExportCSVDoesNotExists(t *testing.T) {
 	filename := "higorCSVTestExport-DoesNotExists.csv"
 
@@ -211,7 +244,6 @@ func TestExportCSVDoesNotExists(t *testing.T) {
 
 }
 
-// Export - With another separator
 func TestExportCSVAnotherSeparator(t *testing.T) {
 	// Separator
 	separator := '|'
@@ -243,10 +275,6 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	csvCheker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
-
-//////////////////////////
-// Dataframe functions //
-////////////////////////
 
 // Equal DataFrame
 func TestEqualDataFrame(t *testing.T) {
@@ -303,28 +331,6 @@ func TestDifferentlDataFrame(t *testing.T) {
 
 // Print DataFrame with Index (TODO)
 // Print a DataFrame
-func TestPrintDataFrame(t *testing.T) {
-	columns := []string{"col1", "col2", "col3"}
-	chapters := book{
-		"col1": {"row11", "row21"},
-		"col2": {"row12", "row22"},
-		"col3": {"row13", "row23"},
-	}
-
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-
-	tableExpectedFormat := "   COL1  |  COL2  |  COL3   \n---------|--------|---------\n  row11  | row12  | row13   \n  row21  | row22  | row23   \n---------|--------|---------\n  STRING | STRING | STRING  \n---------|--------|---------\n"
-
-	tableResultFormat := df.String()
-
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
-	}
-
-}
 
 // Print a large DataFrame
 
@@ -333,3 +339,6 @@ func TestPrintDataFrame(t *testing.T) {
 // Print tail dataframe
 
 // Print DataFrame with unknown format
+
+// More test cases to ReadCSV
+// More test cases to ExportCSV

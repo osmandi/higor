@@ -2,6 +2,7 @@ package dataframe
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -96,6 +97,30 @@ func ReadCSV(filename string, opts ...CSVOption) DataFrame {
 	return df
 }
 
+func trasposeRows(df DataFrame) [][]string {
+	data := [][]string{}
+
+	// Add []string empties
+	for range df.Columns {
+		data = append(data, []string{})
+	}
+
+	// Add columns names
+	data[0] = df.Columns
+
+	// Traspose row
+	for _, colName := range df.Columns {
+		colValues, colOk := df.Values[colName]
+		if colOk {
+			for rowIndex, value := range colValues {
+				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", value))
+			}
+		}
+	}
+
+	return data
+}
+
 // ExportCSV To export a dataframe to CSV file
 func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 	csvInternal := &CSV{}
@@ -118,15 +143,11 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 
 func (df DataFrame) String() string {
 	tableString := &strings.Builder{}
-
-	data := [][]string{
-		{"row11", "row12", "row13"},
-		{"row21", "row22", "row23"},
-	}
+	data := trasposeRows(df)
 
 	table := tablewriter.NewWriter(tableString)
 	table.SetHeader(df.Columns)
-	table.SetFooter([]string{"", "", ""})
+	table.SetFooter([]string{"", "", ""}) // Todo: Change to another method
 	table.AppendBulk(data)
 	table.SetBorder(false)
 	table.SetCenterSeparator("|")
