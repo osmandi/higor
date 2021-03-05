@@ -13,10 +13,17 @@ import (
 
 type book map[string][]interface{}
 
+// Letter Count how much data type.
+type Letter map[string]int
+
+// Words Count how much letter there are on a column
+type Words map[string]Letter
+
 // DataFrame Structure for DataFrame
 type DataFrame struct {
-	Columns []string
-	Values  book
+	Columns  []string
+	Values   book
+	DataType Words
 }
 
 // IsEqual to kown if two DataFrame are equal
@@ -94,6 +101,9 @@ func ReadCSV(filename string, opts ...CSVOption) DataFrame {
 
 	df.Values = chapters
 
+	// Get columnTypes
+	df.DataType = getColumnTypes(df)
+
 	return df
 }
 
@@ -113,12 +123,49 @@ func trasposeRows(df DataFrame) [][]string {
 		colValues, colOk := df.Values[colName]
 		if colOk {
 			for rowIndex, value := range colValues {
-				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", value))
+				var v interface{}
+				v = value
+				if value == nil {
+					v = ""
+				}
+				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
 			}
 		}
 	}
 
 	return data
+}
+
+func getColumnTypes(df DataFrame) Words {
+	/*
+		s = String
+		f = Float
+		i = int
+		b = bool
+	*/
+	//m := make(map[string]float64)
+
+	myWords := make(Words)
+
+	for key := range df.Values {
+		myLetter := make(Letter)
+		for _, v := range df.Values[key] {
+			switch v.(type) {
+			case int:
+				myLetter["i"] = myLetter["i"] + 1
+			case string:
+				myLetter["s"] = myLetter["s"] + 1
+			case float64:
+				myLetter["f"] = myLetter["f"] + 1
+			case bool:
+				myLetter["b"] = myLetter["b"] + 1
+			}
+		}
+		myWords[key] = myLetter
+
+	}
+
+	return myWords
 }
 
 // ExportCSV To export a dataframe to CSV file
@@ -144,10 +191,16 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 func (df DataFrame) String() string {
 	tableString := &strings.Builder{}
 	data := trasposeRows(df)
+	footer := []string{}
+	for _, colName := range df.Columns {
+		keys := reflect.ValueOf(df.DataType[colName]).MapKeys()
+		keysString := strings.TrimSpace(fmt.Sprintf("%v", keys))
+		footer = append(footer, keysString)
+	}
 
 	table := tablewriter.NewWriter(tableString)
 	table.SetHeader(df.Columns)
-	table.SetFooter([]string{"", "", ""}) // Todo: Change to another method
+	table.SetFooter(footer) // Todo: Change to another method
 	table.AppendBulk(data)
 	table.SetBorder(false)
 	table.SetCenterSeparator("|")

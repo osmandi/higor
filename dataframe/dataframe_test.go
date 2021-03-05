@@ -14,10 +14,9 @@ func TestErrorChecker(t *testing.T) {
 }
 
 //////////////////////////
-// Dataframe functions //
+// Utilities DataFrame //
 ////////////////////////
 
-// Utilities DataFrame
 func csvCheker(dataExpected, dataResult [][]string, t *testing.T) {
 	if !reflect.DeepEqual(dataExpected, dataResult) {
 		t.Errorf("Header with errors. \nExpected: \n%s. \nReceived: \n%s", dataExpected, dataResult)
@@ -52,7 +51,7 @@ func csvCreatorMock(data [][]string, separator rune) *os.File {
 func dataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
 	isEqual := IsEqual(dfExpected, dfResult)
 	if !isEqual {
-		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: %v \ndfResult: %v", dfExpected, dfResult)
+		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: \n%v \ndfResult: \n%v", dfExpected, dfResult)
 	}
 
 }
@@ -80,7 +79,7 @@ func TestPrintDataFrame(t *testing.T) {
 
 }
 
-func TestTrasposeRows(t *testing.T) {
+func TestTrasposeRowsString(t *testing.T) {
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
@@ -98,6 +97,50 @@ func TestTrasposeRows(t *testing.T) {
 
 }
 
+func TestTrasposeRowsMultipleDataType(t *testing.T) {
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "", "row13"}, {"row21", "row22", "row23"}}
+
+	dfExpected := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: book{
+			"col1": {1, "row21"},
+			"col2": {nil, "row22"},
+			"col3": {"row13", "row23"},
+		},
+	}
+
+	dataResult := trasposeRows(dfExpected)
+
+	csvCheker(dataExpected, dataResult, t)
+
+}
+
+func TestGetColumnTypesOnlyString(t *testing.T) {
+	df := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: book{
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
+			"col3": {"row13", "row23"},
+		},
+	}
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
+	typeColmnsResult := getColumnTypes(df)
+
+	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
+		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
+	}
+
+}
+
+// Multiples types (TODO)
+
 func TestSep(t *testing.T) {
 	separator := ';'
 	csvResult := &CSV{}
@@ -110,7 +153,9 @@ func TestSep(t *testing.T) {
 
 }
 
-// ReadCSV
+/////////////
+// ReadCSV /
+///////////
 
 func TestLazyQuotes(t *testing.T) {
 	lazyQuotesBool := true
@@ -131,6 +176,12 @@ func TestReadCSVNormal(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: book{
@@ -138,6 +189,7 @@ func TestReadCSVNormal(t *testing.T) {
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
+		DataType: typeColumnsExpected,
 	}
 
 	dfResult := ReadCSV(csvTempFilename)
@@ -154,6 +206,12 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: book{
@@ -161,6 +219,7 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
+		DataType: typeColumnsExpected,
 	}
 
 	dfResult := ReadCSV(csvTempFilename, Sep('|'))
@@ -172,10 +231,16 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 func TestReadCSVWithLazyQuotes(t *testing.T) {
 	// Mockup
 	data := [][]string{{"col1\"", "col2", "col3"}, {"row11\"", "row12", "row13"}, {"row21", "row22", "row23"}}
-	separator := '|'
+	separator := ','
 	csvTempFile := csvCreatorMock(data, separator)
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1\"", "col2", "col3"},
@@ -184,15 +249,21 @@ func TestReadCSVWithLazyQuotes(t *testing.T) {
 			"col2":   {"row12", "row22"},
 			"col3":   {"row13", "row23"},
 		},
+		DataType: typeColumnsExpected,
 	}
 
-	dfResult := ReadCSV(csvTempFilename, Sep('|'), LazyQuotes(true))
+	dfResult := ReadCSV(csvTempFilename, LazyQuotes(true))
 
 	dataFrameChecker(dfExpected, dfResult, t)
 
 }
 
-// ExportCSV
+///////////////
+// ExportCSV /
+/////////////
+
+// TODO: Correct implementation to ReadCSV
+
 func TestExportCSVFileExists(t *testing.T) {
 
 	// Temp file
