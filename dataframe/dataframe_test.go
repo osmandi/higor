@@ -56,46 +56,14 @@ func dataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
 
 }
 
-func TestPrintDataFrame(t *testing.T) {
-	columns := []string{"col1", "col2", "col3"}
-	chapters := book{
-		"col1": {"row11", "row21"},
-		"col2": {"row12", "row22"},
-		"col3": {"row13", "row23"},
-	}
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
-	df := DataFrame{
-		Columns:  columns,
-		Values:   chapters,
-		DataType: typeColumnsExpected,
-	}
-
-	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n    S   |   S   |   S    \n--------|-------|--------\n"
-
-	tableResultFormat := df.String()
-
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
-	}
-
-}
-
-// TestPrintDataFrameMultiplesTypes
-
-func TestTrasposeRowsString(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+func TestTrasposeRowsMultipleDataType(t *testing.T) {
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
+			"col1": {1, "row21"},
+			"col2": {nil, "row22"},
 			"col3": {"row13", "row23"},
 		},
 	}
@@ -106,14 +74,14 @@ func TestTrasposeRowsString(t *testing.T) {
 
 }
 
-func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "", "row13"}, {"row21", "row22", "row23"}}
+func TestTrasposeRowsString(t *testing.T) {
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: book{
-			"col1": {1, "row21"},
-			"col2": {nil, "row22"},
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
 	}
@@ -148,7 +116,29 @@ func TestGetColumnTypesOnlyString(t *testing.T) {
 
 }
 
-// Multiples types (TODO)
+func TestGetColumnTypesMultipleDataType(t *testing.T) {
+	df := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: book{
+			"col1": {"row11", 1.2},
+			"col2": {1, "row22"},
+			"col3": {"row13", "row23"},
+		},
+	}
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 1, "f": 1},
+		"col2": Letter{"s": 1, "i": 1},
+		"col3": Letter{"s": 2},
+	}
+
+	typeColmnsResult := getColumnTypes(df)
+
+	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
+		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
+	}
+
+}
 
 func TestSep(t *testing.T) {
 	separator := ';'
@@ -161,6 +151,157 @@ func TestSep(t *testing.T) {
 	}
 
 }
+
+func TestEqualDataFrame(t *testing.T) {
+
+	columns := []string{"colInt", "colString", "colBool", "colFloat"}
+	chapters := book{
+		"colInt":    {1, nil, 2, 3},
+		"colString": {"hola", "que", "hace", nil},
+		"colBool":   {nil, true, false, nil},
+		"colFloat":  {3.2, 5.4, nil, nil},
+	}
+
+	df1 := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+	df2 := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+
+	isEqual := IsEqual(df1, df2)
+
+	if !isEqual {
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!")
+	}
+}
+
+// Diferent DataFrame
+func TestDifferentlDataFrame(t *testing.T) {
+	columns := []string{"colInt", "colString", "colBool", "colFloat"}
+	chapters := book{
+		"colInt2":    {1, nil, 2, 3},
+		"colString2": {"hola", "que", "hace", nil},
+		"colBool2":   {nil, true, false, nil},
+		"colFloat2":  {3.2, 5.4, nil, nil},
+	}
+
+	df1 := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+	df2 := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values:  chapters,
+	}
+
+	isEqual := IsEqual(df1, df2)
+
+	if isEqual {
+		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")
+	}
+}
+
+/////////////////////
+// Print DataFrame /
+///////////////////
+
+func TestPrintDataFrame(t *testing.T) {
+	columns := []string{"col1", "col2", "col3"}
+	chapters := book{
+		"col1": {"row11", "row21"},
+		"col2": {"row12", "row22"},
+		"col3": {"row13", "row23"},
+	}
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
+	df := DataFrame{
+		Columns:  columns,
+		Values:   chapters,
+		DataType: typeColumnsExpected,
+	}
+
+	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n    S   |   S   |   S    \n--------|-------|--------\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+func TestPrintDataFrameMultipleDataType(t *testing.T) {
+	columns := []string{"col1", "col2", "col3"}
+	chapters := book{
+		"col1": {1, "row21"},
+		"col2": {2.3, "row22"},
+		"col3": {"row13", "row23"},
+	}
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 1, "i": 1},
+		"col2": Letter{"s": 1, "f": 1},
+		"col3": Letter{"s": 2},
+	}
+
+	df := DataFrame{
+		Columns:  columns,
+		Values:   chapters,
+		DataType: typeColumnsExpected,
+	}
+
+	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n      1 |   2.3 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n   S,I  |  S,F  |   S    \n--------|-------|--------\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+func TestPrintDataFrameWithNils(t *testing.T) {
+	columns := []string{"col1", "col2", "col3"}
+	chapters := book{
+		"col1": {nil, "row21"},
+		"col2": {"row12", "row22"},
+		"col3": {"row13", "row23"},
+	}
+
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 1, "n": 1},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
+	df := DataFrame{
+		Columns:  columns,
+		Values:   chapters,
+		DataType: typeColumnsExpected,
+	}
+
+	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n        | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n   S,N  |   S   |   S    \n--------|-------|--------\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+// Print DataFrame with Index (TODO)
+// Print a large DataFrame
+// Print head DataFrame
+// Print tail dataframe
 
 /////////////
 // ReadCSV /
@@ -226,11 +367,16 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 
 }
 
+// ReadCSV with parsing values
+// ReadCSV with multiples data types
+// ReadCSv with nil datatypes
+// ReadCSV with an specific nan value
+// ReadCSV without header
+// ReadCSV with more rows than columns
+
 ///////////////
 // ExportCSV /
 /////////////
-
-// TODO: Correct implementation to ReadCSV
 
 func TestExportCSVFileExists(t *testing.T) {
 
@@ -315,69 +461,12 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	defer os.Remove(filename)
 }
 
-// Equal DataFrame
-func TestEqualDataFrame(t *testing.T) {
+// Implement as a DataFrame function
+// Export with nils values
+// Export with multiple DataTypes
+// Export without header
+// Export without index
 
-	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := book{
-		"colInt":    {1, nil, 2, 3},
-		"colString": {"hola", "que", "hace", nil},
-		"colBool":   {nil, true, false, nil},
-		"colFloat":  {3.2, 5.4, nil, nil},
-	}
-
-	df1 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-	df2 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-
-	isEqual := IsEqual(df1, df2)
-
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!")
-	}
-}
-
-// Diferent DataFrame
-func TestDifferentlDataFrame(t *testing.T) {
-	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := book{
-		"colInt2":    {1, nil, 2, 3},
-		"colString2": {"hola", "que", "hace", nil},
-		"colBool2":   {nil, true, false, nil},
-		"colFloat2":  {3.2, 5.4, nil, nil},
-	}
-
-	df1 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-	df2 := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values:  chapters,
-	}
-
-	isEqual := IsEqual(df1, df2)
-
-	if isEqual {
-		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")
-	}
-}
-
-// Print DataFrame with Index (TODO)
-// Print a DataFrame
-
-// Print a large DataFrame
-
-// Print header DataFrame
-
-// Print tail dataframe
-
-// Print DataFrame with unknown format
-
-// More test cases to ReadCSV
-// More test cases to ExportCSV
+/////////////////////////////////////
+// DataFrame Description functions /
+///////////////////////////////////

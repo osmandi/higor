@@ -134,6 +134,7 @@ func getColumnTypes(df DataFrame) Words {
 		f = Float
 		i = int
 		b = bool
+		n = nil
 	*/
 	//m := make(map[string]float64)
 
@@ -151,6 +152,8 @@ func getColumnTypes(df DataFrame) Words {
 				myLetter["f"] = myLetter["f"] + 1
 			case bool:
 				myLetter["b"] = myLetter["b"] + 1
+			case nil:
+				myLetter["n"] = myLetter["n"] + 1
 			}
 		}
 		myWords[key] = myLetter
@@ -203,7 +206,6 @@ func (df DataFrame) String() string {
 	table.SetCenterSeparator("|")
 
 	table.Render()
-	fmt.Println(tableString.String())
 
 	return tableString.String()
 }
