@@ -76,7 +76,7 @@ func TestPrintDataFrame(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n	S   |   S   |   S    \n--------|-------|--------\n"
+	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n    S   |   S   |   S    \n--------|-------|--------\n"
 
 	tableResultFormat := df.String()
 
