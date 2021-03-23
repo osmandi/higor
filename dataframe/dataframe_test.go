@@ -298,11 +298,6 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 
 }
 
-// Print DataFrame with Index (TODO)
-// Print a large DataFrame
-// Print head DataFrame
-// Print tail dataframe
-
 /////////////
 // ReadCSV /
 ///////////
@@ -366,13 +361,6 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	dataFrameChecker(dfExpected, dfResult, t)
 
 }
-
-// ReadCSV with parsing values
-// ReadCSV with multiples data types
-// ReadCSv with nil datatypes
-// ReadCSV with an specific nan value
-// ReadCSV without header
-// ReadCSV with more rows than columns
 
 ///////////////
 // ExportCSV /
@@ -460,12 +448,6 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	csvCheker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
-
-// Implement as a DataFrame function
-// Export with nils values
-// Export with multiple DataTypes
-// Export without header
-// Export without index
 
 /////////////////////////////////////
 // DataFrame Description functions /

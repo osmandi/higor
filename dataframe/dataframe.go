@@ -186,7 +186,6 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 func (df DataFrame) String() string {
 	tableString := &strings.Builder{}
 	data := trasposeRows(df)
-	fmt.Println(data)
 	footer := []string{}
 	for _, colName := range df.Columns {
 		keys := reflect.ValueOf(df.DataType[colName]).MapKeys()
