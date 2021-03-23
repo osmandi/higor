@@ -14,8 +14,11 @@ func HelloHigor() string {
 	return helloMessage
 }
 
+// Higor interface
+// TODO: Add interface to use higor as "hg" alias. Require code reorganization
+
 // Print DataFrame section
-// TODO: Print DataFrame with Index (TODO)
+// TODO: Print DataFrame with Index
 // TODO: Print a large DataFrame
 // TODO: Print head DataFrame
 // TODO: Print tail dataframe
@@ -33,6 +36,3 @@ func HelloHigor() string {
 // TODO: Export with multiple DataTypes
 // TODO: Export without header
 // TODO: Export without index
-
-// Higor interface
-// TODO: Add interface to use higor as "hg" alias
