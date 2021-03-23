@@ -33,6 +33,18 @@ The aim of Higor is to provide a library that allows you to work with different 
 go get -v -u github.com/osmandi/higor
 ```
 
+## Say hello to Higor
+
+```Go
+package main
+
+import hg "github.com/osmandi/higor"
+
+func main() {
+    fmt.Println(hg.HelloHigor())    
+}
+```
+
 ## How to contribute?
 - Give this repo a star.
 - Create tutorials about Data Engineering with Go.
