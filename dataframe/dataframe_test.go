@@ -23,7 +23,7 @@ func csvCheker(dataExpected, dataResult [][]string, t *testing.T) {
 	}
 }
 
-func csvCreatorMock(data [][]string, separator rune) *os.File {
+func CSVCreatorMock(data [][]string, separator rune) *os.File {
 	// Temp file
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTest-*.csv")
 	if err != nil {
@@ -48,8 +48,9 @@ func csvCreatorMock(data [][]string, separator rune) *os.File {
 
 }
 
-func dataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
-	isEqual := IsEqual(dfExpected, dfResult)
+// DataFrameChecker To check if two DataFrame are equal
+func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
+	isEqual := df.IsEqual(dfExpected, dfResult)
 	if !isEqual {
 		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: \n%v \ndfResult: \n%v", dfExpected, dfResult)
 	}
@@ -61,7 +62,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
+		Values: df.Book{
 			"col1": {1, "row21"},
 			"col2": {nil, "row22"},
 			"col3": {"row13", "row23"},
@@ -295,70 +296,6 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 	if tableExpectedFormat != tableResultFormat {
 		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
 	}
-
-}
-
-/////////////
-// ReadCSV /
-///////////
-
-func TestReadCSVNormal(t *testing.T) {
-	// Mockup
-	data := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	separator := ','
-	csvTempFile := csvCreatorMock(data, separator)
-	csvTempFilename := csvTempFile.Name()
-	defer os.Remove(csvTempFilename)
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
-		},
-		DataType: typeColumnsExpected,
-	}
-
-	dfResult := ReadCSV(csvTempFilename)
-
-	dataFrameChecker(dfExpected, dfResult, t)
-
-}
-
-func TestReadCSVAnoterSeparator(t *testing.T) {
-	// Mockup
-	data := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	separator := '|'
-	csvTempFile := csvCreatorMock(data, separator)
-	csvTempFilename := csvTempFile.Name()
-	defer os.Remove(csvTempFilename)
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
-		},
-		DataType: typeColumnsExpected,
-	}
-
-	dfResult := ReadCSV(csvTempFilename, Sep('|'))
-
-	dataFrameChecker(dfExpected, dfResult, t)
 
 }
 

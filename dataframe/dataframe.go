@@ -3,15 +3,18 @@ package dataframe
 import (
 	"encoding/csv"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"strings"
+	"testing"
 
 	"github.com/olekukonko/tablewriter"
 )
 
-type book map[string][]interface{}
+// Book Interface to save a DataFrame
+type Book map[string][]interface{}
 
 // Letter Count how much data type.
 type Letter map[string]int
@@ -22,7 +25,7 @@ type Words map[string]Letter
 // DataFrame Structure for DataFrame
 type DataFrame struct {
 	Columns  []string
-	Values   book
+	Values   Book
 	DataType Words
 }
 
@@ -34,7 +37,43 @@ func IsEqual(dataFrame1, dataFrame2 DataFrame) bool {
 
 /////////
 // CSV /
-///////
+
+// CSVCreatorMock sample csv to tests
+func CSVCreatorMock(data [][]string, separator rune) *os.File {
+	// Temp file
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTest-*.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	writer := csv.NewWriter(tmpFile)
+	writer.Comma = separator
+	for _, value := range data {
+		err := writer.Write(value)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	writer.Flush()
+
+	if err := tmpFile.Close(); err != nil {
+		log.Fatal(err)
+	}
+	return tmpFile
+
+}
+
+// DataFrameChecker To check if two DataFrame are equal
+func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
+	isEqual := IsEqual(dfExpected, dfResult)
+	if !isEqual {
+		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: \n%v \ndfResult: \n%v", dfExpected, dfResult)
+	}
+
+}
+
+//////
 
 // CSV type
 type CSV struct {
@@ -43,7 +82,8 @@ type CSV struct {
 	LazyQuotes bool
 }
 
-func errorChecker(err error) {
+// ErrorChecker to kown if there are error
+func ErrorChecker(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,46 +97,6 @@ func Sep(separator rune) CSVOption {
 	return func(c *CSV) {
 		c.Sep = separator
 	}
-}
-
-// ReadCSV Read a CSV file and save it as a DataFrame
-func ReadCSV(filename string, opts ...CSVOption) DataFrame {
-	csvInternal := &CSV{}
-	csvInternal.Sep = ','
-
-	for _, opt := range opts {
-		opt(csvInternal)
-	}
-
-	// Open file
-	csvFile, err := os.Open(filename)
-	errorChecker(err)
-	defer csvFile.Close()
-
-	// Read CSV
-	csvReader := csv.NewReader(csvFile)
-	csvReader.Comma = csvInternal.Sep
-
-	// Convert CSV to [][]string
-	csv, err := csvReader.ReadAll()
-	errorChecker(err)
-
-	df := DataFrame{}
-	df.Columns = csv[0]
-	chapters := book{}
-
-	for _, rowValue := range csv[1:] {
-		for columnIndex, columnValue := range rowValue {
-			chapters[df.Columns[columnIndex]] = append(chapters[df.Columns[columnIndex]], columnValue)
-		}
-	}
-
-	df.Values = chapters
-
-	// Get columnTypes
-	df.DataType = getColumnTypes(df)
-
-	return df
 }
 
 func trasposeRows(df DataFrame) [][]string {
@@ -128,7 +128,8 @@ func trasposeRows(df DataFrame) [][]string {
 	return data
 }
 
-func getColumnTypes(df DataFrame) Words {
+// GetColumnTypes To know data type
+func GetColumnTypes(df DataFrame) Words {
 	/*
 		s = String
 		f = Float
@@ -173,13 +174,13 @@ func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
 	}
 
 	csvFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, os.ModePerm)
-	errorChecker(err)
+	ErrorChecker(err)
 	defer csvFile.Close()
 
 	csvWriter := csv.NewWriter(csvFile)
 	csvWriter.Comma = csvInternal.Sep
 	err = csvWriter.WriteAll(data)
-	errorChecker(err)
+	ErrorChecker(err)
 
 }
 

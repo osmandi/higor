@@ -1,7 +1,11 @@
 package higor
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
+
+	"github.com/osmandi/higor/dataframe"
 )
 
 var Version string = "v0.2.1"
@@ -14,8 +18,53 @@ func HelloHigor() string {
 	return helloMessage
 }
 
+/////////
+// CSV /
+///////
+
+// ReadCSV Read a CSV file and save it as a DataFrame
+func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
+	csvInternal := &dataframe.CSV{}
+	csvInternal.Sep = ','
+
+	for _, opt := range opts {
+		opt(csvInternal)
+	}
+
+	// Open file
+	csvFile, err := os.Open(filename)
+	dataframe.ErrorChecker(err)
+	defer csvFile.Close()
+
+	// Read CSV
+	csvReader := csv.NewReader(csvFile)
+	csvReader.Comma = csvInternal.Sep
+
+	// Convert CSV to [][]string
+	csv, err := csvReader.ReadAll()
+	dataframe.ErrorChecker(err)
+
+	df := dataframe.DataFrame{}
+	df.Columns = csv[0]
+	chapters := dataframe.Book{}
+
+	for _, rowValue := range csv[1:] {
+		for columnIndex, columnValue := range rowValue {
+			chapters[df.Columns[columnIndex]] = append(chapters[df.Columns[columnIndex]], columnValue)
+		}
+	}
+
+	df.Values = chapters
+
+	// Get columnTypes
+	df.DataType = dataframe.GetColumnTypes(df)
+
+	return df
+}
+
 // Higor interface
-// TODO: Add interface to use higor as "hg" alias. Require code reorganization
+// TODO: Add interface to use higor as "hg" alias - ReadCSV
+// TODO: Add interface to use higor as "hg" alias - ExportCSV
 
 // Print DataFrame section
 // TODO: Print DataFrame with Index
