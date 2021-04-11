@@ -63,7 +63,6 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 }
 
 // Higor interface
-// TODO: Add interface to use higor as "hg" alias - ReadCSV
 // TODO: Add interface to use higor as "hg" alias - ExportCSV
 
 // Print DataFrame section
