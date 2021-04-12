@@ -58,4 +58,5 @@ func main() {
 - Give this repo a star.
 - Create tutorials about Data Engineering with Go.
 - Use this library and if you have some issues please put it on issues section with the Data.
+- If you need a specific feature, please create a PR to README.md to request it.
 
