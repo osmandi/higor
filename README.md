@@ -41,11 +41,21 @@ package main
 import hg "github.com/osmandi/higor"
 
 func main() {
+    
+    // Higor says Hi!
     fmt.Println(hg.HelloHigor())    
+
+    // Read a DataFrame and print it
+   	df := hg.ReadCSV("example.csv")
+   	fmt.Println(df)
+
+    // Export a DataFrame
+   	df.ToCSV("example_exported.csv")
 }
 ```
 
 ## How to contribute?
 - Give this repo a star.
 - Create tutorials about Data Engineering with Go.
+- Use this library and if you have some issues please put it on issues section with the Data.
 
