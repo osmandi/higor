@@ -8,8 +8,6 @@ import (
 	"github.com/osmandi/higor/dataframe"
 )
 
-type higorDataFrame dataframe.DataFrame
-
 var Version string = "v0.2.1"
 
 // HelloHigor Print a simple message to check if Higor are installed correctly
@@ -63,26 +61,6 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 	return df
 }
-
-// ToCSV Export DataFrame to CSV
-func (df higorDataFrame) ToCSV(filename string) {
-	data := [][]string{}
-	data = append(data, df.Columns)
-
-	dfInternal := dataframe.DataFrame{
-		Columns: df.Columns,
-		Values:  df.Values,
-	}
-
-	data = append(data, dfInternal.GetValues()...)
-
-	fmt.Println(df.Values)
-
-	dataframe.ExportCSV(filename, data)
-}
-
-// Higor interface
-// TODO: Add interface to use higor as "hg" alias - ExportCSV
 
 // Print DataFrame section
 // TODO: Print DataFrame with Index

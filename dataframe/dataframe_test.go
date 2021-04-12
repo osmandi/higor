@@ -13,6 +13,52 @@ func TestErrorChecker(t *testing.T) {
 	ErrorChecker(nil)
 }
 
+//////////////////
+// Export CSVs //
+////////////////
+func TestToCSVNormal(t *testing.T) {
+
+	filename := "higorToCSVNormalExpected.csv"
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+
+	// Temp DataFrame
+	typeColumnsExpected := Words{
+		"col1": Letter{"s": 2},
+		"col2": Letter{"s": 2},
+		"col3": Letter{"s": 2},
+	}
+
+	dfResult := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: Book{
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
+			"col3": {"row13", "row23"},
+		},
+		DataType: typeColumnsExpected,
+	}
+
+	dfResult.ToCSV(filename)
+
+	// Read the CSV content
+	csvOpen, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer csvOpen.Close()
+	csvReader := csv.NewReader(csvOpen)
+	dataResult, err := csvReader.ReadAll()
+	CSVChecker(dataExpected, dataResult, t)
+
+	// Delete file created
+	defer os.Remove(filename)
+
+}
+
+// ToCSV With another separator
+// ToCSV with or without header
+// TOCSV with or without index
+
 //////////////////////////
 // Utilities DataFrame //
 ////////////////////////
@@ -296,7 +342,7 @@ func TestExportCSVFileExists(t *testing.T) {
 
 	// Export to CSV
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	ExportCSV(filename, dataExpected)
+	exportCSV(filename, dataExpected)
 
 	// Read the CSV content
 	csvOpen, err := os.Open(filename)
@@ -305,7 +351,7 @@ func TestExportCSVFileExists(t *testing.T) {
 	}
 	defer csvOpen.Close()
 	csvReader := csv.NewReader(csvOpen)
-	dataResult, err := csvReader.ReadAll()
+	dataResult, _ := csvReader.ReadAll()
 	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
@@ -315,7 +361,7 @@ func TestExportCSVDoesNotExists(t *testing.T) {
 
 	// Export to CSV
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	ExportCSV(filename, dataExpected)
+	exportCSV(filename, dataExpected)
 
 	// Read the CSV content
 	csvOpen, err := os.Open(filename)
@@ -324,7 +370,7 @@ func TestExportCSVDoesNotExists(t *testing.T) {
 	}
 	defer csvOpen.Close()
 	csvReader := csv.NewReader(csvOpen)
-	dataResult, err := csvReader.ReadAll()
+	dataResult, _ := csvReader.ReadAll()
 	CSVChecker(dataExpected, dataResult, t)
 
 	// Delete file created
@@ -349,7 +395,7 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 
 	// Export to CSV
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	ExportCSV(filename, dataExpected, Sep(separator))
+	exportCSV(filename, dataExpected, Sep(separator))
 
 	// Read the CSV content
 	csvOpen, err := os.Open(filename)
@@ -359,7 +405,7 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	defer csvOpen.Close()
 	csvReader := csv.NewReader(csvOpen)
 	csvReader.Comma = separator
-	dataResult, err := csvReader.ReadAll()
+	dataResult, _ := csvReader.ReadAll()
 	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }

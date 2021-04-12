@@ -176,8 +176,8 @@ func GetColumnTypes(df DataFrame) Words {
 	return myWords
 }
 
-// ExportCSV To export a dataframe to CSV file
-func ExportCSV(filename string, data [][]string, opts ...CSVOption) {
+// exportCSV To export a dataframe to CSV file
+func exportCSV(filename string, data [][]string, opts ...CSVOption) {
 	csvInternal := &CSV{}
 	csvInternal.Sep = ','
 
@@ -220,4 +220,19 @@ func (df DataFrame) String() string {
 	table.Render()
 
 	return tableString.String()
+}
+
+// ToCSV Export DataFrame to CSV
+func (df DataFrame) ToCSV(filename string) {
+	data := [][]string{}
+	data = append(data, df.Columns)
+
+	dfInternal := DataFrame{
+		Columns: df.Columns,
+		Values:  df.Values,
+	}
+
+	data = append(data, dfInternal.GetValues()...)
+
+	exportCSV(filename, data)
 }
