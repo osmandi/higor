@@ -1,6 +1,8 @@
 package higor
 
 import (
+	"encoding/csv"
+	"log"
 	"os"
 	"testing"
 
@@ -81,3 +83,49 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
+
+//////////////////
+// Export CSVs //
+////////////////
+func TestToCSVNormal(t *testing.T) {
+
+	filename := "higorToCSVNormalExpected.csv"
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+
+	// Temp DataFrame
+	typeColumnsExpected := dataframe.Words{
+		"col1": dataframe.Letter{"s": 2},
+		"col2": dataframe.Letter{"s": 2},
+		"col3": dataframe.Letter{"s": 2},
+	}
+
+	dfResult := higorDataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: dataframe.Book{
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
+			"col3": {"row13", "row23"},
+		},
+		DataType: typeColumnsExpected,
+	}
+
+	dfResult.ToCSV(filename)
+
+	// Read the CSV content
+	csvOpen, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer csvOpen.Close()
+	csvReader := csv.NewReader(csvOpen)
+	dataResult, err := csvReader.ReadAll()
+	dataframe.CSVChecker(dataExpected, dataResult, t)
+
+	// Delete file created
+	defer os.Remove(filename)
+
+}
+
+// ToCSV With another separator
+// ToCSV with or without header
+// TOCSV with or without index

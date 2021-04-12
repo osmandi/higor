@@ -10,59 +10,19 @@ import (
 )
 
 func TestErrorChecker(t *testing.T) {
-	errorChecker(nil)
+	ErrorChecker(nil)
 }
 
 //////////////////////////
 // Utilities DataFrame //
 ////////////////////////
 
-func csvCheker(dataExpected, dataResult [][]string, t *testing.T) {
-	if !reflect.DeepEqual(dataExpected, dataResult) {
-		t.Errorf("Header with errors. \nExpected: \n%s. \nReceived: \n%s", dataExpected, dataResult)
-	}
-}
-
-func CSVCreatorMock(data [][]string, separator rune) *os.File {
-	// Temp file
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTest-*.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	writer := csv.NewWriter(tmpFile)
-	writer.Comma = separator
-	for _, value := range data {
-		err := writer.Write(value)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	writer.Flush()
-
-	if err := tmpFile.Close(); err != nil {
-		log.Fatal(err)
-	}
-	return tmpFile
-
-}
-
-// DataFrameChecker To check if two DataFrame are equal
-func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
-	isEqual := df.IsEqual(dfExpected, dfResult)
-	if !isEqual {
-		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: \n%v \ndfResult: \n%v", dfExpected, dfResult)
-	}
-
-}
-
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
-		Values: df.Book{
+		Values: Book{
 			"col1": {1, "row21"},
 			"col2": {nil, "row22"},
 			"col3": {"row13", "row23"},
@@ -71,7 +31,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 
 	dataResult := trasposeRows(dfExpected)
 
-	csvCheker(dataExpected, dataResult, t)
+	CSVChecker(dataExpected, dataResult, t)
 
 }
 
@@ -80,7 +40,7 @@ func TestTrasposeRowsString(t *testing.T) {
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
+		Values: Book{
 			"col1": {"row11", "row21"},
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
@@ -89,14 +49,32 @@ func TestTrasposeRowsString(t *testing.T) {
 
 	dataResult := trasposeRows(dfExpected)
 
-	csvCheker(dataExpected, dataResult, t)
+	CSVChecker(dataExpected, dataResult, t)
+
+}
+
+func TestValuesNormal(t *testing.T) {
+	dataExpected := [][]string{{"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+
+	dfExpected := DataFrame{
+		Columns: []string{"col1", "col2", "col3"},
+		Values: Book{
+			"col1": {"row11", "row21"},
+			"col2": {"row12", "row22"},
+			"col3": {"row13", "row23"},
+		},
+	}
+
+	dataResult := dfExpected.GetValues()
+
+	CSVChecker(dataExpected, dataResult, t)
 
 }
 
 func TestGetColumnTypesOnlyString(t *testing.T) {
 	df := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
+		Values: Book{
 			"col1": {"row11", "row21"},
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
@@ -109,7 +87,7 @@ func TestGetColumnTypesOnlyString(t *testing.T) {
 		"col3": Letter{"s": 2},
 	}
 
-	typeColmnsResult := getColumnTypes(df)
+	typeColmnsResult := GetColumnTypes(df)
 
 	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
 		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
@@ -120,7 +98,7 @@ func TestGetColumnTypesOnlyString(t *testing.T) {
 func TestGetColumnTypesMultipleDataType(t *testing.T) {
 	df := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
-		Values: book{
+		Values: Book{
 			"col1": {"row11", 1.2},
 			"col2": {1, "row22"},
 			"col3": {"row13", "row23"},
@@ -133,7 +111,7 @@ func TestGetColumnTypesMultipleDataType(t *testing.T) {
 		"col3": Letter{"s": 2},
 	}
 
-	typeColmnsResult := getColumnTypes(df)
+	typeColmnsResult := GetColumnTypes(df)
 
 	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
 		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
@@ -156,7 +134,7 @@ func TestSep(t *testing.T) {
 func TestEqualDataFrame(t *testing.T) {
 
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := book{
+	chapters := Book{
 		"colInt":    {1, nil, 2, 3},
 		"colString": {"hola", "que", "hace", nil},
 		"colBool":   {nil, true, false, nil},
@@ -182,7 +160,7 @@ func TestEqualDataFrame(t *testing.T) {
 // Diferent DataFrame
 func TestDifferentlDataFrame(t *testing.T) {
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := book{
+	chapters := Book{
 		"colInt2":    {1, nil, 2, 3},
 		"colString2": {"hola", "que", "hace", nil},
 		"colBool2":   {nil, true, false, nil},
@@ -211,7 +189,7 @@ func TestDifferentlDataFrame(t *testing.T) {
 
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
-	chapters := book{
+	chapters := Book{
 		"col1": {"row11", "row21"},
 		"col2": {"row12", "row22"},
 		"col3": {"row13", "row23"},
@@ -241,7 +219,7 @@ func TestPrintDataFrame(t *testing.T) {
 
 func TestPrintDataFrameMultipleDataType(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
-	chapters := book{
+	chapters := Book{
 		"col1": {1, "row21"},
 		"col2": {2.3, "row22"},
 		"col3": {"row13", "row23"},
@@ -271,7 +249,7 @@ func TestPrintDataFrameMultipleDataType(t *testing.T) {
 
 func TestPrintDataFrameWithNils(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
-	chapters := book{
+	chapters := Book{
 		"col1": {nil, "row21"},
 		"col2": {"row12", "row22"},
 		"col3": {"row13", "row23"},
@@ -328,7 +306,7 @@ func TestExportCSVFileExists(t *testing.T) {
 	defer csvOpen.Close()
 	csvReader := csv.NewReader(csvOpen)
 	dataResult, err := csvReader.ReadAll()
-	csvCheker(dataExpected, dataResult, t)
+	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
 
@@ -347,7 +325,7 @@ func TestExportCSVDoesNotExists(t *testing.T) {
 	defer csvOpen.Close()
 	csvReader := csv.NewReader(csvOpen)
 	dataResult, err := csvReader.ReadAll()
-	csvCheker(dataExpected, dataResult, t)
+	CSVChecker(dataExpected, dataResult, t)
 
 	// Delete file created
 	defer os.Remove(filename)
@@ -382,7 +360,7 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	csvReader := csv.NewReader(csvOpen)
 	csvReader.Comma = separator
 	dataResult, err := csvReader.ReadAll()
-	csvCheker(dataExpected, dataResult, t)
+	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
 

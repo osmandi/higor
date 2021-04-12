@@ -64,6 +64,13 @@ func CSVCreatorMock(data [][]string, separator rune) *os.File {
 
 }
 
+// CSVChecker To Check csv result
+func CSVChecker(dataExpected, dataResult [][]string, t *testing.T) {
+	if !reflect.DeepEqual(dataExpected, dataResult) {
+		t.Errorf("Header with errors. \nExpected: \n%s. \nReceived: \n%s", dataExpected, dataResult)
+	}
+}
+
 // DataFrameChecker To check if two DataFrame are equal
 func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
 	isEqual := IsEqual(dfExpected, dfResult)
@@ -97,6 +104,11 @@ func Sep(separator rune) CSVOption {
 	return func(c *CSV) {
 		c.Sep = separator
 	}
+}
+
+// GetValues get all values
+func (df DataFrame) GetValues() [][]string {
+	return trasposeRows(df)[1:]
 }
 
 func trasposeRows(df DataFrame) [][]string {
