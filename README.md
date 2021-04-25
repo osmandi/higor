@@ -10,7 +10,7 @@
 
 # Higor
 
-Dataframe for Golang, simple but powerful.
+Dataframe for Golang as column oriented, simple but powerful.
 
 ## Why Golang for Data Engineering?
 
