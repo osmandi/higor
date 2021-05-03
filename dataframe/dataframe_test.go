@@ -253,7 +253,7 @@ func TestPrintDataFrame(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n  row11 | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n    S   |   S   |   S    \n--------|-------|--------\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|   S   |   S   |   S   |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -283,7 +283,7 @@ func TestPrintDataFrameMultipleDataType(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n      1 |   2.3 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n   S,I  |  S,F  |   S    \n--------|-------|--------\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|     1 |   2.3 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|  S,I  |  S,F  |   S   |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -313,7 +313,7 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "  COL1  | COL2  | COL3   \n--------|-------|--------\n        | row12 | row13  \n  row21 | row22 | row23  \n--------|-------|--------\n   S,N  |   S   |   S    \n--------|-------|--------\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|       | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|  S,N  |   S   |   S   |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
