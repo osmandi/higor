@@ -72,6 +72,7 @@ func main() {
 
 // v0.3.1: DataTypes reading unexpeding
 // TODO: ReadCSV with nil values
+// TODO: ReadCSV custom nil values setting
 
 // v0.3.2: Improve DataFrame print it
 // TODO: Print tail dataframe
