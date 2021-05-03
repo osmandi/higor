@@ -10,7 +10,7 @@
 
 # Higor
 
-Dataframe for Golang, simple but powerful.
+Dataframe for Golang as column oriented, simple but powerful.
 
 ## Why Golang for Data Engineering?
 
@@ -35,7 +35,54 @@ The aim of Higor is to provide a library that allows you to work with different 
 go get -v -u github.com/osmandi/higor
 ```
 
+## Say hello to Higor
+
+```Go
+package main
+
+import hg "github.com/osmandi/higor"
+
+func main() {
+    
+    // Higor says Hi!
+    fmt.Println(hg.HelloHigor())    
+
+    // Read a DataFrame and print it
+   	df := hg.ReadCSV("example.csv")
+   	fmt.Println(df)
+
+    // Export a DataFrame
+   	df.ToCSV("example_exported.csv")
+}
+```
+
 ## How to contribute?
 - Give this repo a star.
 - Create tutorials about Data Engineering with Go.
+- Use this library and if you have some issues please put it on issues section with the Data.
+- If you need a specific feature, please create a PR to README.md to request it.
 
+# Releases version
+
+// v0.3.0: DataType by column
+// TODO: Print DataType (string, bool, int8, int64, etc) on the footer
+// TODO: Set schema to read a CSV with parsing values
+// TODO: Save values with a specific DataType slice instead a interface
+// TODO: DataType for datetime values
+
+// v0.3.1: DataTypes reading unexpeding
+// TODO: ReadCSV with nil values
+// TODO: ReadCSV custom nil values setting
+
+// v0.3.2: Improve DataFrame print it
+// TODO: Print tail dataframe
+// TODO: Print head DataFrame
+// TODO: Print DataFrame with Index
+
+// v0.3.3: Automatic reading DataType
+// TODO: Read CSV with automatic DataTypes setting
+
+// v0.3.4: Improve importing CSV
+// TODO: Export with nils values
+// TODO: Export without header
+// TODO: Export without index
