@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"reflect"
 	"testing"
 )
 
@@ -117,54 +116,6 @@ func TestValuesNormal(t *testing.T) {
 
 }
 
-func TestGetColumnTypesOnlyString(t *testing.T) {
-	df := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
-		},
-	}
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
-	typeColmnsResult := GetColumnTypes(df)
-
-	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
-		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
-	}
-
-}
-
-func TestGetColumnTypesMultipleDataType(t *testing.T) {
-	df := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			"col1": {"row11", 1.2},
-			"col2": {1, "row22"},
-			"col3": {"row13", "row23"},
-		},
-	}
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 1, "f": 1},
-		"col2": Letter{"s": 1, "i": 1},
-		"col3": Letter{"s": 2},
-	}
-
-	typeColmnsResult := GetColumnTypes(df)
-
-	if !reflect.DeepEqual(typeColumnsExpected, typeColmnsResult) {
-		t.Errorf("Header with errors. \nExpected: \n%v. \nReceived: \n%v", typeColumnsExpected, typeColmnsResult)
-	}
-
-}
-
 func TestSep(t *testing.T) {
 	separator := ';'
 	csvResult := &CSV{}
@@ -253,7 +204,7 @@ func TestPrintDataFrame(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|   S   |   S   |   S   |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | true  |\n| row21 | row22 | false |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -283,7 +234,7 @@ func TestPrintDataFrameMultipleDataType(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|     1 |   2.3 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|  S,I  |  S,F  |   S   |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|     1 |   2.3 | row13 |\n|     2 |   2.5 | row23 |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -313,7 +264,7 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 		DataType: typeColumnsExpected,
 	}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|       | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n|  S,N  |   S   |   S   |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|       | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 

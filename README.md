@@ -65,7 +65,7 @@ func main() {
 # Releases version
 
 ## v0.3.0: DataType by column
-- Print DataType (string, bool, int8, int64, etc) on the footer
+- Delete footer
 - Set schema to read a CSV with parsing values
 - Save values with a specific DataType slice instead a interface
 - DataType for datetime values
