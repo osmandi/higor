@@ -64,25 +64,25 @@ func main() {
 
 # Releases version
 
-// v0.3.0: DataType by column
-// TODO: Print DataType (string, bool, int8, int64, etc) on the footer
-// TODO: Set schema to read a CSV with parsing values
-// TODO: Save values with a specific DataType slice instead a interface
-// TODO: DataType for datetime values
+## v0.3.0: DataType by column
+- Print DataType (string, bool, int8, int64, etc) on the footer
+- Set schema to read a CSV with parsing values
+- Save values with a specific DataType slice instead a interface
+- DataType for datetime values
 
-// v0.3.1: DataTypes reading unexpeding
-// TODO: ReadCSV with nil values
-// TODO: ReadCSV custom nil values setting
+## v0.3.1: DataTypes reading unexpeding
+- ReadCSV with nil values
+- ReadCSV custom nil values setting
 
-// v0.3.2: Improve DataFrame print it
-// TODO: Print tail dataframe
-// TODO: Print head DataFrame
-// TODO: Print DataFrame with Index
+## v0.3.2: Improve DataFrame print it
+- Print tail dataframe
+- Print head DataFrame
+- Print DataFrame with Index
 
-// v0.3.3: Automatic reading DataType
-// TODO: Read CSV with automatic DataTypes setting
+## v0.3.3: Automatic reading DataType
+- Read CSV with automatic DataTypes setting
 
-// v0.3.4: Improve importing CSV
-// TODO: Export with nils values
-// TODO: Export without header
-// TODO: Export without index
+## v0.3.4: Improve importing CSV
+- Export with nils values
+- Export without header
+- Export without index
