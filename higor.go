@@ -56,8 +56,5 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 	df.Values = chapters
 
-	// Get columnTypes
-	df.DataType = dataframe.GetColumnTypes(df)
-
 	return df
 }
