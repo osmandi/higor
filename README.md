@@ -62,3 +62,26 @@ func main() {
 - Use this library and if you have some issues please put it on issues section with the Data.
 - If you need a specific feature, please create a PR to README.md to request it.
 
+# Releases version
+
+// v0.3.0: DataType by column
+// TODO: Print DataType (string, bool, int8, int64, etc) on the footer
+// TODO: Set schema to read a CSV with parsing values
+// TODO: Save values with a specific DataType slice instead a interface
+// TODO: DataType for datetime values
+
+// v0.3.1: DataTypes reading unexpeding
+// TODO: ReadCSV with nil values
+
+// v0.3.2: Improve DataFrame print it
+// TODO: Print tail dataframe
+// TODO: Print head DataFrame
+// TODO: Print DataFrame with Index
+
+// v0.3.3: Automatic reading DataType
+// TODO: Read CSV with automatic DataTypes setting
+
+// v0.3.4: Improve importing CSV
+// TODO: Export with nils values
+// TODO: Export without header
+// TODO: Export without index
