@@ -214,8 +214,8 @@ func (df DataFrame) String() string {
 	table.SetHeader(df.Columns)
 	table.SetFooter(footer) // Todo: Change to another method
 	table.AppendBulk(data[1:])
-	table.SetBorder(false)
-	table.SetCenterSeparator("|")
+	table.SetBorder(true)
+	table.SetCenterSeparator("+")
 
 	table.Render()
 
