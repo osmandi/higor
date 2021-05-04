@@ -30,12 +30,6 @@ func TestReadCSVNormal(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 
-	typeColumnsExpected := dataframe.Words{
-		"col1": dataframe.Letter{"s": 2},
-		"col2": dataframe.Letter{"s": 2},
-		"col3": dataframe.Letter{"s": 2},
-	}
-
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
@@ -43,7 +37,6 @@ func TestReadCSVNormal(t *testing.T) {
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
-		DataType: typeColumnsExpected,
 	}
 
 	dfResult := ReadCSV(csvTempFilename)
@@ -60,12 +53,6 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 
-	typeColumnsExpected := dataframe.Words{
-		"col1": dataframe.Letter{"s": 2},
-		"col2": dataframe.Letter{"s": 2},
-		"col3": dataframe.Letter{"s": 2},
-	}
-
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
@@ -73,7 +60,6 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
-		DataType: typeColumnsExpected,
 	}
 
 	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'))

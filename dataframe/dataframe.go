@@ -19,14 +19,10 @@ type Book map[string][]interface{}
 // Letter Count how much data type.
 type Letter map[string]int
 
-// Words Count how much letter there are on a column
-type Words map[string]Letter
-
 // DataFrame Structure for DataFrame
 type DataFrame struct {
-	Columns  []string
-	Values   Book
-	DataType Words
+	Columns []string
+	Values  Book
 }
 
 // IsEqual to kown if two DataFrame are equal

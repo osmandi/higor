@@ -20,13 +20,6 @@ func TestToCSVNormal(t *testing.T) {
 	filename := "higorToCSVNormalExpected.csv"
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
-	// Temp DataFrame
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
 	dfResult := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
@@ -34,7 +27,6 @@ func TestToCSVNormal(t *testing.T) {
 			"col2": {"row12", "row22"},
 			"col3": {"row13", "row23"},
 		},
-		DataType: typeColumnsExpected,
 	}
 
 	dfResult.ToCSV(filename)
@@ -184,24 +176,21 @@ func TestDifferentlDataFrame(t *testing.T) {
 // Print DataFrame /
 ///////////////////
 
+// TODO: Print normal DataFrame
+// TODO: Print DataFrame with nils values
+// TODO: Print DataFrame with multiple DataTypes
+
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
 		"col1": {"row11", "row21"},
 		"col2": {"row12", "row22"},
-		"col3": {"row13", "row23"},
-	}
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 2},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
+		"col3": {true, false},
 	}
 
 	df := DataFrame{
-		Columns:  columns,
-		Values:   chapters,
-		DataType: typeColumnsExpected,
+		Columns: columns,
+		Values:  chapters,
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | true  |\n| row21 | row22 | false |\n+-------+-------+-------+\n"
@@ -214,35 +203,7 @@ func TestPrintDataFrame(t *testing.T) {
 
 }
 
-func TestPrintDataFrameMultipleDataType(t *testing.T) {
-	columns := []string{"col1", "col2", "col3"}
-	chapters := Book{
-		"col1": {1, "row21"},
-		"col2": {2.3, "row22"},
-		"col3": {"row13", "row23"},
-	}
-
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 1, "i": 1},
-		"col2": Letter{"s": 1, "f": 1},
-		"col3": Letter{"s": 2},
-	}
-
-	df := DataFrame{
-		Columns:  columns,
-		Values:   chapters,
-		DataType: typeColumnsExpected,
-	}
-
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|     1 |   2.3 | row13 |\n|     2 |   2.5 | row23 |\n+-------+-------+-------+\n"
-
-	tableResultFormat := df.String()
-
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
-	}
-
-}
+// TODO: Test with multiple data types
 
 func TestPrintDataFrameWithNils(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
@@ -252,16 +213,9 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 		"col3": {"row13", "row23"},
 	}
 
-	typeColumnsExpected := Words{
-		"col1": Letter{"s": 1, "n": 1},
-		"col2": Letter{"s": 2},
-		"col3": Letter{"s": 2},
-	}
-
 	df := DataFrame{
-		Columns:  columns,
-		Values:   chapters,
-		DataType: typeColumnsExpected,
+		Columns: columns,
+		Values:  chapters,
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|       | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
