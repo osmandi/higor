@@ -16,9 +16,6 @@ import (
 // Book Interface to save a DataFrame
 type Book map[string][]interface{}
 
-// Letter Count how much data type.
-type Letter map[string]int
-
 // DataFrame Structure for DataFrame
 type DataFrame struct {
 	Columns []string
