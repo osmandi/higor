@@ -92,6 +92,7 @@ type CSV struct {
 	Sep        rune
 	LineString string
 	LazyQuotes bool
+	Schema     Book
 }
 
 // ErrorChecker to kown if there are error
@@ -108,6 +109,13 @@ type CSVOption func(c *CSV)
 func Sep(separator rune) CSVOption {
 	return func(c *CSV) {
 		c.Sep = separator
+	}
+}
+
+// Schema set the schema
+func Schema(schema Book) CSVOption {
+	return func(c *CSV) {
+		c.Schema = schema
 	}
 }
 

@@ -38,8 +38,12 @@ func TestReadCSVNormal(t *testing.T) {
 			"col3": dataframe.PageString{"row13", "row23"},
 		},
 	}
-
-	dfResult := ReadCSV(csvTempFilename)
+	schema := dataframe.Book{
+		"col1": dataframe.PageString{},
+		"col2": dataframe.PageString{},
+		"col3": dataframe.PageString{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
 
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
@@ -62,7 +66,13 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 		},
 	}
 
-	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'))
+	schema := dataframe.Book{
+		"col1": dataframe.PageString{},
+		"col2": dataframe.PageString{},
+		"col3": dataframe.PageString{},
+	}
+
+	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema))
 
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 

@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -113,8 +114,24 @@ func TestSep(t *testing.T) {
 	csvOptionInternal := Sep(separator)
 	csvOptionInternal(csvResult)
 
-	if csvResult.Sep != ';' {
+	if csvResult.Sep != separator {
 		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
+	}
+
+}
+
+func TestSchema(t *testing.T) {
+	schema := Book{
+		"col1": PageString{},
+		"col2": PageBool{},
+		"col3": PageFloat64{},
+	}
+	csvResult := &CSV{}
+	csvOptionInternal := Schema(schema)
+	csvOptionInternal(csvResult)
+
+	if !reflect.DeepEqual(schema, csvResult.Schema) {
+		t.Errorf("Schema error. Expected: %v. But result: %v", schema, csvResult.Sep)
 	}
 
 }
