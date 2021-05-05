@@ -47,11 +47,18 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	df := dataframe.DataFrame{}
 	df.Columns = csv[0]
 	chapters := dataframe.Book{}
+	valueMap := make(map[string][]interface{})
 
 	for _, rowValue := range csv[1:] {
 		for columnIndex, columnValue := range rowValue {
-			chapters[df.Columns[columnIndex]] = append(chapters[df.Columns[columnIndex]], columnValue)
+			//chapters[df.Columns[columnIndex]] = append(chapters[df.Columns[columnIndex]], columnValue)
+			valueMap[df.Columns[columnIndex]] = append(valueMap[df.Columns[columnIndex]], columnValue)
 		}
+
+	}
+
+	for key, value := range valueMap {
+		chapters[key] = value
 	}
 
 	df.Values = chapters

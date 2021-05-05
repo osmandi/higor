@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"testing"
 )
@@ -23,9 +24,9 @@ func TestToCSVNormal(t *testing.T) {
 	dfResult := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
+			"col1": PageString{"row11", "row21"},
+			"col2": PageString{"row12", "row22"},
+			"col3": PageString{"row13", "row23"},
 		},
 	}
 
@@ -51,18 +52,17 @@ func TestToCSVNormal(t *testing.T) {
 // TOCSV with or without index
 
 //////////////////////////
-// Utilities DataFrame //
+// TrasposeRows //
 ////////////////////////
-
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "<nil>", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": {1, "row21"},
-			"col2": {nil, "row22"},
-			"col3": {"row13", "row23"},
+			"col1": PageString{1, "row21"},
+			"col2": PageString{nil, "row22"},
+			"col3": PageString{"row13", "row23"},
 		},
 	}
 
@@ -71,16 +71,15 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 	CSVChecker(dataExpected, dataResult, t)
 
 }
-
 func TestTrasposeRowsString(t *testing.T) {
 	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
+			"col1": PageString{"row11", "row21"},
+			"col2": PageString{"row12", "row22"},
+			"col3": PageString{"row13", "row23"},
 		},
 	}
 
@@ -96,9 +95,9 @@ func TestValuesNormal(t *testing.T) {
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
+			"col1": PageString{"row11", "row21"},
+			"col2": PageString{"row12", "row22"},
+			"col3": PageString{"row13", "row23"},
 		},
 	}
 
@@ -124,12 +123,11 @@ func TestEqualDataFrame(t *testing.T) {
 
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
 	chapters := Book{
-		"colInt":    {1, nil, 2, 3},
-		"colString": {"hola", "que", "hace", nil},
-		"colBool":   {nil, true, false, nil},
-		"colFloat":  {3.2, 5.4, nil, nil},
+		"colInt":    PageFloat64{1, math.NaN(), 2, 3},
+		"colString": PageString{"hola", "que", "hace", nil},
+		"colBool":   PageBool{nil, true, false, nil},
+		"colFloat":  PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
 	}
-
 	df1 := DataFrame{
 		Columns: columns,
 		Values:  chapters,
@@ -150,10 +148,10 @@ func TestEqualDataFrame(t *testing.T) {
 func TestDifferentlDataFrame(t *testing.T) {
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
 	chapters := Book{
-		"colInt2":    {1, nil, 2, 3},
-		"colString2": {"hola", "que", "hace", nil},
-		"colBool2":   {nil, true, false, nil},
-		"colFloat2":  {3.2, 5.4, nil, nil},
+		"colInt2":    PageFloat64{1, math.NaN(), 2, 3},
+		"colString2": PageString{"hola", "que", "hace", nil},
+		"colBool2":   PageBool{nil, true, false, nil},
+		"colFloat2":  PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
 	}
 
 	df1 := DataFrame{
@@ -183,9 +181,9 @@ func TestDifferentlDataFrame(t *testing.T) {
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
-		"col1": {"row11", "row21"},
-		"col2": {"row12", "row22"},
-		"col3": {true, false},
+		"col1": PageString{"row11", "row21"},
+		"col2": PageString{"row12", "row22"},
+		"col3": PageBool{true, false},
 	}
 
 	df := DataFrame{
@@ -203,14 +201,12 @@ func TestPrintDataFrame(t *testing.T) {
 
 }
 
-// TODO: Test with multiple data types
-
 func TestPrintDataFrameWithNils(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
-		"col1": {nil, "row21"},
-		"col2": {"row12", "row22"},
-		"col3": {"row13", "row23"},
+		"col1": PageString{nil, "row21"},
+		"col2": PageString{"row12", "row22"},
+		"col3": PageString{"row13", "row23"},
 	}
 
 	df := DataFrame{
@@ -218,7 +214,7 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 		Values:  chapters,
 	}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n|       | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| <nil> | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -227,6 +223,10 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 	}
 
 }
+
+///////////////////////////
+// DataTypes on columns //
+/////////////////////////
 
 ///////////////
 // ExportCSV /

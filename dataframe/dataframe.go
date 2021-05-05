@@ -13,8 +13,20 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
+// PageString Data type for string values
+type PageString []interface{}
+
+// PageBool Data type for boolean values
+type PageBool []interface{}
+
+// PageFloat64 Data type for numbers and float values
+type PageFloat64 []float64
+
+// Page values saved on a map
+type Page interface{}
+
 // Book Interface to save a DataFrame
-type Book map[string][]interface{}
+type Book map[string]Page
 
 // DataFrame Structure for DataFrame
 type DataFrame struct {
@@ -118,8 +130,13 @@ func trasposeRows(df DataFrame) [][]string {
 	// Traspose row
 	for _, colName := range df.Columns {
 		colValues, colOk := df.Values[colName]
+		valuesIterate := []interface{}{}
+		values := reflect.ValueOf(colValues)
+		for i := 0; i < values.Len(); i++ {
+			valuesIterate = append(valuesIterate, values.Index(i))
+		}
 		if colOk {
-			for rowIndex, value := range colValues {
+			for rowIndex, value := range valuesIterate {
 				var v interface{}
 				v = value
 				if value == nil {

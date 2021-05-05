@@ -33,9 +33,9 @@ func TestReadCSVNormal(t *testing.T) {
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
+			"col1": dataframe.PageString{"row11", "row21"},
+			"col2": dataframe.PageString{"row12", "row22"},
+			"col3": dataframe.PageString{"row13", "row23"},
 		},
 	}
 
@@ -56,9 +56,9 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
-			"col1": {"row11", "row21"},
-			"col2": {"row12", "row22"},
-			"col3": {"row13", "row23"},
+			"col1": dataframe.PageString{"row11", "row21"},
+			"col2": dataframe.PageString{"row12", "row22"},
+			"col3": dataframe.PageString{"row13", "row23"},
 		},
 	}
 
