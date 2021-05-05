@@ -55,13 +55,13 @@ func TestToCSVNormal(t *testing.T) {
 // TrasposeRows //
 ////////////////////////
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "<nil>", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
 			"col1": PageString{1, "row21"},
-			"col2": PageString{nil, "row22"},
+			"col2": PageString{math.NaN(), "row22"},
 			"col3": PageString{"row13", "row23"},
 		},
 	}
@@ -201,10 +201,10 @@ func TestPrintDataFrame(t *testing.T) {
 
 }
 
-func TestPrintDataFrameWithNils(t *testing.T) {
+func TestPrintDataFrameWithNaN(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
-		"col1": PageString{nil, "row21"},
+		"col1": PageString{math.NaN(), "row21"},
 		"col2": PageString{"row12", "row22"},
 		"col3": PageString{"row13", "row23"},
 	}
@@ -214,7 +214,7 @@ func TestPrintDataFrameWithNils(t *testing.T) {
 		Values:  chapters,
 	}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| <nil> | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
