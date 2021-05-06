@@ -13,20 +13,20 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
+// PageAnyDataType To save any data type, when if you don't know what data type is
+type PageAnyDataType []interface{}
+
 // PageString Data type for string values
-type PageString []interface{}
+type PageString []string
 
 // PageBool Data type for boolean values
-type PageBool []interface{}
+type PageBool []bool
 
 // PageFloat64 Data type for numbers and float values
-type PageFloat64 []interface{} //float64
-
-// Page values saved on a map
-//type Page []interface{}
+type PageFloat64 []float64
 
 // Book Interface to save a DataFrame
-type Book map[string][]interface{}
+type Book []interface{}
 
 // DataFrame Structure for DataFrame
 type DataFrame struct {
