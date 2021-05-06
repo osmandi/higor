@@ -114,6 +114,11 @@ func Sep(separator rune) CSVOption {
 
 // Schema set the schema
 func Schema(schema Book) CSVOption {
+	fmt.Println("Schema:")
+	fmt.Println(schema)
+	for i := range schema {
+		fmt.Println(reflect.TypeOf(schema[i]))
+	}
 	return func(c *CSV) {
 		c.Schema = schema
 	}

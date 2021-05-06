@@ -33,15 +33,15 @@ func TestReadCSVNormal(t *testing.T) {
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
-			"col1": dataframe.PageString{"row11", "row21"},
-			"col2": dataframe.PageString{"row12", "row22"},
-			"col3": dataframe.PageString{"row13", "row23"},
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageString{"row12", "row22"},
+			dataframe.PageString{"row13", "row23"},
 		},
 	}
 	schema := dataframe.Book{
-		"col1": dataframe.PageString{},
-		"col2": dataframe.PageString{},
-		"col3": dataframe.PageString{},
+		dataframe.PageString{},
+		dataframe.PageString{},
+		dataframe.PageString{},
 	}
 	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
 
@@ -60,18 +60,16 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	dfExpected := dataframe.DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: dataframe.Book{
-			"col1": dataframe.PageString{"row11", "row21"},
-			"col2": dataframe.PageString{"row12", "row22"},
-			"col3": dataframe.PageString{"row13", "row23"},
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageString{"row12", "row22"},
+			dataframe.PageString{"row13", "row23"},
 		},
 	}
-
 	schema := dataframe.Book{
-		"col1": dataframe.PageString{},
-		"col2": dataframe.PageString{},
-		"col3": dataframe.PageString{},
+		dataframe.PageString{},
+		dataframe.PageString{},
+		dataframe.PageString{},
 	}
-
 	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema))
 
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
