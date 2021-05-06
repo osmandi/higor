@@ -76,30 +76,6 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 			}
 
 		}
-		/*
-			fmt.Println("df.Values")
-			//df.Values[0] = append(df.Values[0], "Hello")
-			df.Values = append(df.Values, []int{1, 2, 5})
-			df.Values = append(df.Values, dataframe.PageString{"hola1", "hola2"})
-			for i := range df.Values {
-				fmt.Println(reflect.TypeOf(df.Values[i]))
-			}
-			fmt.Println(df.Values)
-			fmt.Println(df.Values[3])
-			internalSlice := df.Values[3].([]int)
-			fmt.Println(internalSlice[2])
-			fmt.Println(df.Values[4].(dataframe.PageString)[1])
-		*/
-
-		/*
-			for key, value := range valueMap {
-				for _, v := range value {
-					df.Values[key] = append(df.Values[key], v)
-				}
-				//		df.Values[key] = value
-			}
-		*/
-
 	}
 	//df.Values = chapters
 
