@@ -60,7 +60,10 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	}
 
 	for key, value := range valueMap {
-		df.Values[key] = value
+		for _, v := range value {
+			df.Values[key] = append(df.Values[key], v)
+		}
+		//		df.Values[key] = value
 	}
 
 	//df.Values = chapters

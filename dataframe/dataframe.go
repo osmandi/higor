@@ -20,13 +20,13 @@ type PageString []interface{}
 type PageBool []interface{}
 
 // PageFloat64 Data type for numbers and float values
-type PageFloat64 []float64
+type PageFloat64 []interface{} //float64
 
 // Page values saved on a map
-type Page interface{}
+//type Page []interface{}
 
 // Book Interface to save a DataFrame
-type Book map[string]Page
+type Book map[string][]interface{}
 
 // DataFrame Structure for DataFrame
 type DataFrame struct {
