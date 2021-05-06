@@ -13,8 +13,8 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// PageAnyDataType To save any data type, when if you don't know what data type is
-type PageAnyDataType []interface{}
+// PageAny To save any data type, when if you don't know what data type is
+type PageAny []interface{}
 
 // PageString Data type for string values
 type PageString []string
@@ -136,22 +136,20 @@ func trasposeRows(df DataFrame) [][]string {
 	data[0] = df.Columns
 
 	// Traspose row
-	for _, colName := range df.Columns {
-		colValues, colOk := df.Values[colName]
+	for colIndex := range df.Columns {
+		colValues := df.Values[colIndex]
 		valuesIterate := []interface{}{}
 		values := reflect.ValueOf(colValues)
 		for i := 0; i < values.Len(); i++ {
 			valuesIterate = append(valuesIterate, values.Index(i))
 		}
-		if colOk {
-			for rowIndex, value := range valuesIterate {
-				var v interface{}
-				v = value
-				if value == nil {
-					v = ""
-				}
-				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
+		for rowIndex, value := range valuesIterate {
+			var v interface{}
+			v = value
+			if value == nil {
+				v = ""
 			}
+			data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
 		}
 	}
 

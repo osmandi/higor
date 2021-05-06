@@ -25,9 +25,10 @@ func TestToCSVNormal(t *testing.T) {
 	dfResult := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": PageString{"row11", "row21"},
-			"col2": PageString{"row12", "row22"},
-			"col3": PageString{"row13", "row23"},
+
+			PageString{"row11", "row21"},
+			PageString{"row12", "row22"},
+			PageString{"row13", "row23"},
 		},
 	}
 
@@ -61,9 +62,9 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": PageString{1, "row21"},
-			"col2": PageString{math.NaN(), "row22"},
-			"col3": PageString{"row13", "row23"},
+			PageAny{1, "row21"},
+			PageAny{math.NaN(), "row22"},
+			PageString{"row13", "row23"},
 		},
 	}
 
@@ -78,9 +79,9 @@ func TestTrasposeRowsString(t *testing.T) {
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": PageString{"row11", "row21"},
-			"col2": PageString{"row12", "row22"},
-			"col3": PageString{"row13", "row23"},
+			PageString{"row11", "row21"},
+			PageString{"row12", "row22"},
+			PageString{"row13", "row23"},
 		},
 	}
 
@@ -96,9 +97,9 @@ func TestValuesNormal(t *testing.T) {
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-			"col1": PageString{"row11", "row21"},
-			"col2": PageString{"row12", "row22"},
-			"col3": PageString{"row13", "row23"},
+			PageString{"row11", "row21"},
+			PageString{"row12", "row22"},
+			PageString{"row13", "row23"},
 		},
 	}
 
@@ -122,9 +123,9 @@ func TestSep(t *testing.T) {
 
 func TestSchema(t *testing.T) {
 	schema := Book{
-		"col1": PageString{},
-		"col2": PageBool{},
-		"col3": PageFloat64{},
+		PageString{},
+		PageBool{},
+		PageFloat64{},
 	}
 	csvResult := &CSV{}
 	csvOptionInternal := Schema(schema)
@@ -140,10 +141,10 @@ func TestEqualDataFrame(t *testing.T) {
 
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
 	chapters := Book{
-		"colInt":    PageFloat64{1, math.NaN(), 2, 3},
-		"colString": PageString{"hola", "que", "hace", nil},
-		"colBool":   PageBool{nil, true, false, nil},
-		"colFloat":  PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
+		PageFloat64{1, math.NaN(), 2, 3},
+		PageAny{"hola", "que", "hace", math.NaN()},
+		PageAny{math.NaN(), true, false, math.NaN()},
+		PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
 	}
 	df1 := DataFrame{
 		Columns: columns,
@@ -165,10 +166,10 @@ func TestEqualDataFrame(t *testing.T) {
 func TestDifferentlDataFrame(t *testing.T) {
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}
 	chapters := Book{
-		"colInt2":    PageFloat64{1, math.NaN(), 2, 3},
-		"colString2": PageString{"hola", "que", "hace", nil},
-		"colBool2":   PageBool{nil, true, false, nil},
-		"colFloat2":  PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
+		PageFloat64{1, math.NaN(), 2, 3},
+		PageAny{"hola", "que", "hace", math.NaN()},
+		PageAny{math.NaN(), true, false, math.NaN()},
+		PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
 	}
 
 	df1 := DataFrame{
@@ -198,9 +199,9 @@ func TestDifferentlDataFrame(t *testing.T) {
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
-		"col1": PageString{"row11", "row21"},
-		"col2": PageString{"row12", "row22"},
-		"col3": PageBool{true, false},
+		PageString{"row11", "row21"},
+		PageString{"row12", "row22"},
+		PageBool{true, false},
 	}
 
 	df := DataFrame{
@@ -221,9 +222,9 @@ func TestPrintDataFrame(t *testing.T) {
 func TestPrintDataFrameWithNaN(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
-		"col1": PageString{math.NaN(), "row21"},
-		"col2": PageString{"row12", "row22"},
-		"col3": PageString{"row13", "row23"},
+		PageAny{math.NaN(), "row21"},
+		PageString{"row12", "row22"},
+		PageString{"row13", "row23"},
 	}
 
 	df := DataFrame{
