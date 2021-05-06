@@ -50,10 +50,12 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 	// If schema is set
 	if len(csvInternal.Schema) > 0 {
-
-		for i := range csvInternal.Schema {
-			df.Values = append(df.Values, csvInternal.Schema[i])
-		}
+		/*
+			for i := range csvInternal.Schema {
+				df.Values = append(df.Values, csvInternal.Schema[i])
+			}
+		*/
+		df.Values = csvInternal.Schema
 
 		//		df.Values = csvInternal.Schema
 
