@@ -50,7 +50,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	df := dataframe.DataFrame{}
 	df.Columns = csv[0]
 	df.Values = dataframe.Book{}
-	layout := "2006-01-02" // YYYY-MM-DD
+	layout := "2006-01-02" // Dafault: YYYY-MM-DD
 
 	if csvInternal.Dateformat != "" {
 		value := strings.Replace(csvInternal.Dateformat, "YYYY", "2006", 1)
@@ -61,22 +61,10 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 	// If schema is set
 	if len(csvInternal.Schema) > 0 {
-		/*
-			for i := range csvInternal.Schema {
-				df.Values = append(df.Values, csvInternal.Schema[i])
-			}
-		*/
 		df.Values = csvInternal.Schema
-
-		//		df.Values = csvInternal.Schema
-
-		//		chapters := []interface{}{}
-		//		valueMap := make(map[string][]interface{})
 
 		for _, rowValue := range csv[1:] {
 			for columnIndex, columnValue := range rowValue {
-				//				chapters[columnIndex] = append(chapters[columnIndex], columnValue)
-				//				valueMap[df.Columns[columnIndex]] = append(valueMap[df.Columns[columnIndex]], columnValue)
 
 				switch df.Values[columnIndex].(type) {
 				case dataframe.PageString:
@@ -99,13 +87,10 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 				}
 
-				//fmt.Println(df.Values[columnIndex], columnValue)
-				//fmt.Println(reflect.TypeOf(df.Values[columnIndex]))
 			}
 
 		}
 	}
-	//df.Values = chapters
 
 	return df
 }
