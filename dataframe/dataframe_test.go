@@ -137,6 +137,18 @@ func TestSchema(t *testing.T) {
 
 }
 
+func TestDataformat(t *testing.T) {
+	dateformat := "YYYY-MM-DD"
+	csvResult := &CSV{}
+	csvOptionInternal := Dateformat(dateformat)
+	csvOptionInternal(csvResult)
+
+	if !reflect.DeepEqual(dateformat, csvResult.Dateformat) {
+		t.Errorf("Schema error. Expected: %v. But result: %v", dateformat, csvResult.Dateformat)
+	}
+
+}
+
 func TestEqualDataFrame(t *testing.T) {
 
 	columns := []string{"colInt", "colString", "colBool", "colFloat"}

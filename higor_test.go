@@ -106,7 +106,7 @@ func TestReadCSVMultipleDataTypes(t *testing.T) {
 
 }
 
-func TestReadCSVWithDatatimeType(t *testing.T) {
+func TestReadCSVWithDatatimeTypeDefault(t *testing.T) {
 	// Mockup
 	data := [][]string{{"colDatetime"}, {"2020-01-02"}, {"2020-01-30"}}
 	separator := '|'
@@ -114,6 +114,7 @@ func TestReadCSVWithDatatimeType(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 	layout := "2006-01-02"
+
 	date1, _ := time.Parse(layout, "2020-01-02")
 	date2, _ := time.Parse(layout, "2020-01-30")
 	dfExpected := dataframe.DataFrame{
@@ -125,7 +126,60 @@ func TestReadCSVWithDatatimeType(t *testing.T) {
 	schema := dataframe.Book{
 		dataframe.PageDatetime{},
 	}
+	//	dateformat := "YYYY-MM-DD"
 	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+}
+
+func TestReadCSVWithDatatimeTypeCustom(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colDatetime"}, {"2020/01/02"}, {"2020/01/30"}}
+	separator := '|'
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+	layout := "2006/01/02"
+
+	date1, _ := time.Parse(layout, "2020/01/02")
+	date2, _ := time.Parse(layout, "2020/01/30")
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colDatetime"},
+		Values: dataframe.Book{
+			dataframe.PageDatetime{date1, date2},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageDatetime{},
+	}
+	dateformat := "YYYY/MM/DD"
+	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema), dataframe.Dateformat(dateformat))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+}
+
+func TestReadCSVWithDatatimeTypeCustomInverted(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colDatetime"}, {"2020-28-02"}, {"2020-30-01"}}
+	separator := '|'
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+	layout := "2006-02-01"
+
+	date1, _ := time.Parse(layout, "2020-28-02")
+	date2, _ := time.Parse(layout, "2020-30-01")
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colDatetime"},
+		Values: dataframe.Book{
+			dataframe.PageDatetime{date1, date2},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageDatetime{},
+	}
+	dateformat := "YYYY-DD-MM"
+	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema), dataframe.Dateformat(dateformat))
 
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 }

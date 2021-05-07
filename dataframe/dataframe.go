@@ -97,6 +97,7 @@ type CSV struct {
 	LineString string
 	LazyQuotes bool
 	Schema     Book
+	Dateformat string
 }
 
 // ErrorChecker to kown if there are error
@@ -120,6 +121,13 @@ func Sep(separator rune) CSVOption {
 func Schema(schema Book) CSVOption {
 	return func(c *CSV) {
 		c.Schema = schema
+	}
+}
+
+// Dateformat Set date format in all columns
+func Dateformat(dateformat string) CSVOption {
+	return func(c *CSV) {
+		c.Dateformat = dateformat
 	}
 }
 

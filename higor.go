@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/osmandi/higor/dataframe"
@@ -50,6 +51,14 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	df := dataframe.DataFrame{}
 	df.Columns = csv[0]
 	df.Values = dataframe.Book{}
+	layout := "2006-01-02" // YYYY-MM-DD
+
+	if csvInternal.Dateformat != "" {
+		value := strings.Replace(csvInternal.Dateformat, "YYYY", "2006", 1)
+		value = strings.Replace(value, "MM", "01", 1)
+		value = strings.Replace(value, "DD", "02", 1)
+		layout = value
+	}
 
 	// If schema is set
 	if len(csvInternal.Schema) > 0 {
@@ -87,7 +96,6 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 					}
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
 				case dataframe.PageDatetime:
-					layout := "2006-01-02" // YYYY-MM-DD
 					dateValue, err := time.Parse(layout, columnValue)
 					if err != nil {
 						log.Fatal(err)

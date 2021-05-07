@@ -94,6 +94,7 @@ Hello from Higor :) v0.3.0
 - Set schema to read a CSV with parsing values
 - Save values with a specific DataType slice instead a interface
 - DataType for datetime values
+- DataType for datetime values with custom format
 
 ## v0.3.1: DataTypes reading unexpeding
 - ReadCSV with nil values
