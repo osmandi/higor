@@ -117,5 +117,5 @@ Hello from Higor :) v0.3.0
 - Export without header
 - Export without index
 
-## v0.3.4: Improve features
-- Custom datetime layout by each column
+## v0.3.5: Improve features
+- Custom datetime format by each column
