@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -24,6 +25,9 @@ type PageBool []bool
 
 // PageFloat64 Data type for numbers and float values
 type PageFloat64 []float64
+
+// PageDatetime To date dates
+type PageDatetime []time.Time
 
 // Book Interface to save a DataFrame
 type Book []interface{}

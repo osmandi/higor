@@ -3,6 +3,7 @@ package higor
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/osmandi/higor/dataframe"
 )
@@ -104,3 +105,30 @@ func TestReadCSVMultipleDataTypes(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
+
+func TestReadCSVWithDatatimeType(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colDatetime"}, {"2020-01-02"}, {"2020-01-30"}}
+	separator := '|'
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+	layout := "2006-01-02"
+	date1, _ := time.Parse(layout, "2020-01-02")
+	date2, _ := time.Parse(layout, "2020-01-30")
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colDatetime"},
+		Values: dataframe.Book{
+			dataframe.PageDatetime{date1, date2},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageDatetime{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+}
+
+// TestReadCSVWithTimestamp
+// TestReadCSVWithMultipleDatetime on Multiple columns

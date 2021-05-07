@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/osmandi/higor/dataframe"
 )
@@ -85,7 +86,13 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 						log.Fatal(err)
 					}
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
-
+				case dataframe.PageDatetime:
+					layout := "2006-01-02" // YYYY-MM-DD
+					dateValue, err := time.Parse(layout, columnValue)
+					if err != nil {
+						log.Fatal(err)
+					}
+					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
 				case dataframe.PageAny:
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
 
