@@ -3,7 +3,6 @@ package higor
 import (
 	"encoding/csv"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -84,22 +83,16 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
 				case dataframe.PageFloat64:
 					valueFloat64, err := strconv.ParseFloat(columnValue, 64)
-					if err != nil {
-						log.Fatal(err)
-					}
+					dataframe.ErrorChecker(err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
 
 				case dataframe.PageBool:
 					valueBool, err := strconv.ParseBool(columnValue)
-					if err != nil {
-						log.Fatal(err)
-					}
+					dataframe.ErrorChecker(err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
 				case dataframe.PageDatetime:
 					dateValue, err := time.Parse(layout, columnValue)
-					if err != nil {
-						log.Fatal(err)
-					}
+					dataframe.ErrorChecker(err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
 				case dataframe.PageAny:
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
