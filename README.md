@@ -40,20 +40,47 @@ go get -v -u github.com/osmandi/higor
 ```Go
 package main
 
-import hg "github.com/osmandi/higor"
+import (
+	"fmt"
+
+	hg "github.com/osmandi/higor"
+	"github.com/osmandi/higor/dataframe"
+)
 
 func main() {
-    
-    // Higor says Hi!
-    fmt.Println(hg.HelloHigor())    
+	fmt.Println(hg.HelloHigor())
+	fmt.Println("")
 
-    // Read a DataFrame and print it
-   	df := hg.ReadCSV("example.csv")
-   	fmt.Println(df)
-
-    // Export a DataFrame
-   	df.ToCSV("example_exported.csv")
+	// sample.csv content:
+	/*
+		col1,col2,col3,col4,col5
+		1,2,no,true,2021-01-30
+		3,5,hello,false,2021-28-02
+	*/
+	schema := dataframe.Book{
+		dataframe.PageFloat64{},
+		dataframe.PageFloat64{},
+		dataframe.PageString{},
+		dataframe.PageBool{},
+		dataframe.PageDatetime{},
+	}
+	dateformat := "YYYY-MM-DD"
+	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema), dataframe.Dateformat(dateformat))
+	fmt.Println(df)
 }
+```
+
+Result:
+
+```Bash
+Hello from Higor :) v0.3.0
+
++------+------+-------+-------+-------------------------------+
+| COL1 | COL2 | COL3  | COL4  |             COL5              |
++------+------+-------+-------+-------------------------------+
+|    1 |    2 | no    | true  | 2021-01-30 00:00:00 +0000 UTC |
+|    3 |    5 | hello | false | 2021-02-28 00:00:00 +0000 UTC |
++------+------+-------+-------+-------------------------------+
 ```
 
 ## How to contribute?
@@ -65,10 +92,11 @@ func main() {
 # Releases version
 
 ## v0.3.0: DataType by column
-- Print DataType (string, bool, int8, int64, etc) on the footer
+- Delete footer
 - Set schema to read a CSV with parsing values
 - Save values with a specific DataType slice instead a interface
 - DataType for datetime values
+- DataType for datetime values with custom format
 
 ## v0.3.1: DataTypes reading unexpeding
 - ReadCSV with nil values
@@ -86,3 +114,6 @@ func main() {
 - Export with nils values
 - Export without header
 - Export without index
+
+## v0.3.4: Improve features
+- Custom datetime layout by each column
