@@ -91,6 +91,8 @@ Hello from Higor :) v0.3.0
 
 # Releases version
 
+> Actual version: v0.3.0
+
 ## v0.3.0: DataType by column
 - Delete footer
 - Set schema to read a CSV with parsing values
