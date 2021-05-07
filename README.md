@@ -40,20 +40,45 @@ go get -v -u github.com/osmandi/higor
 ```Go
 package main
 
-import hg "github.com/osmandi/higor"
+import (
+	"fmt"
+
+	hg "github.com/osmandi/higor"
+	"github.com/osmandi/higor/dataframe"
+)
 
 func main() {
-    
-    // Higor says Hi!
-    fmt.Println(hg.HelloHigor())    
+	fmt.Println(hg.HelloHigor())
+	fmt.Println("")
 
-    // Read a DataFrame and print it
-   	df := hg.ReadCSV("example.csv")
-   	fmt.Println(df)
-
-    // Export a DataFrame
-   	df.ToCSV("example_exported.csv")
+	// sample.csv content:
+	/*
+		col1,col2,col3,col4
+		1,2,no,true
+		3,5,hello,false
+	*/
+	schema := dataframe.Book{
+		dataframe.PageFloat64{},
+		dataframe.PageFloat64{},
+		dataframe.PageString{},
+		dataframe.PageBool{},
+	}
+	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema))
+	fmt.Println(df)
 }
+```
+
+Result:
+
+```Bash
+Hello from Higor :) v0.3.0
+
++------+------+-------+-------+
+| COL1 | COL2 | COL3  | COL4  |
++------+------+-------+-------+
+|    1 |    2 | no    | true  |
+|    3 |    5 | hello | false |
++------+------+-------+-------+
 ```
 
 ## How to contribute?
