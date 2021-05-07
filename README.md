@@ -53,17 +53,19 @@ func main() {
 
 	// sample.csv content:
 	/*
-		col1,col2,col3,col4
-		1,2,no,true
-		3,5,hello,false
+		col1,col2,col3,col4,col5
+		1,2,no,true,2021-01-30
+		3,5,hello,false,2021-28-02
 	*/
 	schema := dataframe.Book{
 		dataframe.PageFloat64{},
 		dataframe.PageFloat64{},
 		dataframe.PageString{},
 		dataframe.PageBool{},
+		dataframe.PageDatetime{},
 	}
-	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema))
+	dateformat := "YYYY-MM-DD"
+	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema), dataframe.Dateformat(dateformat))
 	fmt.Println(df)
 }
 ```
@@ -73,12 +75,12 @@ Result:
 ```Bash
 Hello from Higor :) v0.3.0
 
-+------+------+-------+-------+
-| COL1 | COL2 | COL3  | COL4  |
-+------+------+-------+-------+
-|    1 |    2 | no    | true  |
-|    3 |    5 | hello | false |
-+------+------+-------+-------+
++------+------+-------+-------+-------------------------------+
+| COL1 | COL2 | COL3  | COL4  |             COL5              |
++------+------+-------+-------+-------------------------------+
+|    1 |    2 | no    | true  | 2021-01-30 00:00:00 +0000 UTC |
+|    3 |    5 | hello | false | 2021-02-28 00:00:00 +0000 UTC |
++------+------+-------+-------+-------------------------------+
 ```
 
 ## How to contribute?
