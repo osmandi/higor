@@ -75,3 +75,32 @@ func TestReadCSVAnoterSeparator(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
+
+func TestReadCSVMultipleDataTypes(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString", "colBool", "colFloat64", "colAny"}, {"rowString", "true", "1", "uno"}, {"rowString", "false", "3.2", "false"}}
+	separator := '|'
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString", "colBool", "colFloat64", "colAny"},
+		Values: dataframe.Book{
+			dataframe.PageString{"rowString", "rowString"},
+			dataframe.PageBool{true, false},
+			dataframe.PageFloat64{1, 3.2},
+			dataframe.PageAny{"uno", "false"},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageBool{},
+		dataframe.PageFloat64{},
+		dataframe.PageAny{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Sep('|'), dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}
