@@ -119,3 +119,9 @@ Hello from Higor :) v0.3.0
 
 ## v0.3.5: Improve features
 - Custom datetime format by each column
+
+## v0.4.x: Column manipulate (select, update, drop, create)
+
+## v0.5.x: Implement statistics functions (Mean, Median, etc)
+
+## v0.6.x: Implement concurrency by default
