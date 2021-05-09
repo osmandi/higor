@@ -107,6 +107,7 @@ Hello from Higor :) v0.3.0
 - [ ] ReadCSV with none values - PageDate
 - [x] ReadCSV custom none values setting
 - [ ] Message for incorrect schema
+- [ ] Set what PageTypes has None values support
 
 ## v0.3.2: Improve DataFrame print it
 - Print tail dataframe
@@ -123,6 +124,8 @@ Hello from Higor :) v0.3.0
 
 ## v0.3.5: Improve features
 - Custom datetime format by each column
+- Set a way to ignore rows with NaN values
+- Set a way to change to PageAny if found None values whe that is not supported on the schema
 
 ## v0.4.x: Column manipulate (select, update, drop, create)
 
