@@ -101,9 +101,12 @@ Hello from Higor :) v0.3.0
 - DataType for datetime values with custom format
 
 ## v0.3.1: DataTypes reading unexpeding
-- ReadCSV with none values
-- ReadCSV custom none values setting
-- Message for incorrect schema
+- [x] ReadCSV with none values - PageFloat64
+- [x] ReadCSV with none values - PageAny
+- [ ] ReadCSV with none values - PageString
+- [ ] ReadCSV with none values - PageDate
+- [ ] ReadCSV custom none values setting
+- [ ] Message for incorrect schema
 
 ## v0.3.2: Improve DataFrame print it
 - Print tail dataframe
