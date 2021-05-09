@@ -236,3 +236,29 @@ func TestReadCSVNormalWithNoneValuesColFloat64(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
+
+func TestReadCSVNormalWithNoneCustom(t *testing.T) {
+	// Mockup
+	none := "none"
+	data := [][]string{{"colString", "colFloat64"}, {"row11", "2"}, {"row21", "none"}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString", "colFloat64"},
+		Values: dataframe.Book{
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageFloat64{2, math.NaN()},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageFloat64{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema), dataframe.None(none))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}

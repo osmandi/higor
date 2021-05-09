@@ -137,6 +137,17 @@ func TestSchema(t *testing.T) {
 
 }
 
+func TestNone(t *testing.T) {
+	none := "none"
+	csvResult := &CSV{}
+	csvOptionInternal := None(none)
+	csvOptionInternal(csvResult)
+
+	if csvResult.None != none {
+		t.Errorf("None error. Expected: %v - But result: %v", none, csvResult.None)
+	}
+}
+
 func TestDataformat(t *testing.T) {
 	dateformat := "YYYY-MM-DD"
 	csvResult := &CSV{}

@@ -30,6 +30,7 @@ func HelloHigor() string {
 func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	csvInternal := &dataframe.CSV{}
 	csvInternal.Sep = ','
+	csvInternal.None = ""
 
 	for _, opt := range opts {
 		opt(csvInternal)
@@ -71,7 +72,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 				case dataframe.PageString:
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
 				case dataframe.PageFloat64:
-					if columnValue != "" {
+					if columnValue != csvInternal.None {
 						valueFloat64, err := strconv.ParseFloat(columnValue, 64)
 						dataframe.ErrorChecker(err)
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
@@ -87,7 +88,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 					dataframe.ErrorChecker(err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
 				case dataframe.PageAny:
-					if columnValue != "" {
+					if columnValue != csvInternal.None {
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
 					} else {
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), math.NaN())

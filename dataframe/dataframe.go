@@ -159,6 +159,7 @@ type CSV struct {
 	LazyQuotes bool
 	Schema     Book
 	Dateformat string
+	None       string
 }
 
 // ErrorChecker to kown if there are error
@@ -182,6 +183,13 @@ func Sep(separator rune) CSVOption {
 func Schema(schema Book) CSVOption {
 	return func(c *CSV) {
 		c.Schema = schema
+	}
+}
+
+// None to set custom value for None
+func None(none string) CSVOption {
+	return func(c *CSV) {
+		c.None = none
 	}
 }
 
