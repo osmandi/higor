@@ -71,9 +71,13 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 				case dataframe.PageString:
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
 				case dataframe.PageFloat64:
-					valueFloat64, err := strconv.ParseFloat(columnValue, 64)
-					dataframe.ErrorChecker(err)
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
+					if columnValue != "" {
+						valueFloat64, err := strconv.ParseFloat(columnValue, 64)
+						dataframe.ErrorChecker(err)
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), math.NaN())
+					}
 				case dataframe.PageBool:
 					valueBool, err := strconv.ParseBool(columnValue)
 					dataframe.ErrorChecker(err)
