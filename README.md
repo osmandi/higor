@@ -105,7 +105,7 @@ Hello from Higor :) v0.3.0
 - [x] ReadCSV with none values - PageAny
 - [ ] ReadCSV with none values - PageString
 - [ ] ReadCSV with none values - PageDate
-- [ ] ReadCSV custom none values setting
+- [x] ReadCSV custom none values setting
 - [ ] Message for incorrect schema
 
 ## v0.3.2: Improve DataFrame print it
