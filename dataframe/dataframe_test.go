@@ -167,10 +167,10 @@ func TestEqualDataFrame(t *testing.T) {
 		Values:  chapters,
 	}
 
-	isEqual := IsEqual(df1, df2)
+	isEqual, message := IsEqual(df1, df2)
 
 	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!")
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
 	}
 }
 
@@ -193,7 +193,7 @@ func TestDifferentlDataFrame(t *testing.T) {
 		Values:  chapters,
 	}
 
-	isEqual := IsEqual(df1, df2)
+	isEqual, _ := IsEqual(df1, df2)
 
 	if isEqual {
 		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")

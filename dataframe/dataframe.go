@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"reflect"
 	"strings"
@@ -39,8 +40,66 @@ type DataFrame struct {
 }
 
 // IsEqual to kown if two DataFrame are equal
-func IsEqual(dataFrame1, dataFrame2 DataFrame) bool {
-	return reflect.DeepEqual(dataFrame1, dataFrame2)
+func IsEqual(dataFrame1, dataFrame2 DataFrame) (bool, string) {
+	columnComparation := reflect.DeepEqual(dataFrame1.Columns, dataFrame2.Columns)
+
+	// Columns comparation
+	if !columnComparation {
+		return false, "Columns are different"
+	}
+
+	// Values comparation
+	valuesDataFrame1 := dataFrame1.Values
+	valuesDataFrame2 := dataFrame2.Values
+
+	if len(valuesDataFrame1) != len(valuesDataFrame2) {
+		return false, ""
+	}
+
+	for i, v := range valuesDataFrame1 {
+		switch v.(type) {
+		case PageString:
+			for i2, v2 := range v.(PageString) {
+				v3 := valuesDataFrame2[i].(PageString)[i2]
+				if v2 != v3 {
+					return false, fmt.Sprintf("PageStringError: v2: %v | v3: %v", v2, v3)
+				}
+			}
+		case PageBool:
+			for i2, v2 := range v.(PageBool) {
+				v3 := valuesDataFrame2[i].(PageBool)[i2]
+				if v2 != v3 {
+					return false, fmt.Sprintf("PageBoolError: v2: %v | v3: %v", v2, v3)
+				}
+			}
+		case PageFloat64:
+			for i2, v2 := range v.(PageFloat64) {
+				v3 := valuesDataFrame2[i].(PageFloat64)[i2]
+				if math.IsNaN(v2) != math.IsNaN(v3) {
+					return false, fmt.Sprintf("PageFloat64ErrorIsNaN: v2: %v | v3: %v | v2 == v3: %v", math.IsNaN(v2), math.IsNaN(v3), math.IsNaN(v2) == math.IsNaN(v3))
+				} else if v2 != v3 && !math.IsNaN(v2) {
+					return false, fmt.Sprintf("PageFloat64ErrorComparation: v2: %v | v3: %v | v2 == v3: %v", v2, v3, v2 == v3)
+				}
+			}
+		case PageAny:
+			for i2, v2 := range v.(PageAny) {
+				if fmt.Sprintf("%T", v2) == "float64" {
+					if math.IsNaN(v2.(float64)) != math.IsNaN(valuesDataFrame2[i].(PageAny)[i2].(float64)) {
+						return false, ""
+					}
+
+				} else if v2 != valuesDataFrame2[i].(PageAny)[i2] {
+					fmt.Println("PageAny")
+					fmt.Printf("v2: %v, v3: %v\n", v2, valuesDataFrame2[i].(PageAny)[i2])
+					fmt.Printf("v2 == v3: %v\n", v2 == valuesDataFrame2[i].(PageAny)[i2])
+					return false, ""
+				}
+			}
+
+		}
+	}
+
+	return true, ""
 
 }
 
@@ -82,9 +141,11 @@ func CSVChecker(dataExpected, dataResult [][]string, t *testing.T) {
 
 // DataFrameChecker To check if two DataFrame are equal
 func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
-	isEqual := IsEqual(dfExpected, dfResult)
+	isEqual, message := IsEqual(dfExpected, dfResult)
 	if !isEqual {
-		t.Errorf("dfExpected and dfResult are distinct.\ndfExpected: \n%v \ndfResult: \n%v", dfExpected, dfResult)
+		t.Errorf("dfExpected and dfResult are distinct: %s.\ndfExpected: \n%v \ndfResult: \n%v", message, dfExpected, dfResult)
+		t.Errorf("Values:\n - dfExpected.Values: %v\n - dfResult.Values: %s\n", dfExpected.Values, dfResult.Values)
+		t.Errorf("Columns:\n - dfExpected.Columns: %v\n - dfResult.Columns: %s\n", dfExpected.Columns, dfResult.Columns)
 	}
 
 }

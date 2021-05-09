@@ -101,8 +101,9 @@ Hello from Higor :) v0.3.0
 - DataType for datetime values with custom format
 
 ## v0.3.1: DataTypes reading unexpeding
-- ReadCSV with nil values
-- ReadCSV custom nil values setting
+- ReadCSV with none values
+- ReadCSV custom none values setting
+- Message for incorrect schema
 
 ## v0.3.2: Improve DataFrame print it
 - Print tail dataframe
