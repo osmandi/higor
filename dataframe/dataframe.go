@@ -103,6 +103,16 @@ func IsEqual(dataFrame1, dataFrame2 DataFrame) (bool, string) {
 
 }
 
+// IsNaN To know if a interface{} is NaN
+func IsNaN(a interface{}) bool {
+	switch a.(type) {
+	case time.Time:
+		return a.(time.Time).IsZero()
+	}
+
+	return false
+}
+
 /////////
 // CSV /
 

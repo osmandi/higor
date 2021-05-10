@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestErrorChecker(t *testing.T) {
@@ -264,6 +265,55 @@ func TestPrintDataFrameWithNaN(t *testing.T) {
 	}
 
 }
+
+//Here
+func TestIsNaNPageDatetimeFalse(t *testing.T) {
+	layout := "2006-01-02"
+	dateNaNFalse, _ := time.Parse(layout, "2020-01-02")
+	//dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	resultExpectedFalse := IsNaN(dateNaNFalse)
+
+	if resultExpectedFalse != false {
+		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
+	}
+
+}
+
+func TestIsNaNPageDatetimeTrue(t *testing.T) {
+	dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	resultExpectedTrue := IsNaN(dateNaNTrue)
+
+	if resultExpectedTrue != true {
+		t.Errorf("IsNaN Error. Expected: True | but Result: %t", resultExpectedTrue)
+	}
+
+}
+
+/*
+func TestPrintDataFrameDateWithNaN(t *testing.T) {
+	columns := []string{"colDate"}
+	date1, _ := time.Parse(layout, "2020-01-02")
+	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	chapters := Book{
+		PageDate{},
+		PageDate{},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+
+	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+*/
 
 ///////////////////////////
 // DataTypes on columns //
