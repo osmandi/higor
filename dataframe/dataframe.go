@@ -240,6 +240,16 @@ func trasposeRows(df DataFrame) [][]string {
 			if value == nil {
 				v = ""
 			}
+
+			// Detect NaN values
+			switch value.(type) {
+			case time.Time:
+				fmt.Println("here")
+				if IsNaN(value) {
+					v = "NaN"
+				}
+			}
+
 			data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
 		}
 	}

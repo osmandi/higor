@@ -266,7 +266,6 @@ func TestPrintDataFrameWithNaN(t *testing.T) {
 
 }
 
-//Here
 func TestIsNaNPageDatetimeFalse(t *testing.T) {
 	layout := "2006-01-02"
 	dateNaNFalse, _ := time.Parse(layout, "2020-01-02")
@@ -289,22 +288,24 @@ func TestIsNaNPageDatetimeTrue(t *testing.T) {
 
 }
 
-/*
+// Here
 func TestPrintDataFrameDateWithNaN(t *testing.T) {
-	columns := []string{"colDate"}
+	columns := []string{"colDate", "colString1", "colString2"}
+	layout := "2006-01-02"
 	date1, _ := time.Parse(layout, "2020-01-02")
 	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 	chapters := Book{
-		PageDate{},
-		PageDate{},
+		PageDatetime{date1, dateNaN},
+		PageString{"hola1", "hola2"},
+		PageString{"hola1", "hola2"},
 	}
 
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
 	}
-
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
+	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
+	//	tableExpectedFormat := "+-------+-------+-------+\n| COLDATE | COLSTRING1 | COLSTRING2  |\n+-------+-------+-------+\n| 2020-01-02 00:00:00 +0000 UTC  | NaN |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -313,7 +314,6 @@ func TestPrintDataFrameDateWithNaN(t *testing.T) {
 	}
 
 }
-*/
 
 ///////////////////////////
 // DataTypes on columns //
