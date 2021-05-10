@@ -106,6 +106,7 @@ Hello from Higor :) v0.3.0
 - [ ] ReadCSV with none values - PageString
 - [ ] ReadCSV with none values - PageDate
 - [x] ReadCSV custom none values setting
+- [ ] ReadCSV correct print NaN values
 - [ ] Message for incorrect schema
 - [ ] Set what PageTypes has None values support
 

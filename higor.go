@@ -31,6 +31,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	csvInternal := &dataframe.CSV{}
 	csvInternal.Sep = ','
 	csvInternal.None = ""
+	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	for _, opt := range opts {
 		opt(csvInternal)
@@ -84,9 +85,13 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 					dataframe.ErrorChecker(err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
 				case dataframe.PageDatetime:
-					dateValue, err := time.Parse(layout, columnValue)
-					dataframe.ErrorChecker(err)
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
+					if columnValue != csvInternal.None {
+						dateValue, err := time.Parse(layout, columnValue)
+						dataframe.ErrorChecker(err)
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateNaN)
+					}
 				case dataframe.PageAny:
 					if columnValue != csvInternal.None {
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
