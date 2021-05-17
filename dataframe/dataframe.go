@@ -235,7 +235,12 @@ func trasposeRows(df DataFrame) [][]string {
 		switch colValues.(type) {
 		case PageString:
 			for i2, v2 := range colValues.(PageString) {
-				data[i2+1] = append(data[i2+1], v2)
+				if IsNaN(v2) {
+					data[i2+1] = append(data[i2+1], "NaN")
+				} else {
+					data[i2+1] = append(data[i2+1], v2)
+
+				}
 			}
 
 		case PageFloat64:

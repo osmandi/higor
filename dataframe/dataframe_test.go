@@ -343,7 +343,7 @@ func TestPrintPageStringWithNaN(t *testing.T) {
 		Columns: columns,
 		Values:  chapters,
 	}
-	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+"
+	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+\n"
 
 	tableResultFormat := df.String()
 
