@@ -259,31 +259,6 @@ func trasposeRows(df DataFrame) [][]string {
 			}
 		}
 	}
-
-	// Traspose row
-	/*
-		for colIndex := range df.Columns {
-			colValues := df.Values[colIndex]
-			valuesIterate := []interface{}{}
-			values := reflect.ValueOf(colValues)
-			for i := 0; i < values.Len(); i++ {
-				valuesIterate = append(valuesIterate, values.Index(i))
-			}
-			for rowIndex, value := range valuesIterate {
-				var v interface{}
-				v = value
-
-				// Detect NaN values
-				if IsNaN(value) {
-					fmt.Println("Here")
-					v = "NaN"
-				}
-
-				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
-			}
-		}
-	*/
-
 	return data
 }
 
