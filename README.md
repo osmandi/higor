@@ -104,7 +104,7 @@ Hello from Higor :) v0.3.0
 - [x] ReadCSV with none values - PageFloat64
 - [x] ReadCSV with none values - PageAny
 - [ ] ReadCSV with none values - PageString
-- [ ] ReadCSV with none values - PageDate
+- [x] ReadCSV with none values - PageDatetime
 - [x] ReadCSV custom none values setting
 - [ ] ReadCSV correct print NaN values
 - [ ] Message for incorrect schema
