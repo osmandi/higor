@@ -103,10 +103,10 @@ Hello from Higor :) v0.3.0
 ## v0.3.1: DataTypes reading unexpeding
 - [x] ReadCSV with none values - PageFloat64
 - [x] ReadCSV with none values - PageAny
-- [ ] ReadCSV with none values - PageString
+- [x] ReadCSV with none values - PageString
 - [x] ReadCSV with none values - PageDatetime
 - [x] ReadCSV custom none values setting
-- [ ] ReadCSV correct print NaN values
+- [x] ReadCSV correct print NaN values
 - [ ] Message for incorrect schema
 - [ ] Set what PageTypes has None values support
 
