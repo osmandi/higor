@@ -288,7 +288,22 @@ func TestIsNaNPageDatetimeTrue(t *testing.T) {
 
 }
 
-// Here
+func TestIsNaNPageStringFalse(t *testing.T) {
+	stringNaNFalse := "isFalse"
+	resultExpectedFalse := IsNaN(stringNaNFalse)
+	if resultExpectedFalse != false {
+		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
+	}
+}
+
+func TestIsNaNPageStringTrue(t *testing.T) {
+	stringNaNTrue := ""
+	resultExpectedTrue := IsNaN(stringNaNTrue)
+	if resultExpectedTrue != true {
+		t.Errorf("IsNaN Error. Expected: true | but Result: %t", resultExpectedTrue)
+	}
+}
+
 func TestPrintDataFrameDateWithNaN(t *testing.T) {
 	columns := []string{"colDate", "colString1", "colString2"}
 	layout := "2006-01-02"
@@ -306,6 +321,29 @@ func TestPrintDataFrameDateWithNaN(t *testing.T) {
 	}
 	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
 	//	tableExpectedFormat := "+-------+-------+-------+\n| COLDATE | COLSTRING1 | COLSTRING2  |\n+-------+-------+-------+\n| 2020-01-02 00:00:00 +0000 UTC  | NaN |\n+-------+-------+-------+\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+// Here
+func TestPrintPageStringWithNaN(t *testing.T) {
+	columns := []string{"colString1", "colString2", "colstring3"}
+	chapters := Book{
+		PageString{"hola1", ""},
+		PageString{"", "hola2"},
+		PageString{"", ""},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+	}
+	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+"
 
 	tableResultFormat := df.String()
 

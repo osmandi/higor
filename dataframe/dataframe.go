@@ -108,6 +108,10 @@ func IsNaN(a interface{}) bool {
 	switch a.(type) {
 	case time.Time:
 		return a.(time.Time).IsZero()
+	case string:
+		if a.(string) == "" {
+			return true
+		}
 	}
 
 	return false
