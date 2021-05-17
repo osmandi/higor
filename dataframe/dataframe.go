@@ -226,27 +226,63 @@ func trasposeRows(df DataFrame) [][]string {
 	// Add columns names
 	data[0] = df.Columns
 
-	// Traspose row
-	for colIndex := range df.Columns {
-		colValues := df.Values[colIndex]
-		valuesIterate := []interface{}{}
-		values := reflect.ValueOf(colValues)
-		for i := 0; i < values.Len(); i++ {
-			valuesIterate = append(valuesIterate, values.Index(i))
-		}
-		for rowIndex, value := range valuesIterate {
-			var v interface{}
-			v = value
-
-			// Detect NaN values
-			if IsNaN(value) {
-				fmt.Println("Here")
-				v = "NaN"
+	for i := range df.Columns {
+		colValues := df.Values[i]
+		switch colValues.(type) {
+		case PageString:
+			for i2, v2 := range colValues.(PageString) {
+				data[i2+1] = append(data[i2+1], v2)
 			}
 
-			data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
+		case PageFloat64:
+			for i2, v2 := range colValues.(PageFloat64) {
+				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+			}
+
+		case PageBool:
+			for i2, v2 := range colValues.(PageBool) {
+				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+			}
+
+		case PageAny:
+			for i2, v2 := range colValues.(PageAny) {
+				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+			}
+
+		case PageDatetime:
+			for i2, v2 := range colValues.(PageDatetime) {
+				if IsNaN(v2) {
+					data[i2+1] = append(data[i2+1], "NaN")
+				} else {
+					data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+				}
+			}
 		}
 	}
+
+	// Traspose row
+	/*
+		for colIndex := range df.Columns {
+			colValues := df.Values[colIndex]
+			valuesIterate := []interface{}{}
+			values := reflect.ValueOf(colValues)
+			for i := 0; i < values.Len(); i++ {
+				valuesIterate = append(valuesIterate, values.Index(i))
+			}
+			for rowIndex, value := range valuesIterate {
+				var v interface{}
+				v = value
+
+				// Detect NaN values
+				if IsNaN(value) {
+					fmt.Println("Here")
+					v = "NaN"
+				}
+
+				data[rowIndex+1] = append(data[rowIndex+1], fmt.Sprintf("%v", v))
+			}
+		}
+	*/
 
 	return data
 }
