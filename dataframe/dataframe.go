@@ -216,19 +216,21 @@ func Dateformat(dateformat string) CSVOption {
 
 // GetValues get all values
 func (df DataFrame) GetValues() [][]string {
-	return trasposeRows(df)[1:]
+	return trasposeRows(df)
 }
 
 func trasposeRows(df DataFrame) [][]string {
+
 	data := [][]string{}
 
 	// Add []string empties
-	for range df.Columns {
+	for range df.Columns[:len(df.Columns)-1] {
 		data = append(data, []string{})
 	}
 
 	// Add columns names
-	data[0] = df.Columns
+	//data[0] = df.Columns
+	//	data := [][]string{{"colString"}, {"1", "2"}}
 
 	for i := range df.Columns {
 		colValues := df.Values[i]
@@ -236,34 +238,34 @@ func trasposeRows(df DataFrame) [][]string {
 		case PageString:
 			for i2, v2 := range colValues.(PageString) {
 				if IsNaN(v2) {
-					data[i2+1] = append(data[i2+1], "NaN")
+					data[i2] = append(data[i2], "NaN")
 				} else {
-					data[i2+1] = append(data[i2+1], v2)
+					data[i2] = append(data[i2], v2)
 
 				}
 			}
 
 		case PageFloat64:
 			for i2, v2 := range colValues.(PageFloat64) {
-				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
 			}
 
 		case PageBool:
 			for i2, v2 := range colValues.(PageBool) {
-				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
 			}
 
 		case PageAny:
 			for i2, v2 := range colValues.(PageAny) {
-				data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
 			}
 
 		case PageDatetime:
 			for i2, v2 := range colValues.(PageDatetime) {
 				if IsNaN(v2) {
-					data[i2+1] = append(data[i2+1], "NaN")
+					data[i2] = append(data[i2], "NaN")
 				} else {
-					data[i2+1] = append(data[i2+1], fmt.Sprintf("%v", v2))
+					data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
 				}
 			}
 		}
@@ -296,7 +298,7 @@ func (df DataFrame) String() string {
 	data := trasposeRows(df)
 	table := tablewriter.NewWriter(tableString)
 	table.SetHeader(df.Columns)
-	table.AppendBulk(data[1:])
+	table.AppendBulk(data)
 	table.SetBorder(true)
 	table.SetCenterSeparator("+")
 

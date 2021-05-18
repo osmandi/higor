@@ -262,3 +262,26 @@ func TestReadCSVNormalWithNoneCustom(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
+
+func TestReadCSVNormalMoreRowsThanColumns(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString"}, {"1", "2"}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString"},
+		Values: dataframe.Book{
+			dataframe.PageString{"1", "2"},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}

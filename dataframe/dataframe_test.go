@@ -58,7 +58,7 @@ func TestToCSVNormal(t *testing.T) {
 // TrasposeRows //
 ////////////////////////
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
@@ -75,7 +75,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 
 }
 func TestTrasposeRowsString(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
