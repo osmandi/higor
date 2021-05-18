@@ -221,12 +221,16 @@ func (df DataFrame) GetValues() [][]string {
 
 func trasposeRows(df DataFrame) [][]string {
 
-	data := [][]string{}
+	//	data := [][]string{}
 
 	// Add []string empties
-	for range df.Columns[:len(df.Columns)-1] {
-		data = append(data, []string{})
-	}
+	/*
+		for range df.Columns[:len(df.Columns)-1] {
+			data = append(data, []string{})
+		}
+	*/
+
+	data := make([][]string, len(df.Columns)-1)
 
 	// Add columns names
 	//data[0] = df.Columns
