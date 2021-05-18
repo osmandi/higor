@@ -53,6 +53,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	df := dataframe.DataFrame{}
 	df.Columns = csv[0]
 	df.Values = dataframe.Book{}
+	df.Shape = [2]int{len(csv) - 1, len(csv[0])}
 	layout := "2006-01-02" // Dafault: YYYY-MM-DD
 
 	if csvInternal.Dateformat != "" {

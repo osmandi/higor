@@ -37,6 +37,7 @@ type Book []interface{}
 type DataFrame struct {
 	Columns []string
 	Values  Book
+	Shape   [2]int
 }
 
 // IsEqual to kown if two DataFrame are equal
@@ -229,8 +230,7 @@ func trasposeRows(df DataFrame) [][]string {
 			data = append(data, []string{})
 		}
 	*/
-
-	data := make([][]string, len(df.Columns)-1)
+	data := make([][]string, df.Shape[0])
 
 	// Add columns names
 	//data[0] = df.Columns
