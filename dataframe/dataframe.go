@@ -319,9 +319,9 @@ func (df DataFrame) ToCSV(filename string) {
 	dfInternal := DataFrame{
 		Columns: df.Columns,
 		Values:  df.Values,
+		Shape:   df.Shape,
 	}
 
 	data = append(data, dfInternal.GetValues()...)
-
 	exportCSV(filename, data)
 }

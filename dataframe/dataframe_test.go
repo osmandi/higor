@@ -26,11 +26,11 @@ func TestToCSVNormal(t *testing.T) {
 	dfResult := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-
 			PageString{"row11", "row21"},
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dfResult.ToCSV(filename)
@@ -67,6 +67,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 			PageAny{math.NaN(), "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := trasposeRows(dfExpected)
@@ -84,6 +85,7 @@ func TestTrasposeRowsString(t *testing.T) {
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := trasposeRows(dfExpected)
@@ -102,6 +104,7 @@ func TestValuesNormal(t *testing.T) {
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := dfExpected.GetValues()
@@ -231,6 +234,7 @@ func TestPrintDataFrame(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | true  |\n| row21 | row22 | false |\n+-------+-------+-------+\n"
@@ -254,6 +258,7 @@ func TestPrintDataFrameWithNaN(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
@@ -318,6 +323,7 @@ func TestPrintDataFrameDateWithNaN(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
 	//	tableExpectedFormat := "+-------+-------+-------+\n| COLDATE | COLSTRING1 | COLSTRING2  |\n+-------+-------+-------+\n| 2020-01-02 00:00:00 +0000 UTC  | NaN |\n+-------+-------+-------+\n"
@@ -342,6 +348,7 @@ func TestPrintPageStringWithNaN(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+\n"
 
