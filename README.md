@@ -115,6 +115,7 @@ Hello from Higor :) v0.3.0
 - Print tail dataframe
 - Print head DataFrame
 - Print DataFrame with Index
+- [ ] Goal: Read a large csv file
 
 ## v0.3.3: Automatic reading DataType
 - Read CSV with automatic DataTypes setting
