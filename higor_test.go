@@ -265,7 +265,7 @@ func TestReadCSVNormalWithNoneCustom(t *testing.T) {
 
 func TestReadCSVNormalMoreRowsThanColumns(t *testing.T) {
 	// Mockup
-	data := [][]string{{"colString"}, {"1", "2"}}
+	data := [][]string{{"colString"}, {"1"}, {"2"}}
 	separator := ','
 	csvTempFile := dataframe.CSVCreatorMock(data, separator)
 	csvTempFilename := csvTempFile.Name()
@@ -276,6 +276,7 @@ func TestReadCSVNormalMoreRowsThanColumns(t *testing.T) {
 		Values: dataframe.Book{
 			dataframe.PageString{"1", "2"},
 		},
+		Shape: [2]int{2, 1},
 	}
 	schema := dataframe.Book{
 		dataframe.PageString{},
