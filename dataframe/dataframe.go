@@ -184,6 +184,13 @@ func ErrorChecker(err error) {
 	}
 }
 
+// ErrorSchema to kown if there is error when read an schema
+func ErrorSchema(colName string, pageName string, dataValue interface{}, err error) {
+	if err != nil {
+		log.Fatalf("The schema \"%s\" is incorrect for column \"%s\". Error parsing: \"%v\".\n\t\t You can use PageAny to save any data value.", pageName, colName, dataValue)
+	}
+}
+
 // CSVOption alternative parameters
 type CSVOption func(c *CSV)
 

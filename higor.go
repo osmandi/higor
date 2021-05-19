@@ -80,19 +80,19 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 				case dataframe.PageFloat64:
 					if columnValue != csvInternal.None {
 						valueFloat64, err := strconv.ParseFloat(columnValue, 64)
-						dataframe.ErrorChecker(err)
+						dataframe.ErrorSchema(df.Columns[columnIndex], "PageFloat64", columnValue, err)
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
 					} else {
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), math.NaN())
 					}
 				case dataframe.PageBool:
 					valueBool, err := strconv.ParseBool(columnValue)
-					dataframe.ErrorChecker(err)
+					dataframe.ErrorSchema(df.Columns[columnIndex], "PageBool", columnValue, err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
 				case dataframe.PageDatetime:
 					if columnValue != csvInternal.None {
 						dateValue, err := time.Parse(layout, columnValue)
-						dataframe.ErrorChecker(err)
+						dataframe.ErrorSchema(df.Columns[columnIndex], "PageDatetime", columnValue, err)
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
 					} else {
 						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateNaN)

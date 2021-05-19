@@ -15,6 +15,10 @@ func TestErrorChecker(t *testing.T) {
 	ErrorChecker(nil)
 }
 
+func TestErrorSchema(t *testing.T) {
+	ErrorSchema("", "", nil, nil)
+}
+
 //////////////////
 // Export CSVs //
 ////////////////
