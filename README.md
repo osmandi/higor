@@ -117,7 +117,7 @@ Hello from Higor :) v0.3.0
 - [x] ReadCSV custom none values setting
 - [x] ReadCSV correct print NaN values
 - [ ] Message for incorrect schema
-- [ ] Set what PageTypes has None values support
+- [x] Set what PageTypes has None values support
 - [x] Goal: Read [iris.csv](https://gist.github.com/netj/8836201) file successfully
 
 ## v0.3.2: Improve DataFrame print it
