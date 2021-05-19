@@ -42,10 +42,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	hg "github.com/osmandi/higor"
 	"github.com/osmandi/higor/dataframe"
 )
+
+type myTime time.Time
 
 func main() {
 	fmt.Println(hg.HelloHigor())
@@ -53,19 +56,24 @@ func main() {
 
 	// sample.csv content:
 	/*
-		col1,col2,col3,col4,col5
-		1,2,no,true,2021-01-30
-		3,5,hello,false,2021-28-02
+		colFloat64,colString,colBool,colDatetime,colAny
+		2,no,true,2021-01-30,1.2
+		5,hello,false,none,true
+		none,hello,false,none,none
+		none,none,false,none,helloText
+		5,hello,false,none,2021-02-03
 	*/
+
 	schema := dataframe.Book{
-		dataframe.PageFloat64{},
-		dataframe.PageFloat64{},
-		dataframe.PageString{},
-		dataframe.PageBool{},
-		dataframe.PageDatetime{},
+		dataframe.PageFloat64{},  // colFloat64
+		dataframe.PageString{},   // colString
+		dataframe.PageBool{},     // colBool
+		dataframe.PageDatetime{}, // colDatetime
+		dataframe.PageAny{},      // colAny
 	}
 	dateformat := "YYYY-MM-DD"
-	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema), dataframe.Dateformat(dateformat))
+	none := "none" // Support for custom NaN values, default is ""
+	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema), dataframe.Dateformat(dateformat), dataframe.None(none))
 	fmt.Println(df)
 }
 ```
