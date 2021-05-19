@@ -15,19 +15,19 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// PageAny To save any data type, when if you don't know what data type is
+// PageAny To save any data type, when if you don't know what data type is and with support for NaN values
 type PageAny []interface{}
 
-// PageString Data type for string values
+// PageString Data type for string values with support for NaN values
 type PageString []string
 
-// PageBool Data type for boolean values
+// PageBool Data type for boolean values. Not support for NaN values
 type PageBool []bool
 
-// PageFloat64 Data type for numbers and float values
+// PageFloat64 Data type for numbers and float values with support for NaN values
 type PageFloat64 []float64
 
-// PageDatetime To date dates
+// PageDatetime To date dates with support for NaN values
 type PageDatetime []time.Time
 
 // Book Interface to save a DataFrame

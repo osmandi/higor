@@ -83,6 +83,15 @@ Hello from Higor :) v0.3.0
 +------+------+-------+-------+-------------------------------+
 ```
 
+## Column types with support for NaN values
+- PageString: To save any string value. For example: "Hello Higor", "value".
+- PageDatetime: To save datetime values. For example: "2021-01-30 00:00:00 +0000 UTC".
+- PageFloat64: To save numbers integers and floats. For example: 1, 1.2.
+- PageAny: To save any data type. For example: 1, "dos", true, etc.
+
+## Column types without support for NaN values
+- PageBool: To save values type bool. For example: true, false.
+
 ## How to contribute?
 - Give this repo a star.
 - Create tutorials about Data Engineering with Go.
