@@ -120,6 +120,7 @@ func IsNaN(a interface{}) bool {
 
 /////////
 // CSV /
+///////
 
 // CSVCreatorMock sample csv to tests
 func CSVCreatorMock(data [][]string, separator rune) *os.File {
@@ -229,19 +230,7 @@ func (df DataFrame) GetValues() [][]string {
 
 func trasposeRows(df DataFrame) [][]string {
 
-	//	data := [][]string{}
-
-	// Add []string empties
-	/*
-		for range df.Columns[:len(df.Columns)-1] {
-			data = append(data, []string{})
-		}
-	*/
 	data := make([][]string, df.Shape[0])
-
-	// Add columns names
-	//data[0] = df.Columns
-	//	data := [][]string{{"colString"}, {"1", "2"}}
 
 	for i := range df.Columns {
 		colValues := df.Values[i]

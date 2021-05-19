@@ -54,11 +54,7 @@ func TestToCSVNormal(t *testing.T) {
 
 }
 
-// ToCSV With another separator
-// ToCSV with or without header
-// TOCSV with or without index
-
-//////////////////////////
+/////////////////////////
 // TrasposeRows //
 ////////////////////////
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
@@ -223,10 +219,6 @@ func TestDifferentlDataFrame(t *testing.T) {
 // Print DataFrame /
 ///////////////////
 
-// TODO: Print normal DataFrame
-// TODO: Print DataFrame with nils values
-// TODO: Print DataFrame with multiple DataTypes
-
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
 	chapters := Book{
@@ -330,7 +322,6 @@ func TestPrintDataFrameDateWithNaN(t *testing.T) {
 		Shape:   [2]int{2, 3},
 	}
 	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
-	//	tableExpectedFormat := "+-------+-------+-------+\n| COLDATE | COLSTRING1 | COLSTRING2  |\n+-------+-------+-------+\n| 2020-01-02 00:00:00 +0000 UTC  | NaN |\n+-------+-------+-------+\n"
 
 	tableResultFormat := df.String()
 
@@ -340,7 +331,6 @@ func TestPrintDataFrameDateWithNaN(t *testing.T) {
 
 }
 
-// Here
 func TestPrintPageStringWithNaN(t *testing.T) {
 	columns := []string{"colString1", "colString2", "colstring3"}
 	chapters := Book{
@@ -363,10 +353,6 @@ func TestPrintPageStringWithNaN(t *testing.T) {
 	}
 
 }
-
-///////////////////////////
-// DataTypes on columns //
-/////////////////////////
 
 ///////////////
 // ExportCSV /
@@ -454,7 +440,3 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
-
-/////////////////////////////////////
-// DataFrame Description functions /
-///////////////////////////////////

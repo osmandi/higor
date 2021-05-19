@@ -287,7 +287,6 @@ func TestReadCSVNormalMoreRowsThanColumns(t *testing.T) {
 
 }
 
-// here
 func TestReadCSVWithIncorrectSchema(t *testing.T) {
 	// Mockup
 	data := [][]string{{"colString", "colFloat64"}, {"row11", "2"}, {"row21", ""}}
@@ -296,34 +295,11 @@ func TestReadCSVWithIncorrectSchema(t *testing.T) {
 	csvTempFilename := csvTempFile.Name()
 	defer os.Remove(csvTempFilename)
 
-	/*
-
-		dfExpected := dataframe.DataFrame{
-			Columns: []string{"colString", "colFloat64"},
-			Values: dataframe.Book{
-				dataframe.PageString{"row11", "row21"},
-				dataframe.PageFloat64{2, math.NaN()},
-			},
-		}
-
-	*/
 	schema := dataframe.Book{
 		dataframe.PageString{},
 		dataframe.PageFloat64{},
 	}
+
 	ReadCSV(csvTempFilename, dataframe.Schema(schema))
-
-	/*
-		    Error parsing schema:
-			- PageBool
-			- PageDatetime
-			- PageFloat64
-
-			No error parsing schema:
-			- PageAny
-			- PageString
-	*/
-
-	//dataframe.DataFrameChecker(dfExpected, dfResult, t)
 
 }
