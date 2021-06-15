@@ -115,11 +115,11 @@ Hello from Higor :) v0.3.1
 > Actual version: v0.3.1
 
 ## v0.3.0: DataType by column
-- Delete footer
-- Set schema to read a CSV with parsing values
-- Save values with a specific DataType slice instead a interface
-- DataType for datetime values
-- DataType for datetime values with custom format
+- [x] Delete footer
+- [x] Set schema to read a CSV with parsing values
+- [x] Save values with a specific DataType slice instead a interface
+- [x] DataType for datetime values
+- [x] DataType for datetime values with custom format
 
 ## v0.3.1: DataTypes reading unexpeding
 - [x] ReadCSV with none values - PageFloat64
@@ -133,23 +133,23 @@ Hello from Higor :) v0.3.1
 - [x] Goal: Read [iris.csv](https://gist.github.com/netj/8836201) file successfully
 
 ## v0.3.2: Improve DataFrame print it
-- Print tail dataframe
-- Print head DataFrame
-- Print DataFrame with Index
+- [ ] Print tail dataframe
+- [ ] Print head DataFrame
+- [ ] Print DataFrame with Index
 - [ ] Goal: Read a large csv file
 
 ## v0.3.3: Automatic reading DataType
-- Read CSV with automatic DataTypes setting
+- [ ] Read CSV with automatic DataTypes setting
 
 ## v0.3.4: Improve importing CSV
-- Export with nils values
-- Export without header
-- Export without index
+- [ ] Export with nils values
+- [ ] Export without header
+- [ ] Export without index
 
 ## v0.3.5: Improve features
-- Custom datetime format by each column
-- Set a way to ignore rows with NaN values
-- Set a way to change to PageAny if found None values whe that is not supported on the schema
+- [ ] Custom datetime format by each column
+- [ ] Set a way to ignore rows with NaN values
+- [ ] Set a way to change to PageAny if found None values whe that is not supported on the schema
 
 ## v0.4.x: Column manipulate (select, update, drop, create)
 
