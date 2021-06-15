@@ -7,6 +7,7 @@
 [![Build Status](https://travis-ci.com/osmandi/higor.svg?branch=master)](https://travis-ci.com/osmandi/higor)
 [![Go Report Card](https://goreportcard.com/badge/github.com/osmandi/higor)](https://goreportcard.com/report/github.com/osmandi/higor)
 [![codecov](https://codecov.io/gh/osmandi/higor/branch/master/graph/badge.svg)](https://codecov.io/gh/osmandi/higor)
+[![gocover](https://gocover.io/_badge/github.com/osmandi/higor?nocache=wapty)](https://gocover.io/_badge/github.com/osmandi/higor?nocache=wapty)
 
 # Higor
 
