@@ -3,6 +3,7 @@ package higor
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -11,7 +12,7 @@ import (
 	"github.com/osmandi/higor/dataframe"
 )
 
-var Version string = "v0.3.0"
+var Version string = "v0.3.1"
 
 // HelloHigor Print a simple message to check if Higor are installed correctly
 // and print the version installed
@@ -29,6 +30,8 @@ func HelloHigor() string {
 func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	csvInternal := &dataframe.CSV{}
 	csvInternal.Sep = ','
+	csvInternal.None = ""
+	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	for _, opt := range opts {
 		opt(csvInternal)
@@ -50,6 +53,7 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 	df := dataframe.DataFrame{}
 	df.Columns = csv[0]
 	df.Values = dataframe.Book{}
+	df.Shape = [2]int{len(csv) - 1, len(csv[0])}
 	layout := "2006-01-02" // Dafault: YYYY-MM-DD
 
 	if csvInternal.Dateformat != "" {
@@ -68,22 +72,37 @@ func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
 
 				switch df.Values[columnIndex].(type) {
 				case dataframe.PageString:
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
+					if columnValue != csvInternal.None {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), "")
+					}
 				case dataframe.PageFloat64:
-					valueFloat64, err := strconv.ParseFloat(columnValue, 64)
-					dataframe.ErrorChecker(err)
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
-
+					if columnValue != csvInternal.None {
+						valueFloat64, err := strconv.ParseFloat(columnValue, 64)
+						dataframe.ErrorSchema(df.Columns[columnIndex], "PageFloat64", columnValue, err)
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), math.NaN())
+					}
 				case dataframe.PageBool:
 					valueBool, err := strconv.ParseBool(columnValue)
-					dataframe.ErrorChecker(err)
+					dataframe.ErrorSchema(df.Columns[columnIndex], "PageBool", columnValue, err)
 					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
 				case dataframe.PageDatetime:
-					dateValue, err := time.Parse(layout, columnValue)
-					dataframe.ErrorChecker(err)
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
+					if columnValue != csvInternal.None {
+						dateValue, err := time.Parse(layout, columnValue)
+						dataframe.ErrorSchema(df.Columns[columnIndex], "PageDatetime", columnValue, err)
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateNaN)
+					}
 				case dataframe.PageAny:
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
+					if columnValue != csvInternal.None {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
+					} else {
+						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), math.NaN())
+					}
 
 				}
 

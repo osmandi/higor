@@ -1,6 +1,7 @@
 package higor
 
 import (
+	"math"
 	"os"
 	"testing"
 	"time"
@@ -11,7 +12,7 @@ import (
 func TestHelloHigor(t *testing.T) {
 
 	resultMessage := HelloHigor()
-	expectedMessage := "Hello from Higor :) v0.3.0"
+	expectedMessage := "Hello from Higor :) v0.3.1"
 
 	if resultMessage != expectedMessage {
 		t.Errorf("Message expected: '%s' but received: '%s'", expectedMessage, resultMessage)
@@ -184,5 +185,121 @@ func TestReadCSVWithDatatimeTypeCustomInverted(t *testing.T) {
 	dataframe.DataFrameChecker(dfExpected, dfResult, t)
 }
 
-// TestReadCSVWithTimestamp
-// TestReadCSVWithMultipleDatetime on Multiple columns
+func TestReadCSVNormalWithNoneValuesColAny(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString", "colFloat64", "colAny"}, {"row11", "row12", ""}, {"row21", "row22", "row23"}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString", "colFloat64", "colAny"},
+		Values: dataframe.Book{
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageString{"row12", "row22"},
+			dataframe.PageAny{math.NaN(), "row23"},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageString{},
+		dataframe.PageAny{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}
+
+func TestReadCSVNormalWithNoneValuesColFloat64(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString", "colFloat64"}, {"row11", "2"}, {"row21", ""}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString", "colFloat64"},
+		Values: dataframe.Book{
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageFloat64{2, math.NaN()},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageFloat64{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}
+
+func TestReadCSVNormalWithNoneCustom(t *testing.T) {
+	// Mockup
+	none := "none"
+	data := [][]string{{"colString", "colFloat64"}, {"row11", "2"}, {"row21", "none"}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString", "colFloat64"},
+		Values: dataframe.Book{
+			dataframe.PageString{"row11", "row21"},
+			dataframe.PageFloat64{2, math.NaN()},
+		},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageFloat64{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema), dataframe.None(none))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}
+
+func TestReadCSVNormalMoreRowsThanColumns(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString"}, {"1"}, {"2"}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	dfExpected := dataframe.DataFrame{
+		Columns: []string{"colString"},
+		Values: dataframe.Book{
+			dataframe.PageString{"1", "2"},
+		},
+		Shape: [2]int{2, 1},
+	}
+	schema := dataframe.Book{
+		dataframe.PageString{},
+	}
+	dfResult := ReadCSV(csvTempFilename, dataframe.Schema(schema))
+
+	dataframe.DataFrameChecker(dfExpected, dfResult, t)
+
+}
+
+func TestReadCSVWithIncorrectSchema(t *testing.T) {
+	// Mockup
+	data := [][]string{{"colString", "colFloat64"}, {"row11", "2"}, {"row21", ""}}
+	separator := ','
+	csvTempFile := dataframe.CSVCreatorMock(data, separator)
+	csvTempFilename := csvTempFile.Name()
+	defer os.Remove(csvTempFilename)
+
+	schema := dataframe.Book{
+		dataframe.PageString{},
+		dataframe.PageFloat64{},
+	}
+
+	ReadCSV(csvTempFilename, dataframe.Schema(schema))
+
+}

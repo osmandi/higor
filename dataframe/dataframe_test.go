@@ -8,10 +8,15 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestErrorChecker(t *testing.T) {
 	ErrorChecker(nil)
+}
+
+func TestErrorSchema(t *testing.T) {
+	ErrorSchema("", "", nil, nil)
 }
 
 //////////////////
@@ -25,11 +30,11 @@ func TestToCSVNormal(t *testing.T) {
 	dfResult := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
 		Values: Book{
-
 			PageString{"row11", "row21"},
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dfResult.ToCSV(filename)
@@ -49,15 +54,11 @@ func TestToCSVNormal(t *testing.T) {
 
 }
 
-// ToCSV With another separator
-// ToCSV with or without header
-// TOCSV with or without index
-
-//////////////////////////
+/////////////////////////
 // TrasposeRows //
 ////////////////////////
 func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
@@ -66,6 +67,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 			PageAny{math.NaN(), "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := trasposeRows(dfExpected)
@@ -74,7 +76,7 @@ func TestTrasposeRowsMultipleDataType(t *testing.T) {
 
 }
 func TestTrasposeRowsString(t *testing.T) {
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
+	dataExpected := [][]string{{"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
 
 	dfExpected := DataFrame{
 		Columns: []string{"col1", "col2", "col3"},
@@ -83,6 +85,7 @@ func TestTrasposeRowsString(t *testing.T) {
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := trasposeRows(dfExpected)
@@ -101,6 +104,7 @@ func TestValuesNormal(t *testing.T) {
 			PageString{"row12", "row22"},
 			PageString{"row13", "row23"},
 		},
+		Shape: [2]int{2, 3},
 	}
 
 	dataResult := dfExpected.GetValues()
@@ -137,6 +141,17 @@ func TestSchema(t *testing.T) {
 
 }
 
+func TestNone(t *testing.T) {
+	none := "none"
+	csvResult := &CSV{}
+	csvOptionInternal := None(none)
+	csvOptionInternal(csvResult)
+
+	if csvResult.None != none {
+		t.Errorf("None error. Expected: %v - But result: %v", none, csvResult.None)
+	}
+}
+
 func TestDataformat(t *testing.T) {
 	dateformat := "YYYY-MM-DD"
 	csvResult := &CSV{}
@@ -167,10 +182,10 @@ func TestEqualDataFrame(t *testing.T) {
 		Values:  chapters,
 	}
 
-	isEqual := IsEqual(df1, df2)
+	isEqual, message := IsEqual(df1, df2)
 
 	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!")
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
 	}
 }
 
@@ -193,7 +208,7 @@ func TestDifferentlDataFrame(t *testing.T) {
 		Values:  chapters,
 	}
 
-	isEqual := IsEqual(df1, df2)
+	isEqual, _ := IsEqual(df1, df2)
 
 	if isEqual {
 		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")
@@ -203,10 +218,6 @@ func TestDifferentlDataFrame(t *testing.T) {
 /////////////////////
 // Print DataFrame /
 ///////////////////
-
-// TODO: Print normal DataFrame
-// TODO: Print DataFrame with nils values
-// TODO: Print DataFrame with multiple DataTypes
 
 func TestPrintDataFrame(t *testing.T) {
 	columns := []string{"col1", "col2", "col3"}
@@ -219,6 +230,7 @@ func TestPrintDataFrame(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | true  |\n| row21 | row22 | false |\n+-------+-------+-------+\n"
@@ -242,6 +254,7 @@ func TestPrintDataFrameWithNaN(t *testing.T) {
 	df := DataFrame{
 		Columns: columns,
 		Values:  chapters,
+		Shape:   [2]int{2, 3},
 	}
 
 	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
@@ -254,9 +267,92 @@ func TestPrintDataFrameWithNaN(t *testing.T) {
 
 }
 
-///////////////////////////
-// DataTypes on columns //
-/////////////////////////
+func TestIsNaNPageDatetimeFalse(t *testing.T) {
+	layout := "2006-01-02"
+	dateNaNFalse, _ := time.Parse(layout, "2020-01-02")
+	//dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	resultExpectedFalse := IsNaN(dateNaNFalse)
+
+	if resultExpectedFalse != false {
+		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
+	}
+
+}
+
+func TestIsNaNPageDatetimeTrue(t *testing.T) {
+	dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	resultExpectedTrue := IsNaN(dateNaNTrue)
+
+	if resultExpectedTrue != true {
+		t.Errorf("IsNaN Error. Expected: True | but Result: %t", resultExpectedTrue)
+	}
+
+}
+
+func TestIsNaNPageStringFalse(t *testing.T) {
+	stringNaNFalse := "isFalse"
+	resultExpectedFalse := IsNaN(stringNaNFalse)
+	if resultExpectedFalse != false {
+		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
+	}
+}
+
+func TestIsNaNPageStringTrue(t *testing.T) {
+	stringNaNTrue := ""
+	resultExpectedTrue := IsNaN(stringNaNTrue)
+	if resultExpectedTrue != true {
+		t.Errorf("IsNaN Error. Expected: true | but Result: %t", resultExpectedTrue)
+	}
+}
+
+func TestPrintDataFrameDateWithNaN(t *testing.T) {
+	columns := []string{"colDate", "colString1", "colString2"}
+	layout := "2006-01-02"
+	date1, _ := time.Parse(layout, "2020-01-02")
+	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	chapters := Book{
+		PageDatetime{date1, dateNaN},
+		PageString{"hola1", "hola2"},
+		PageString{"hola1", "hola2"},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+		Shape:   [2]int{2, 3},
+	}
+	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
+
+func TestPrintPageStringWithNaN(t *testing.T) {
+	columns := []string{"colString1", "colString2", "colstring3"}
+	chapters := Book{
+		PageString{"hola1", ""},
+		PageString{"", "hola2"},
+		PageString{"", ""},
+	}
+
+	df := DataFrame{
+		Columns: columns,
+		Values:  chapters,
+		Shape:   [2]int{2, 3},
+	}
+	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+\n"
+
+	tableResultFormat := df.String()
+
+	if tableExpectedFormat != tableResultFormat {
+		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	}
+
+}
 
 ///////////////
 // ExportCSV /
@@ -344,7 +440,3 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
-
-/////////////////////////////////////
-// DataFrame Description functions /
-///////////////////////////////////
