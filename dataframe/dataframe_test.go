@@ -440,3 +440,43 @@ func TestExportCSVAnotherSeparator(t *testing.T) {
 	CSVChecker(dataExpected, dataResult, t)
 	defer os.Remove(filename)
 }
+
+/////////////////////////////
+// Head and Tail function //
+///////////////////////////
+
+func TestTailWithDataframeMore5Rows(t *testing.T) {
+	columns := []string{"col1", "col2"}
+	pageStringOriginal := PageString{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
+
+	chaptersOriginal := Book{
+		pageStringOriginal,
+		pageStringOriginal,
+	}
+
+	chaptersTailExpected := Bool{
+		pageStringOriginal[:6],
+		pageStringOriginal[:6],
+	}
+
+	dfOriginal := DataFrame{
+		Columns: columns,
+		Values:  chaptersOriginal,
+		Shape:   [2]int{2, 20},
+	}
+
+	dfTailExpected := DataFrame{
+		Columns: columns,
+		Values:  chaptersTailExpected,
+		Shape:   [2]int{2, 5},
+	}
+
+	dfTailResult := dfOriginal.Tail()
+
+	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
+
+	if !isEqual {
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	}
+
+}

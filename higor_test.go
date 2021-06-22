@@ -12,7 +12,7 @@ import (
 func TestHelloHigor(t *testing.T) {
 
 	resultMessage := HelloHigor()
-	expectedMessage := "Hello from Higor :) v0.3.1"
+	expectedMessage := "Hello from Higor :) v0.3.2"
 
 	if resultMessage != expectedMessage {
 		t.Errorf("Message expected: '%s' but received: '%s'", expectedMessage, resultMessage)
