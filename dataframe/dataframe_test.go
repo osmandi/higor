@@ -534,13 +534,13 @@ func TestHeadWithDataframeMore5Rows(t *testing.T) {
 	dfOriginal := DataFrame{
 		Columns: columns,
 		Values:  chaptersOriginal,
-		Shape:   [2]int{2, 20},
+		Shape:   [2]int{20, 2},
 	}
 
 	dfTailExpected := DataFrame{
 		Columns: columns,
 		Values:  chaptersTailExpected,
-		Shape:   [2]int{2, 5},
+		Shape:   [2]int{5, 2},
 	}
 
 	dfTailResult := dfOriginal.Tail()
@@ -570,13 +570,13 @@ func TestTailWithDataframeLess5Rows(t *testing.T) {
 	dfOriginal := DataFrame{
 		Columns: columns,
 		Values:  chaptersOriginal,
-		Shape:   [2]int{2, 3},
+		Shape:   [2]int{3, 2},
 	}
 
 	dfTailExpected := DataFrame{
 		Columns: columns,
 		Values:  chaptersTailExpected,
-		Shape:   [2]int{2, 3},
+		Shape:   [2]int{3, 2},
 	}
 
 	dfTailResult := dfOriginal.Tail()
