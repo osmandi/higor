@@ -37,7 +37,7 @@ type Book []interface{}
 type DataFrame struct {
 	Columns []string
 	Values  Book
-	Shape   [2]int
+	Shape   [2]int // [rowsNumber, columnsNumber]
 }
 
 // IsEqual to kown if two DataFrame are equal
