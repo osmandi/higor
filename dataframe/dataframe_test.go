@@ -454,7 +454,7 @@ func TestTailWithDataframeMore5Rows(t *testing.T) {
 		pageStringOriginal,
 	}
 
-	chaptersTailExpected := Bool{
+	chaptersTailExpected := Book{
 		pageStringOriginal[:6],
 		pageStringOriginal[:6],
 	}
