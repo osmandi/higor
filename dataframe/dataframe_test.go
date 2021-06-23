@@ -454,7 +454,7 @@ func TestTailWithDataframeMore5Rows(t *testing.T) {
 		pageStringOriginal,
 	}
 
-	chaptersTailExpected := Book{
+	chaptersHeadExpected := Book{
 		pageStringOriginal[:6],
 		pageStringOriginal[:6],
 	}
@@ -465,15 +465,15 @@ func TestTailWithDataframeMore5Rows(t *testing.T) {
 		Shape:   [2]int{2, 20},
 	}
 
-	dfTailExpected := DataFrame{
+	dfHeadExpected := DataFrame{
 		Columns: columns,
-		Values:  chaptersTailExpected,
+		Values:  chaptersHeadExpected,
 		Shape:   [2]int{2, 5},
 	}
 
-	dfTailResult := dfOriginal.Tail()
+	dfHeadResult := dfOriginal.Head()
 
-	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
+	isEqual, message := IsEqual(dfHeadExpected, dfHeadResult)
 
 	if !isEqual {
 		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)

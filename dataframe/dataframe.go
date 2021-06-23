@@ -321,3 +321,5 @@ func (df DataFrame) ToCSV(filename string) {
 	data = append(data, dfInternal.GetValues()...)
 	exportCSV(filename, data)
 }
+
+// Head get first 5 rows
