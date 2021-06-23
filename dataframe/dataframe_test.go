@@ -455,8 +455,8 @@ func TestTailWithDataframeMore5Rows(t *testing.T) {
 	}
 
 	chaptersHeadExpected := Book{
-		pageStringOriginal[:6],
-		pageStringOriginal[:6],
+		pageStringOriginal[:5],
+		pageStringOriginal[:5],
 	}
 
 	dfOriginal := DataFrame{

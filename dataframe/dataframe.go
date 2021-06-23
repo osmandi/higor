@@ -325,25 +325,26 @@ func (df DataFrame) ToCSV(filename string) {
 // Head get first 5 rows
 func (df DataFrame) Head() DataFrame {
 	valuesInternal := Book{}
+	numberToHead := 5
 	for _, v := range df.Values {
 		switch v.(type) {
 		case PageString:
-			valuesInternal = append(valuesInternal, v.(PageString)[:6])
+			valuesInternal = append(valuesInternal, v.(PageString)[:numberToHead])
 		case PageFloat64:
-			valuesInternal = append(valuesInternal, v.(PageFloat64)[:6])
+			valuesInternal = append(valuesInternal, v.(PageFloat64)[:numberToHead])
 		case PageBool:
-			valuesInternal = append(valuesInternal, v.(PageBool)[:6])
+			valuesInternal = append(valuesInternal, v.(PageBool)[:numberToHead])
 		case PageAny:
-			valuesInternal = append(valuesInternal, v.(PageAny)[:6])
+			valuesInternal = append(valuesInternal, v.(PageAny)[:numberToHead])
 		case PageDatetime:
-			valuesInternal = append(valuesInternal, v.(PageDatetime)[:6])
+			valuesInternal = append(valuesInternal, v.(PageDatetime)[:numberToHead])
 		}
 	}
 
 	dfInternal := DataFrame{
 		Columns: df.Columns,
 		Values:  valuesInternal,
-		Shape:   [2]int{df.Shape[0], 5},
+		Shape:   [2]int{df.Shape[0], numberToHead},
 	}
 
 	return dfInternal
