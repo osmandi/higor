@@ -326,7 +326,7 @@ func (df DataFrame) ToCSV(filename string) {
 func (df DataFrame) Head() DataFrame {
 	valuesInternal := Book{}
 	numberToHead := 5
-	if df.Shape[1] > numberToHead {
+	if df.Shape[0] > numberToHead {
 		for _, v := range df.Values {
 			switch v.(type) {
 			case PageString:
@@ -363,7 +363,7 @@ func (df DataFrame) Head() DataFrame {
 	dfInternal := DataFrame{
 		Columns: df.Columns,
 		Values:  valuesInternal,
-		Shape:   [2]int{df.Shape[0], numberToHead},
+		Shape:   [2]int{numberToHead, df.Shape[1]},
 	}
 
 	return dfInternal
@@ -374,7 +374,7 @@ func (df DataFrame) Head() DataFrame {
 func (df DataFrame) Tail() DataFrame {
 	valuesInternal := Book{}
 	numberToTail := 5
-	totalRows := df.Shape[1]
+	totalRows := df.Shape[0]
 	if totalRows > numberToTail {
 		for _, v := range df.Values {
 			switch v.(type) {
@@ -412,7 +412,7 @@ func (df DataFrame) Tail() DataFrame {
 	dfInternal := DataFrame{
 		Columns: df.Columns,
 		Values:  valuesInternal,
-		Shape:   [2]int{df.Shape[0], numberToTail},
+		Shape:   [2]int{numberToTail, df.Shape[1]},
 	}
 
 	return dfInternal
