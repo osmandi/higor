@@ -326,19 +326,38 @@ func (df DataFrame) ToCSV(filename string) {
 func (df DataFrame) Head() DataFrame {
 	valuesInternal := Book{}
 	numberToHead := 5
-	for _, v := range df.Values {
-		switch v.(type) {
-		case PageString:
-			valuesInternal = append(valuesInternal, v.(PageString)[:numberToHead])
-		case PageFloat64:
-			valuesInternal = append(valuesInternal, v.(PageFloat64)[:numberToHead])
-		case PageBool:
-			valuesInternal = append(valuesInternal, v.(PageBool)[:numberToHead])
-		case PageAny:
-			valuesInternal = append(valuesInternal, v.(PageAny)[:numberToHead])
-		case PageDatetime:
-			valuesInternal = append(valuesInternal, v.(PageDatetime)[:numberToHead])
+	if df.Shape[1] > numberToHead {
+		for _, v := range df.Values {
+			switch v.(type) {
+			case PageString:
+				valuesInternal = append(valuesInternal, v.(PageString)[:numberToHead])
+			case PageFloat64:
+				valuesInternal = append(valuesInternal, v.(PageFloat64)[:numberToHead])
+			case PageBool:
+				valuesInternal = append(valuesInternal, v.(PageBool)[:numberToHead])
+			case PageAny:
+				valuesInternal = append(valuesInternal, v.(PageAny)[:numberToHead])
+			case PageDatetime:
+				valuesInternal = append(valuesInternal, v.(PageDatetime)[:numberToHead])
+			}
 		}
+
+	} else {
+		for _, v := range df.Values {
+			switch v.(type) {
+			case PageString:
+				valuesInternal = append(valuesInternal, v.(PageString))
+			case PageFloat64:
+				valuesInternal = append(valuesInternal, v.(PageFloat64))
+			case PageBool:
+				valuesInternal = append(valuesInternal, v.(PageBool))
+			case PageAny:
+				valuesInternal = append(valuesInternal, v.(PageAny))
+			case PageDatetime:
+				valuesInternal = append(valuesInternal, v.(PageDatetime))
+			}
+		}
+
 	}
 
 	dfInternal := DataFrame{
