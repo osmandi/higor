@@ -133,18 +133,18 @@ Hello from Higor :) v0.3.1
 - [x] Goal: Read [iris.csv](https://gist.github.com/netj/8836201) file successfully
 
 ## v0.3.2: Improve DataFrame print it
-- [ ] Print tail dataframe
-- [ ] Print head DataFrame
+- [x] Print tail dataframe
+- [x] Print head DataFrame
 - [ ] Print DataFrame with Index
 - [ ] Goal: Read a large csv file
 
-## v0.3.3: Automatic reading DataType
-- [ ] Read CSV with automatic DataTypes setting
+## v0.3.3: STOP! Improve codecoverage percent to >= 90%
 
-## v0.3.4: Improve importing CSV
+## v0.3.4: Improve importing and exporting CSV
 - [ ] Export with nils values
 - [ ] Export without header
 - [ ] Export without index
+- [ ] Read CSV with automatic DataTypes setting
 
 ## v0.3.5: Improve features
 - [ ] Custom datetime format by each column
