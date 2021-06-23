@@ -369,3 +369,52 @@ func (df DataFrame) Head() DataFrame {
 	return dfInternal
 
 }
+
+// Tail to get last five rows
+func (df DataFrame) Tail() DataFrame {
+	valuesInternal := Book{}
+	numberToTail := 5
+	totalRows := df.Shape[1]
+	if totalRows > numberToTail {
+		for _, v := range df.Values {
+			switch v.(type) {
+			case PageString:
+				valuesInternal = append(valuesInternal, v.(PageString)[totalRows-numberToTail:])
+			case PageFloat64:
+				valuesInternal = append(valuesInternal, v.(PageFloat64)[totalRows-numberToTail:])
+			case PageBool:
+				valuesInternal = append(valuesInternal, v.(PageBool)[totalRows-numberToTail])
+			case PageAny:
+				valuesInternal = append(valuesInternal, v.(PageAny)[totalRows-numberToTail:])
+			case PageDatetime:
+				valuesInternal = append(valuesInternal, v.(PageDatetime)[totalRows-numberToTail:])
+			}
+		}
+
+	} else {
+		for _, v := range df.Values {
+			switch v.(type) {
+			case PageString:
+				valuesInternal = append(valuesInternal, v.(PageString))
+			case PageFloat64:
+				valuesInternal = append(valuesInternal, v.(PageFloat64))
+			case PageBool:
+				valuesInternal = append(valuesInternal, v.(PageBool))
+			case PageAny:
+				valuesInternal = append(valuesInternal, v.(PageAny))
+			case PageDatetime:
+				valuesInternal = append(valuesInternal, v.(PageDatetime))
+			}
+		}
+
+	}
+
+	dfInternal := DataFrame{
+		Columns: df.Columns,
+		Values:  valuesInternal,
+		Shape:   [2]int{df.Shape[0], numberToTail},
+	}
+
+	return dfInternal
+
+}

@@ -481,7 +481,7 @@ func TestTailWithDataframeMore5Rows(t *testing.T) {
 
 }
 
-func TestTailWithDataframeLess5Rows(t *testing.T) {
+func TestHeadWithDataframeLess5Rows(t *testing.T) {
 	columns := []string{"col1", "col2"}
 	pageStringOriginal := PageString{"1", "2", "3"}
 
@@ -510,6 +510,78 @@ func TestTailWithDataframeLess5Rows(t *testing.T) {
 	dfHeadResult := dfOriginal.Head()
 
 	isEqual, message := IsEqual(dfHeadExpected, dfHeadResult)
+
+	if !isEqual {
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	}
+
+}
+
+func TestHeadWithDataframeMore5Rows(t *testing.T) {
+	columns := []string{"col1", "col2"}
+	pageStringOriginal := PageString{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
+
+	chaptersOriginal := Book{
+		pageStringOriginal,
+		pageStringOriginal,
+	}
+
+	chaptersTailExpected := Book{
+		pageStringOriginal[15:],
+		pageStringOriginal[15:],
+	}
+
+	dfOriginal := DataFrame{
+		Columns: columns,
+		Values:  chaptersOriginal,
+		Shape:   [2]int{2, 20},
+	}
+
+	dfTailExpected := DataFrame{
+		Columns: columns,
+		Values:  chaptersTailExpected,
+		Shape:   [2]int{2, 5},
+	}
+
+	dfTailResult := dfOriginal.Tail()
+
+	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
+
+	if !isEqual {
+		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	}
+
+}
+
+func TestTailWithDataframeLess5Rows(t *testing.T) {
+	columns := []string{"col1", "col2"}
+	pageStringOriginal := PageString{"1", "2", "3"}
+
+	chaptersOriginal := Book{
+		pageStringOriginal,
+		pageStringOriginal,
+	}
+
+	chaptersTailExpected := Book{
+		pageStringOriginal,
+		pageStringOriginal,
+	}
+
+	dfOriginal := DataFrame{
+		Columns: columns,
+		Values:  chaptersOriginal,
+		Shape:   [2]int{2, 3},
+	}
+
+	dfTailExpected := DataFrame{
+		Columns: columns,
+		Values:  chaptersTailExpected,
+		Shape:   [2]int{2, 3},
+	}
+
+	dfTailResult := dfOriginal.Tail()
+
+	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
 
 	if !isEqual {
 		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
