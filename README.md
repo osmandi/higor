@@ -82,7 +82,7 @@ func main() {
 Result:
 
 ```Bash
-Hello from Higor :) v0.3.1
+Hello from Higor :) v0.3.2
 
 +------------+-----------+---------+-------------------------------+------------+
 | COLFLOAT64 | COLSTRING | COLBOOL |          COLDATETIME          |   COLANY   |
@@ -112,7 +112,7 @@ Hello from Higor :) v0.3.1
 
 # Releases version
 
-> Actual version: v0.3.1
+> Actual version: v0.3.2
 
 ## v0.3.0: DataType by column
 - [x] Delete footer
@@ -133,26 +133,24 @@ Hello from Higor :) v0.3.1
 - [x] Goal: Read [iris.csv](https://gist.github.com/netj/8836201) file successfully
 
 ## v0.3.2: Improve DataFrame print it
-- [ ] Print tail dataframe
-- [ ] Print head DataFrame
-- [ ] Print DataFrame with Index
-- [ ] Goal: Read a large csv file
+- [x] Print tail dataframe
+- [x] Print head DataFrame
 
-## v0.3.3: Automatic reading DataType
-- [ ] Read CSV with automatic DataTypes setting
+## v0.4.0: Change core to Dynamic Struct instead maps and better support for NaN values
 
-## v0.3.4: Improve importing CSV
+## v0.4.1: Improve importing and exporting CSV
+- [ ] Print DataFrame with index
 - [ ] Export with nils values
 - [ ] Export without header
 - [ ] Export without index
+- [ ] Read CSV with automatic DataTypes setting
 
-## v0.3.5: Improve features
+## v0.4.2: Improve features
 - [ ] Custom datetime format by each column
 - [ ] Set a way to ignore rows with NaN values
 - [ ] Set a way to change to PageAny if found None values whe that is not supported on the schema
 
-## v0.4.x: Column manipulate (select, update, drop, create)
-
-## v0.5.x: Implement statistics functions (Mean, Median, etc)
-
-## v0.6.x: Implement concurrency by default
+## Next features:
+- Column manipulate (select, update, drop, create, group)
+- Implement statistics functions (Mean, Median, etc)
+- Implement concurrency by default

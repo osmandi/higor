@@ -12,7 +12,7 @@ import (
 	"github.com/osmandi/higor/dataframe"
 )
 
-var Version string = "v0.3.1"
+var Version string = "v0.3.2"
 
 // HelloHigor Print a simple message to check if Higor are installed correctly
 // and print the version installed
