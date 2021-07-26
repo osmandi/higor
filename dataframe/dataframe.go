@@ -22,6 +22,9 @@ type PageInt int
 // PageDatetime To date dates with support for NaN values
 type PageDatetime time.Time
 
+// Words Each value before to insert
+type Words []interface{}
+
 // Book Interface to save a DataFrame
 type Book []reflect.Value
 
@@ -73,4 +76,11 @@ func parseBool(v PageBool) interface{} {
 	return parse[v]
 }
 
-// Next steps: CSVCreatorMock, CSVChecker, DataFrameChecker, DataFrameStringer
+func writeBook(book reflect.Value, words Words) reflect.Value {
+
+	for i, v := range words {
+		book.Field(i).Set(reflect.ValueOf(v))
+	}
+
+	return book
+}
