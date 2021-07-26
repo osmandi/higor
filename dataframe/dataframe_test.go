@@ -19,11 +19,11 @@ type book3 struct {
 }
 
 type bookComplete struct {
-	colString   PageString
-	colInt      PageInt
-	colFloat64  PageInt
-	colBool     PageBool
-	colDatetime PageDatetime
+	ColString   PageString
+	ColInt      PageInt
+	ColFloat64  PageFloat64
+	ColBool     PageBool
+	ColDatetime PageDatetime
 }
 
 func TestIsEqualBookEqual(t *testing.T) {
@@ -58,10 +58,11 @@ func TestTypeOnStruct(t *testing.T) {
 	var typeInt PageInt = 1
 	var typeFloat64 PageFloat64 = 1.1
 	var typeString PageString = "Higor"
+	var typeBool PageBool = 0
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
 	typeDatetime := PageDatetime(timeParse)
 
-	sliceTypes := [4]interface{}{typeInt, typeFloat64, typeString, typeDatetime}
+	sliceTypes := [5]interface{}{typeInt, typeFloat64, typeString, typeDatetime, typeBool}
 
 	for _, v := range sliceTypes {
 		getTypeResult := typeOnStruct(v)
@@ -73,9 +74,44 @@ func TestTypeOnStruct(t *testing.T) {
 
 }
 
-/*
 func TestBookGenerator(t *testing.T) {
-	columns = []string{"colString", "colInt", "colFloat64", "colBool", "colDatetime"}
 
+	// Setting values
+	var typeInt PageInt = 1
+	var typeFloat64 PageFloat64 = 1.1
+	var typeBool PageBool = 0
+	var typeString PageString = "Higor"
+	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
+	typeDatetime := PageDatetime(timeParse)
+
+	// Columns and Schema
+	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
+	schema := Schema{
+		columns[0]: typeOnStruct(typeString),
+		columns[1]: typeOnStruct(typeInt),
+		columns[2]: typeOnStruct(typeFloat64),
+		columns[3]: typeOnStruct(typeBool),
+		columns[4]: typeOnStruct(typeDatetime),
+	}
+
+	bookExpected := bookComplete{
+		ColString:   typeString,
+		ColInt:      typeInt,
+		ColFloat64:  typeFloat64,
+		ColBool:     typeBool,
+		ColDatetime: typeDatetime,
+	}
+
+	bookResult := bookGenerator(columns, schema)
+	bookResult.FieldByName(columns[0]).Set(reflect.ValueOf(typeString))
+	bookResult.FieldByName(columns[1]).Set(reflect.ValueOf(typeInt))
+	bookResult.FieldByName(columns[2]).Set(reflect.ValueOf(typeFloat64))
+	bookResult.FieldByName(columns[3]).Set(reflect.ValueOf(typeBool))
+	bookResult.FieldByName(columns[4]).Set(reflect.ValueOf(typeDatetime))
+
+	bookComparation := isEqualBook(bookExpected, bookResult)
+
+	if !bookComparation {
+		t.Errorf("Error, both book are different but equal expected. \n%+v vs \n%+v", bookExpected, bookResult)
+	}
 }
-*/

@@ -52,3 +52,20 @@ func isEqualBook(a, b interface{}) bool {
 func typeOnStruct(a interface{}) reflect.Type {
 	return reflect.TypeOf(a)
 }
+
+func bookGenerator(columns []string, schema Schema) reflect.Value {
+
+	rsfs := []reflect.StructField{}
+
+	for i, v := range columns {
+		rsf := reflect.StructField{
+			Name: columns[i],
+			Type: schema[v],
+		}
+
+		rsfs = append(rsfs, rsf)
+	}
+
+	internalBook := reflect.StructOf(rsfs)
+	return reflect.New(internalBook).Elem()
+}
