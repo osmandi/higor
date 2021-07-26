@@ -35,10 +35,6 @@ type DataFrame struct {
 	Shape   [2]int // [rowsNumber, columnsNumber]
 }
 
-var (
-	parseBool = map[PageBool]interface{}{0: false, 1: true, 3: math.NaN()}
-)
-
 func isEqualBook(a, b interface{}) bool {
 	valueA := fmt.Sprintf("%+v", a)
 	valueB := fmt.Sprintf("%+v", b)
@@ -68,6 +64,13 @@ func bookGenerator(columns []string, schema Schema) reflect.Value {
 
 	internalBook := reflect.StructOf(rsfs)
 	return reflect.New(internalBook).Elem()
+}
+
+func parseBool(v PageBool) interface{} {
+
+	parse := map[PageBool]interface{}{0: false, 1: true, 2: math.NaN()}
+
+	return parse[v]
 }
 
 // Next steps: CSVCreatorMock, CSVChecker, DataFrameChecker, DataFrameStringer

@@ -1,6 +1,8 @@
 package dataframe
 
 import (
+	"fmt"
+	"math"
 	"reflect"
 	"testing"
 	"time"
@@ -69,6 +71,32 @@ func TestTypeOnStruct(t *testing.T) {
 		getTypeExpected := reflect.TypeOf(v)
 		if getTypeResult != getTypeExpected {
 			t.Errorf("Type are different. Expected: %v, but result: %v", getTypeExpected, getTypeResult)
+		}
+	}
+
+}
+
+func TestParseBool(t *testing.T) {
+
+	// Equal
+	slicesIterator := []PageBool{0, 1, 2}
+	resultExpected := []interface{}{false, true, math.NaN()}
+
+	for i, v := range slicesIterator {
+		result := parseBool(v)
+		if fmt.Sprintf("%v", result) != fmt.Sprintf("%v", resultExpected[i]) {
+			t.Errorf("Result: %v but expected: %v", result, resultExpected[i])
+		}
+	}
+
+	// Different
+	slicesIterator = []PageBool{1, 2, 0}
+	resultExpected = []interface{}{false, true, math.NaN()}
+
+	for i, v := range slicesIterator {
+		result := parseBool(v)
+		if fmt.Sprintf("%v", result) == fmt.Sprintf("%v", resultExpected[i]) {
+			t.Errorf("Result: %v but expected: %v", result, resultExpected[i])
 		}
 	}
 
