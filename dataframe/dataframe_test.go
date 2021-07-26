@@ -14,6 +14,14 @@ type book3 struct {
 	noName string
 }
 
+type bookComplete struct {
+	colString   PageString
+	colInt      PageInt
+	colFloat64  PageInt
+	colBool     PageBool
+	colDatetime PageDatetime
+}
+
 func TestIsEqualBookEqual(t *testing.T) {
 	internalName := "Higor"
 
@@ -25,27 +33,23 @@ func TestIsEqualBookEqual(t *testing.T) {
 		name: internalName,
 	}
 
-	bookComparation := IsEqualBook(book1Example, book2Example)
+	book3Example := book3{
+		noName: internalName,
+	}
+
+	bookComparation := isEqualBook(book1Example, book2Example)
 
 	if !bookComparation {
 		t.Errorf("Error, both DataFrame are different but equal expected. %+v vs %+v", book1Example, book2Example)
 	}
-}
 
-func TestIsEqualBookDifferent(t *testing.T) {
-	internalName := "Higor"
-
-	book1Example := book1{
-		name: internalName,
-	}
-
-	book2Example := book3{
-		noName: internalName,
-	}
-
-	bookComparation := IsEqualBook(book1Example, book2Example)
+	bookComparation = isEqualBook(book1Example, book3Example)
 
 	if bookComparation {
-		t.Errorf("Error, both DataFrame are equal but different expected. %+v vs %+v", book1Example, book2Example)
+		t.Errorf("Error, both DataFrame are equal but different expected. %+v vs %+v", book1Example, book3Example)
 	}
+}
+
+func TestBookGenerator(t *testing.T) {
+	//	columns = []string{"colString", "colInt", "colFloat64", "colBool", "colDatetime"}
 }

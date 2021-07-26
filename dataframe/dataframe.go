@@ -39,7 +39,7 @@ var (
 	parseBool = map[PageBool]interface{}{0: false, 1: true, 3: math.NaN()}
 )
 
-func IsEqualBook(a, b interface{}) bool {
+func isEqualBook(a, b interface{}) bool {
 	valueA := fmt.Sprintf("%+v", a)
 	valueB := fmt.Sprintf("%+v", b)
 	if valueA == valueB {
