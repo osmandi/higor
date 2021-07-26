@@ -1,6 +1,8 @@
 package dataframe
 
 import (
+	"fmt"
+	"math"
 	"reflect"
 	"time"
 )
@@ -23,9 +25,26 @@ type PageDatetime time.Time
 // Book Interface to save a DataFrame
 type Book []reflect.Value
 
+// Schema Map to set the schema
+type Schema map[string]reflect.Type
+
 // DataFrame Structure for DataFrame
 type DataFrame struct {
 	Columns []string
 	Values  Book
 	Shape   [2]int // [rowsNumber, columnsNumber]
+}
+
+var (
+	parseBool = map[PageBool]interface{}{0: false, 1: true, 3: math.NaN()}
+)
+
+func IsEqualBook(a, b interface{}) bool {
+	valueA := fmt.Sprintf("%+v", a)
+	valueB := fmt.Sprintf("%+v", b)
+	if valueA == valueB {
+		return true
+	}
+	return false
+
 }
