@@ -1,6 +1,10 @@
 package dataframe
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+	"time"
+)
 
 type book1 struct {
 	name string
@@ -50,6 +54,28 @@ func TestIsEqualBookEqual(t *testing.T) {
 	}
 }
 
-func TestBookGenerator(t *testing.T) {
-	//	columns = []string{"colString", "colInt", "colFloat64", "colBool", "colDatetime"}
+func TestTypeOnStruct(t *testing.T) {
+	var typeInt PageInt = 1
+	var typeFloat64 PageFloat64 = 1.1
+	var typeString PageString = "Higor"
+	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
+	typeDatetime := PageDatetime(timeParse)
+
+	sliceTypes := [4]interface{}{typeInt, typeFloat64, typeString, typeDatetime}
+
+	for _, v := range sliceTypes {
+		getTypeResult := typeOnStruct(v)
+		getTypeExpected := reflect.TypeOf(v)
+		if getTypeResult != getTypeExpected {
+			t.Errorf("Type are different. Expected: %v, but result: %v", getTypeExpected, getTypeResult)
+		}
+	}
+
 }
+
+/*
+func TestBookGenerator(t *testing.T) {
+	columns = []string{"colString", "colInt", "colFloat64", "colBool", "colDatetime"}
+
+}
+*/

@@ -48,3 +48,7 @@ func isEqualBook(a, b interface{}) bool {
 	return false
 
 }
+
+func typeOnStruct(a interface{}) reflect.Type {
+	return reflect.TypeOf(a)
+}
