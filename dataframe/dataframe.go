@@ -69,3 +69,5 @@ func bookGenerator(columns []string, schema Schema) reflect.Value {
 	internalBook := reflect.StructOf(rsfs)
 	return reflect.New(internalBook).Elem()
 }
+
+// Next steps: CSVCreatorMock, CSVChecker, DataFrameChecker, DataFrameStringer
