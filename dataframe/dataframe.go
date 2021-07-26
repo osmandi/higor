@@ -84,3 +84,5 @@ func writeLine(book reflect.Value, words Words) reflect.Value {
 
 	return book
 }
+
+// Next steps: writeBook with CSVvalues, custom String type, custom NaN values
