@@ -25,6 +25,9 @@ type PageDatetime time.Time
 // Words Each value before to insert
 type Words []interface{}
 
+// Line save a row with dynamic struct
+type Line []reflect.Value
+
 // Book Interface to save a DataFrame
 type Book []reflect.Value
 
@@ -76,7 +79,7 @@ func parseBool(v PageBool) interface{} {
 	return parse[v]
 }
 
-func writeBook(book reflect.Value, words Words) reflect.Value {
+func writeLine(book reflect.Value, words Words) reflect.Value {
 
 	for i, v := range words {
 		book.Field(i).Set(reflect.ValueOf(v))

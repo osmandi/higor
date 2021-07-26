@@ -177,7 +177,7 @@ func TestWriteBook(t *testing.T) {
 
 	values := Words{typeString, typeInt, typeFloat64, typeBool, typeDatetime}
 
-	bookResult := writeBook(book, values)
+	bookResult := writeLine(book, values)
 
 	// Equal
 	bookComparation := isEqualBook(bookExpected, bookResult)
