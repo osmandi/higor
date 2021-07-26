@@ -144,7 +144,7 @@ func TestBookGenerator(t *testing.T) {
 	}
 }
 
-func TestWriteBook(t *testing.T) {
+func TestWriteLine(t *testing.T) {
 
 	// Setting values
 	var typeString PageString = "Higor"
