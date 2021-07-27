@@ -203,7 +203,7 @@ func TestWriteLine(t *testing.T) {
 	bookExpected.FieldByName(columns[3]).Set(reflect.ValueOf(valueBool))
 	bookExpected.FieldByName(columns[4]).Set(reflect.ValueOf(valueDatetime))
 
-	values := Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
+	values := []Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
 
 	bookResult := writeLine(book, values)
 
@@ -226,6 +226,7 @@ func TestWriteLine(t *testing.T) {
 
 // Next: Implement TranslateWords
 // to convert []string{} to Words{}
+/*
 func TestTranslateWords(t *testing.T) {
 
 	// Setting values
@@ -236,7 +237,7 @@ func TestTranslateWords(t *testing.T) {
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
 	valueDatetime := PageDatetime(timeParse)
 
-	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sptring(valueBool), fmt.Sprint(valueDatetime)}
+	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sprint(valueBool), fmt.Sprint(valueDatetime)}
 
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
@@ -250,4 +251,4 @@ func TestTranslateWords(t *testing.T) {
 	// Book generate
 	book := bookGenerator(columns, schema)
 
-}
+}*/
