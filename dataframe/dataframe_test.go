@@ -257,3 +257,10 @@ func TestTranslateWords(t *testing.T) {
 	}
 
 }
+
+// Next steps:
+/*
+translateWord: Implement NaN values, custom datetimeformat
+writeLine: Refactor code, iterate with columns empty (save a dafaultName)
+New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy
+*/
