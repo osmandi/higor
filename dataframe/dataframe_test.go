@@ -224,12 +224,9 @@ func TestWriteLine(t *testing.T) {
 
 }
 
-// Next: Implement TranslateWords
-// to convert []string{} to Words{}
-/*
 func TestTranslateWords(t *testing.T) {
 
-	// Setting values
+	// Normal values
 	var valueString PageString = "Higor"
 	var valueInt PageInt = 1
 	var valueFloat64 PageFloat64 = 1.1
@@ -237,7 +234,8 @@ func TestTranslateWords(t *testing.T) {
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
 	valueDatetime := PageDatetime(timeParse)
 
-	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sprint(valueBool), fmt.Sprint(valueDatetime)}
+	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sprint(valueBool), FirstCommit}
+	textExpected := []Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
 
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
@@ -248,7 +246,14 @@ func TestTranslateWords(t *testing.T) {
 		columns[4]: typeDatetime(),
 	}
 
-	// Book generate
-	book := bookGenerator(columns, schema)
+	for i, v := range textInput {
+		result, err := translateWord(v, schema[columns[i]])
+		if err != nil {
+			panic(err)
+		}
+		if result != textExpected[i] {
+			t.Errorf("Different values but equal expected. Expected: %v, Result: %v", textExpected[i], result)
+		}
+	}
 
-}*/
+}

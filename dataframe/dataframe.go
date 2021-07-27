@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -112,4 +113,27 @@ func typeDatetime() reflect.Type {
 	return reflect.TypeOf(PageDatetime(timeParse))
 }
 
-// Next steps: writeBook with CSVvalues, custom String type, custom NaN values
+func translateWord(text string, typeValue reflect.Type) (Words, error) {
+	switch typeValue {
+	case typeString():
+		return PageString(text), nil
+	case typeInt():
+		result, err := strconv.Atoi(text)
+		return PageInt(result), err
+	case typeFloat64():
+		result, err := strconv.ParseFloat(text, 64)
+		return PageFloat64(result), err
+	case typeBool():
+		result, err := strconv.ParseBool(text)
+		if result {
+			return PageBool(uint8(1)), err
+		} else {
+			return PageBool(uint8(0)), err
+		}
+	case typeDatetime():
+		fmt.Println("Datetime:", text)
+		result, err := time.Parse("2006-01-02", text)
+		return PageDatetime(result), err
+	}
+	return nil, fmt.Errorf("Error to translate the word: %s", text)
+}
