@@ -56,22 +56,50 @@ func TestIsEqualBookEqual(t *testing.T) {
 	}
 }
 
-func TestTypeOnStruct(t *testing.T) {
-	var typeInt PageInt = 1
-	var typeFloat64 PageFloat64 = 1.1
-	var typeString PageString = "Higor"
-	var typeBool PageBool = 0
-	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	typeDatetime := PageDatetime(timeParse)
+func TestTypeString(t *testing.T) {
+	result := typeString()
+	expected := reflect.TypeOf(PageString(LibraryName))
 
-	sliceTypes := [5]interface{}{typeInt, typeFloat64, typeString, typeDatetime, typeBool}
+	if result != expected {
+		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
+	}
+}
 
-	for _, v := range sliceTypes {
-		getTypeResult := typeOnStruct(v)
-		getTypeExpected := reflect.TypeOf(v)
-		if getTypeResult != getTypeExpected {
-			t.Errorf("Type are different. Expected: %v, but result: %v", getTypeExpected, getTypeResult)
-		}
+func TestTypeInt(t *testing.T) {
+	result := typeInt()
+	expected := reflect.TypeOf(PageInt(VersionGlobal))
+
+	if result != expected {
+		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
+	}
+
+}
+
+func TestTypeFloat64(t *testing.T) {
+	result := typeFloat64()
+	expected := reflect.TypeOf(PageFloat64(VersionSub))
+
+	if result != expected {
+		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
+	}
+}
+
+func TestTypeBool(t *testing.T) {
+	result := typeBool()
+	expected := reflect.TypeOf(PageBool(uint8(VersionGlobal)))
+
+	if result != expected {
+		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
+	}
+}
+
+func TestTypeDatetime(t *testing.T) {
+	result := typeDatetime()
+	timeParse, _ := time.Parse("2006-01-02", FirstCommit)
+	expected := reflect.TypeOf(PageDatetime(timeParse))
+
+	if result != expected {
+		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
 	}
 
 }
@@ -105,37 +133,37 @@ func TestParseBool(t *testing.T) {
 func TestBookGenerator(t *testing.T) {
 
 	// Setting values
-	var typeInt PageInt = 1
-	var typeFloat64 PageFloat64 = 1.1
-	var typeBool PageBool = 0
-	var typeString PageString = "Higor"
+	var valueString PageString = "Higor"
+	var valueInt PageInt = 1
+	var valueFloat64 PageFloat64 = 1.1
+	var valueBool PageBool = 0
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	typeDatetime := PageDatetime(timeParse)
+	valueDatetime := PageDatetime(timeParse)
 
 	// Columns and Schema
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
-		columns[0]: typeOnStruct(typeString),
-		columns[1]: typeOnStruct(typeInt),
-		columns[2]: typeOnStruct(typeFloat64),
-		columns[3]: typeOnStruct(typeBool),
-		columns[4]: typeOnStruct(typeDatetime),
+		columns[0]: typeString(),
+		columns[1]: typeInt(),
+		columns[2]: typeFloat64(),
+		columns[3]: typeBool(),
+		columns[4]: typeDatetime(),
 	}
 
 	bookExpected := bookComplete{
-		ColString:   typeString,
-		ColInt:      typeInt,
-		ColFloat64:  typeFloat64,
-		ColBool:     typeBool,
-		ColDatetime: typeDatetime,
+		ColString:   valueString,
+		ColInt:      valueInt,
+		ColFloat64:  valueFloat64,
+		ColBool:     valueBool,
+		ColDatetime: valueDatetime,
 	}
 
 	bookResult := bookGenerator(columns, schema)
-	bookResult.FieldByName(columns[0]).Set(reflect.ValueOf(typeString))
-	bookResult.FieldByName(columns[1]).Set(reflect.ValueOf(typeInt))
-	bookResult.FieldByName(columns[2]).Set(reflect.ValueOf(typeFloat64))
-	bookResult.FieldByName(columns[3]).Set(reflect.ValueOf(typeBool))
-	bookResult.FieldByName(columns[4]).Set(reflect.ValueOf(typeDatetime))
+	bookResult.FieldByName(columns[0]).Set(reflect.ValueOf(valueString))
+	bookResult.FieldByName(columns[1]).Set(reflect.ValueOf(valueInt))
+	bookResult.FieldByName(columns[2]).Set(reflect.ValueOf(valueFloat64))
+	bookResult.FieldByName(columns[3]).Set(reflect.ValueOf(valueBool))
+	bookResult.FieldByName(columns[4]).Set(reflect.ValueOf(valueDatetime))
 
 	bookComparation := isEqualBook(bookExpected, bookResult)
 
@@ -147,21 +175,21 @@ func TestBookGenerator(t *testing.T) {
 func TestWriteLine(t *testing.T) {
 
 	// Setting values
-	var typeString PageString = "Higor"
-	var typeInt PageInt = 1
-	var typeFloat64 PageFloat64 = 1.1
-	var typeBool PageBool = 0
+	var valueString PageString = "Higor"
+	var valueInt PageInt = 1
+	var valueFloat64 PageFloat64 = 1.1
+	var valueBool PageBool = 0
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	typeDatetime := PageDatetime(timeParse)
+	valueDatetime := PageDatetime(timeParse)
 
 	// Columns and Schema
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
-		columns[0]: typeOnStruct(typeString),
-		columns[1]: typeOnStruct(typeInt),
-		columns[2]: typeOnStruct(typeFloat64),
-		columns[3]: typeOnStruct(typeBool),
-		columns[4]: typeOnStruct(typeDatetime),
+		columns[0]: typeString(),
+		columns[1]: typeInt(),
+		columns[2]: typeFloat64(),
+		columns[3]: typeBool(),
+		columns[4]: typeDatetime(),
 	}
 
 	// Book generate
@@ -169,13 +197,13 @@ func TestWriteLine(t *testing.T) {
 	bookExpected := bookGenerator(columns, schema)
 
 	// Expected book values
-	bookExpected.FieldByName(columns[0]).Set(reflect.ValueOf(typeString))
-	bookExpected.FieldByName(columns[1]).Set(reflect.ValueOf(typeInt))
-	bookExpected.FieldByName(columns[2]).Set(reflect.ValueOf(typeFloat64))
-	bookExpected.FieldByName(columns[3]).Set(reflect.ValueOf(typeBool))
-	bookExpected.FieldByName(columns[4]).Set(reflect.ValueOf(typeDatetime))
+	bookExpected.FieldByName(columns[0]).Set(reflect.ValueOf(valueString))
+	bookExpected.FieldByName(columns[1]).Set(reflect.ValueOf(valueInt))
+	bookExpected.FieldByName(columns[2]).Set(reflect.ValueOf(valueFloat64))
+	bookExpected.FieldByName(columns[3]).Set(reflect.ValueOf(valueBool))
+	bookExpected.FieldByName(columns[4]).Set(reflect.ValueOf(valueDatetime))
 
-	values := Words{typeString, typeInt, typeFloat64, typeBool, typeDatetime}
+	values := Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
 
 	bookResult := writeLine(book, values)
 

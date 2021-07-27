@@ -7,6 +7,16 @@ import (
 	"time"
 )
 
+// Higor description
+const (
+	LibraryName   = "Higor"
+	FirstCommit   = "2020-01-02"
+	Version       = "0.4.0"
+	VersionGlobal = 0
+	VersionSub    = 0.4
+	StableVersion = false
+)
+
 // PageString Data type for string values with support for NaN values
 type PageString string
 
@@ -48,10 +58,6 @@ func isEqualBook(a, b interface{}) bool {
 
 }
 
-func typeOnStruct(a interface{}) reflect.Type {
-	return reflect.TypeOf(a)
-}
-
 func bookGenerator(columns []string, schema Schema) reflect.Value {
 
 	rsfs := []reflect.StructField{}
@@ -83,6 +89,27 @@ func writeLine(book reflect.Value, words Words) reflect.Value {
 	}
 
 	return book
+}
+
+func typeString() reflect.Type {
+	return reflect.TypeOf(PageString(LibraryName))
+}
+
+func typeInt() reflect.Type {
+	return reflect.TypeOf(PageInt(VersionGlobal))
+}
+
+func typeFloat64() reflect.Type {
+	return reflect.TypeOf(PageFloat64(VersionSub))
+}
+
+func typeBool() reflect.Type {
+	return reflect.TypeOf(PageBool(uint8(VersionGlobal)))
+}
+
+func typeDatetime() reflect.Type {
+	timeParse, _ := time.Parse("2006-01-02", FirstCommit)
+	return reflect.TypeOf(PageDatetime(timeParse))
 }
 
 // Next steps: writeBook with CSVvalues, custom String type, custom NaN values
