@@ -223,3 +223,31 @@ func TestWriteLine(t *testing.T) {
 	}
 
 }
+
+// Next: Implement TranslateWords
+// to convert []string{} to Words{}
+func TestTranslateWords(t *testing.T) {
+
+	// Setting values
+	var valueString PageString = "Higor"
+	var valueInt PageInt = 1
+	var valueFloat64 PageFloat64 = 1.1
+	var valueBool PageBool = 0
+	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
+	valueDatetime := PageDatetime(timeParse)
+
+	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sptring(valueBool), fmt.Sprint(valueDatetime)}
+
+	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
+	schema := Schema{
+		columns[0]: typeString(),
+		columns[1]: typeInt(),
+		columns[2]: typeFloat64(),
+		columns[3]: typeBool(),
+		columns[4]: typeDatetime(),
+	}
+
+	// Book generate
+	book := bookGenerator(columns, schema)
+
+}
