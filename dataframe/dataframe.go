@@ -114,16 +114,28 @@ func typeDatetime() reflect.Type {
 }
 
 func translateWord(text string, typeValue reflect.Type) (Words, error) {
+
+	nanValueInput := ""
+
 	switch typeValue {
 	case typeString():
 		return PageString(text), nil
 	case typeInt():
+		if text == nanValueInput {
+			return nil, fmt.Errorf("Error parsing Int to NaN")
+		}
 		result, err := strconv.Atoi(text)
 		return PageInt(result), err
 	case typeFloat64():
+		if text == nanValueInput {
+			return PageFloat64(math.NaN()), nil
+		}
 		result, err := strconv.ParseFloat(text, 64)
 		return PageFloat64(result), err
 	case typeBool():
+		if text == nanValueInput {
+			return PageBool(2), nil
+		}
 		result, err := strconv.ParseBool(text)
 		if result {
 			return PageBool(uint8(1)), err
@@ -131,7 +143,10 @@ func translateWord(text string, typeValue reflect.Type) (Words, error) {
 			return PageBool(uint8(0)), err
 		}
 	case typeDatetime():
-		fmt.Println("Datetime:", text)
+		if text == nanValueInput {
+			valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+			return PageDatetime(valueDatetimeNaN), nil
+		}
 		result, err := time.Parse("2006-01-02", text)
 		return PageDatetime(result), err
 	}

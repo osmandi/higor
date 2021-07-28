@@ -233,9 +233,12 @@ func TestTranslateWords(t *testing.T) {
 	var valueBool PageBool = 0
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
 	valueDatetime := PageDatetime(timeParse)
+	valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sprint(valueBool), FirstCommit}
 	textExpected := []Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
+	textInputNaN := []string{"", "1", "", "", ""}
+	textExpectedNaN := []Words{PageString(""), valueInt, PageFloat64(math.NaN()), PageBool(2), PageDatetime(valueDatetimeNaN)}
 
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
@@ -253,6 +256,16 @@ func TestTranslateWords(t *testing.T) {
 		}
 		if result != textExpected[i] {
 			t.Errorf("Different values but equal expected. Expected: %v, Result: %v", textExpected[i], result)
+		}
+	}
+
+	for i, v := range textInputNaN {
+		result, err := translateWord(v, schema[columns[i]])
+		if err != nil {
+			panic(err)
+		}
+		if fmt.Sprint(result) != fmt.Sprint(textExpectedNaN[i]) {
+			t.Errorf("Different values but equal expected. Expected: %v, Result: %v", textExpectedNaN[i], result)
 		}
 	}
 
