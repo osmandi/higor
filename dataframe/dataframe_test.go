@@ -259,6 +259,9 @@ func TestTranslateWords(t *testing.T) {
 
 // Next steps:
 /*
+IsNaN function to know if a variable is NaN
+Stringers for each PageType custom (include NaN values)
+New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy. Usar una goroutine que corrija en retroceso si llega haber un error en el schema seleccionado
 ReadCSV: Implement all functions to read csvs and iterate with columns empties
-New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy
+Readme: Plasmar la analogía de los libros: Book, Page, Line, Word, etc
 */
