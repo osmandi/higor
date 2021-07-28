@@ -274,7 +274,7 @@ func TestTranslateWords(t *testing.T) {
 
 // Next steps:
 /*
-translateWord: custom datetimeformat
-writeLine: Refactor code, iterate with columns empty (save a dafaultName)
+writeLine: Refactor code
+ReadCSV: Implement all functions to read csvs and iterate with columns empties
 New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy
 */
