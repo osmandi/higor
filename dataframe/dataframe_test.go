@@ -226,12 +226,13 @@ func TestWriteLine(t *testing.T) {
 
 func TestTranslateWords(t *testing.T) {
 
+	datetimeLayout := "2006-01-02"
 	// Normal values
 	var valueString PageString = "Higor"
 	var valueInt PageInt = 1
 	var valueFloat64 PageFloat64 = 1.1
 	var valueBool PageBool = 0
-	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
+	timeParse, _ := time.Parse(datetimeLayout, "2020-01-02")
 	valueDatetime := PageDatetime(timeParse)
 	valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
@@ -273,7 +274,7 @@ func TestTranslateWords(t *testing.T) {
 
 // Next steps:
 /*
-translateWord: Implement NaN values, custom datetimeformat
+translateWord: custom datetimeformat
 writeLine: Refactor code, iterate with columns empty (save a dafaultName)
 New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy
 */

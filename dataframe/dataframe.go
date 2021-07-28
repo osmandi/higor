@@ -116,6 +116,7 @@ func typeDatetime() reflect.Type {
 func translateWord(text string, typeValue reflect.Type) (Words, error) {
 
 	nanValueInput := ""
+	datetimeLayout := "2006-01-02"
 
 	switch typeValue {
 	case typeString():
@@ -147,7 +148,7 @@ func translateWord(text string, typeValue reflect.Type) (Words, error) {
 			valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 			return PageDatetime(valueDatetimeNaN), nil
 		}
-		result, err := time.Parse("2006-01-02", text)
+		result, err := time.Parse(datetimeLayout, text)
 		return PageDatetime(result), err
 	}
 	return nil, fmt.Errorf("Error to translate the word: %s", text)
