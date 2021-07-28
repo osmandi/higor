@@ -174,13 +174,8 @@ func TestBookGenerator(t *testing.T) {
 
 func TestWriteLine(t *testing.T) {
 
-	// Setting values
-	var valueString PageString = "Higor"
-	var valueInt PageInt = 1
-	var valueFloat64 PageFloat64 = 1.1
-	var valueBool PageBool = 0
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	valueDatetime := PageDatetime(timeParse)
+	words := []Words{PageString("Higor"), PageInt(1), PageFloat64(1.1), PageBool(0), PageDatetime(timeParse)}
 
 	// Columns and Schema
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
@@ -196,16 +191,11 @@ func TestWriteLine(t *testing.T) {
 	book := bookGenerator(columns, schema)
 	bookExpected := bookGenerator(columns, schema)
 
-	// Expected book values
-	bookExpected.FieldByName(columns[0]).Set(reflect.ValueOf(valueString))
-	bookExpected.FieldByName(columns[1]).Set(reflect.ValueOf(valueInt))
-	bookExpected.FieldByName(columns[2]).Set(reflect.ValueOf(valueFloat64))
-	bookExpected.FieldByName(columns[3]).Set(reflect.ValueOf(valueBool))
-	bookExpected.FieldByName(columns[4]).Set(reflect.ValueOf(valueDatetime))
+	for i := range columns {
+		bookExpected.Field(i).Set(reflect.ValueOf(words[i]))
+	}
 
-	values := []Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
-
-	bookResult := writeLine(book, values)
+	bookResult := writeLine(book, words)
 
 	// Equal
 	bookComparation := isEqualBook(bookExpected, bookResult)
@@ -221,25 +211,18 @@ func TestWriteLine(t *testing.T) {
 	if bookComparation {
 		t.Errorf("Error, both book are equal but different expected. \n%+v vs \n%+v", bookExpected, bookResult)
 	}
-
 }
 
 func TestTranslateWords(t *testing.T) {
 
 	datetimeLayout := "2006-01-02"
-	// Normal values
-	var valueString PageString = "Higor"
-	var valueInt PageInt = 1
-	var valueFloat64 PageFloat64 = 1.1
-	var valueBool PageBool = 0
 	timeParse, _ := time.Parse(datetimeLayout, "2020-01-02")
-	valueDatetime := PageDatetime(timeParse)
 	valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	textInput := []string{fmt.Sprint(valueString), fmt.Sprint(valueInt), fmt.Sprint(valueFloat64), fmt.Sprint(valueBool), FirstCommit}
-	textExpected := []Words{valueString, valueInt, valueFloat64, valueBool, valueDatetime}
+	textInput := []string{"Higor", "0", "0.4", "false", "2020-01-02"}
+	textExpected := []Words{PageString("Higor"), PageInt(0), PageFloat64(0.4), PageBool(0), PageDatetime(timeParse)}
 	textInputNaN := []string{"", "1", "", "", ""}
-	textExpectedNaN := []Words{PageString(""), valueInt, PageFloat64(math.NaN()), PageBool(2), PageDatetime(valueDatetimeNaN)}
+	textExpectedNaN := []Words{PageString(""), PageInt(1), PageFloat64(math.NaN()), PageBool(2), PageDatetime(valueDatetimeNaN)}
 
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
@@ -250,6 +233,7 @@ func TestTranslateWords(t *testing.T) {
 		columns[4]: typeDatetime(),
 	}
 
+	// With normal values
 	for i, v := range textInput {
 		result, err := translateWord(v, schema[columns[i]])
 		if err != nil {
@@ -260,6 +244,7 @@ func TestTranslateWords(t *testing.T) {
 		}
 	}
 
+	// With NaN values
 	for i, v := range textInputNaN {
 		result, err := translateWord(v, schema[columns[i]])
 		if err != nil {
@@ -274,7 +259,6 @@ func TestTranslateWords(t *testing.T) {
 
 // Next steps:
 /*
-writeLine: Refactor code
 ReadCSV: Implement all functions to read csvs and iterate with columns empties
 New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy
 */
