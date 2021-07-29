@@ -1,6 +1,7 @@
 package dataframe
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -69,11 +70,32 @@ func WriteWordString(text string, nanLayout string) WordString {
 	wordString := WordString{}
 	if text == nanLayout {
 		wordString.isNaN = true
+		return wordString
 	}
 
 	wordString.value = text
 
 	return wordString
+
+}
+
+func WriteWordBool(text, nanLayout string) WordBool {
+	wordBool := WordBool{}
+	if text == nanLayout {
+		wordBool.isNaN = true
+
+		return wordBool
+	}
+
+	parseBool, err := strconv.ParseBool(text)
+
+	if err != nil {
+		panic(err)
+	}
+
+	wordBool.value = parseBool
+
+	return wordBool
 
 }
 
