@@ -46,7 +46,7 @@ func TestWriteLine(t *testing.T) {
 
 	lineResult := WriteLine(inputLine, nanLayout)
 
-	if reflect.DeepEqual(lineExpected, lineResult) {
+	if !reflect.DeepEqual(lineExpected, lineResult) {
 		t.Errorf("Both lines are different but equal expected. Expected: %v, Result: %v", lineExpected, lineResult)
 	}
 
