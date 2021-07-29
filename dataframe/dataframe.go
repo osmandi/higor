@@ -14,38 +14,42 @@ const (
 	StableVersion = false
 )
 
-type Word struct {
-	isNaN bool
+type Word interface {
 }
 
 // wordString Data type for string values with support for NaN values
 type WordString struct {
 	Word
 	value string
+	isNaN bool
 }
 
 // wordBool Data type for boolean values. Not support for NaN values
 type WordBool struct {
 	Word
 	value bool
+	isNaN bool
 }
 
 // wordFloat64 Data type for numbers and float values with support for NaN values
 type WordFloat64 struct {
 	Word
 	value float64
+	isNaN bool
 }
 
 // wordInt Data type for numbers
 type WordInt struct {
 	Word
 	value int
+	isNaN bool
 }
 
 // wordDatetime To date dates with support for NaN values
 type WordDatetime struct {
 	Word
 	value time.Time
+	isNaN bool
 }
 
 // Lines It's a row
