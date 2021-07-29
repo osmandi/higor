@@ -21,11 +21,11 @@ type book3 struct {
 }
 
 type bookComplete struct {
-	ColString   PageString
-	ColInt      PageInt
-	ColFloat64  PageFloat64
-	ColBool     PageBool
-	ColDatetime PageDatetime
+	ColString   wordString
+	ColInt      wordInt
+	ColFloat64  wordFloat64
+	ColBool     wordBool
+	ColDatetime wordDatetime
 }
 
 func TestIsEqualBookEqual(t *testing.T) {
@@ -58,7 +58,7 @@ func TestIsEqualBookEqual(t *testing.T) {
 
 func TestTypeString(t *testing.T) {
 	result := typeString()
-	expected := reflect.TypeOf(PageString(LibraryName))
+	expected := reflect.TypeOf(wordString(LibraryName))
 
 	if result != expected {
 		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
@@ -67,7 +67,7 @@ func TestTypeString(t *testing.T) {
 
 func TestTypeInt(t *testing.T) {
 	result := typeInt()
-	expected := reflect.TypeOf(PageInt(VersionGlobal))
+	expected := reflect.TypeOf(wordInt(VersionGlobal))
 
 	if result != expected {
 		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
@@ -77,7 +77,7 @@ func TestTypeInt(t *testing.T) {
 
 func TestTypeFloat64(t *testing.T) {
 	result := typeFloat64()
-	expected := reflect.TypeOf(PageFloat64(VersionSub))
+	expected := reflect.TypeOf(wordFloat64(VersionSub))
 
 	if result != expected {
 		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
@@ -86,7 +86,7 @@ func TestTypeFloat64(t *testing.T) {
 
 func TestTypeBool(t *testing.T) {
 	result := typeBool()
-	expected := reflect.TypeOf(PageBool(uint8(VersionGlobal)))
+	expected := reflect.TypeOf(wordBool(uint8(VersionGlobal)))
 
 	if result != expected {
 		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
@@ -96,7 +96,7 @@ func TestTypeBool(t *testing.T) {
 func TestTypeDatetime(t *testing.T) {
 	result := typeDatetime()
 	timeParse, _ := time.Parse("2006-01-02", FirstCommit)
-	expected := reflect.TypeOf(PageDatetime(timeParse))
+	expected := reflect.TypeOf(wordDatetime(timeParse))
 
 	if result != expected {
 		t.Errorf("Type are different. Expected: %v, but result: %v", expected, result)
@@ -107,7 +107,7 @@ func TestTypeDatetime(t *testing.T) {
 func TestParseBool(t *testing.T) {
 
 	// Equal
-	slicesIterator := []PageBool{0, 1, 2}
+	slicesIterator := []wordBool{0, 1, 2}
 	resultExpected := []interface{}{false, true, math.NaN()}
 
 	for i, v := range slicesIterator {
@@ -118,7 +118,7 @@ func TestParseBool(t *testing.T) {
 	}
 
 	// Different
-	slicesIterator = []PageBool{1, 2, 0}
+	slicesIterator = []wordBool{1, 2, 0}
 	resultExpected = []interface{}{false, true, math.NaN()}
 
 	for i, v := range slicesIterator {
@@ -130,52 +130,12 @@ func TestParseBool(t *testing.T) {
 
 }
 
-func TestBookGenerator(t *testing.T) {
-
-	// Setting values
-	var valueString PageString = "Higor"
-	var valueInt PageInt = 1
-	var valueFloat64 PageFloat64 = 1.1
-	var valueBool PageBool = 0
-	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	valueDatetime := PageDatetime(timeParse)
-
-	// Columns and Schema
-	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
-	schema := Schema{
-		columns[0]: typeString(),
-		columns[1]: typeInt(),
-		columns[2]: typeFloat64(),
-		columns[3]: typeBool(),
-		columns[4]: typeDatetime(),
-	}
-
-	bookExpected := bookComplete{
-		ColString:   valueString,
-		ColInt:      valueInt,
-		ColFloat64:  valueFloat64,
-		ColBool:     valueBool,
-		ColDatetime: valueDatetime,
-	}
-
-	bookResult := bookGenerator(columns, schema)
-	bookResult.FieldByName(columns[0]).Set(reflect.ValueOf(valueString))
-	bookResult.FieldByName(columns[1]).Set(reflect.ValueOf(valueInt))
-	bookResult.FieldByName(columns[2]).Set(reflect.ValueOf(valueFloat64))
-	bookResult.FieldByName(columns[3]).Set(reflect.ValueOf(valueBool))
-	bookResult.FieldByName(columns[4]).Set(reflect.ValueOf(valueDatetime))
-
-	bookComparation := isEqualBook(bookExpected, bookResult)
-
-	if !bookComparation {
-		t.Errorf("Error, both book are different but equal expected. \n%+v vs \n%+v", bookExpected, bookResult)
-	}
-}
-
+/*
 func TestWriteLine(t *testing.T) {
 
 	timeParse, _ := time.Parse("2006-01-02", "2020-01-02")
-	words := []Words{PageString("Higor"), PageInt(1), PageFloat64(1.1), PageBool(0), PageDatetime(timeParse)}
+	linesExpected := Lines{Word(reflect.ValueOf(wordString("Higor"))), Word(reflect.ValueOf(wordInt(1))), Word(reflect.ValueOf(wordFloat64(1.1))), Word(reflect.ValueOf(wordBool(0))), Word(reflect.ValueOf(wordDatetime(timeParse)))}
+	linesResult := Lines{}
 
 	// Columns and Schema
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
@@ -192,7 +152,7 @@ func TestWriteLine(t *testing.T) {
 	bookExpected := bookGenerator(columns, schema)
 
 	for i := range columns {
-		bookExpected.Field(i).Set(reflect.ValueOf(words[i]))
+		bookExpected.Field(i).Set(reflect.ValueOf(lines[i]))
 	}
 
 	bookResult := writeLine(book, words)
@@ -205,14 +165,16 @@ func TestWriteLine(t *testing.T) {
 	}
 
 	// Different
-	bookExpected.FieldByName(columns[0]).Set(reflect.ValueOf(PageString("Hello Higor")))
+	bookExpected.FieldByName(columns[0]).Set(reflect.ValueOf(wordString("Hello Higor")))
 	bookComparation = isEqualBook(bookExpected, bookResult)
 
 	if bookComparation {
 		t.Errorf("Error, both book are equal but different expected. \n%+v vs \n%+v", bookExpected, bookResult)
 	}
 }
+*/
 
+/*
 func TestTranslateWords(t *testing.T) {
 
 	datetimeLayout := "2006-01-02"
@@ -220,9 +182,9 @@ func TestTranslateWords(t *testing.T) {
 	valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
 
 	textInput := []string{"Higor", "0", "0.4", "false", "2020-01-02"}
-	textExpected := []Words{PageString("Higor"), PageInt(0), PageFloat64(0.4), PageBool(0), PageDatetime(timeParse)}
+	textExpected := []Word{wordString("Higor"), wordInt(0), wordFloat64(0.4), wordBool(0), wordDatetime(timeParse)}
 	textInputNaN := []string{"", "1", "", "", ""}
-	textExpectedNaN := []Words{PageString(""), PageInt(1), PageFloat64(math.NaN()), PageBool(2), PageDatetime(valueDatetimeNaN)}
+	textExpectedNaN := []Word{wordString(""), wordInt(1), wordFloat64(math.NaN()), wordBool(2), wordDatetime(valueDatetimeNaN)}
 
 	columns := []string{"ColString", "ColInt", "ColFloat64", "ColBool", "ColDatetime"}
 	schema := Schema{
@@ -256,9 +218,11 @@ func TestTranslateWords(t *testing.T) {
 	}
 
 }
+*/
 
 // Next steps:
 /*
+Replace wordString to WordString, etc. And translate
 IsNaN function to know if a variable is NaN
 Stringers for each PageType custom (include NaN values)
 New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy. Usar una goroutine que corrija en retroceso si llega haber un error en el schema seleccionado

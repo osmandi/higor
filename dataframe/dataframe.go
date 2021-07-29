@@ -18,26 +18,29 @@ const (
 	StableVersion = false
 )
 
-// PageString Data type for string values with support for NaN values
-type PageString string
+// wordString Data type for string values with support for NaN values
+type wordString string
 
-// PageBool Data type for boolean values. Not support for NaN values
-type PageBool uint8
+// wordBool Data type for boolean values. Not support for NaN values
+type wordBool uint8
 
-// PageFloat64 Data type for numbers and float values with support for NaN values
-type PageFloat64 float64
+// wordFloat64 Data type for numbers and float values with support for NaN values
+type wordFloat64 float64
 
-// PageInt Data type for numbers
-type PageInt int
+// wordInt Data type for numbers
+type wordInt int
 
-// PageDatetime To date dates with support for NaN values
-type PageDatetime time.Time
+// wordDatetime To date dates with support for NaN values
+type wordDatetime time.Time
 
-// Words Each value before to insert
-type Words interface{}
+// Words It's a value
+type Word reflect.Value
 
-// Book Interface to save a DataFrame
-type Book []reflect.Value
+// Lines It's a row
+type Lines []Word
+
+// Book save multiple lines
+type Book []Lines
 
 // Schema Map to set the schema
 type Schema map[string]reflect.Type
@@ -59,97 +62,71 @@ func isEqualBook(a, b interface{}) bool {
 
 }
 
-func bookGenerator(columns []string, schema Schema) reflect.Value {
+func parseBool(v wordBool) interface{} {
 
-	rsfs := []reflect.StructField{}
-
-	for i, v := range columns {
-		rsf := reflect.StructField{
-			Name: columns[i],
-			Type: schema[v],
-		}
-
-		rsfs = append(rsfs, rsf)
-	}
-
-	internalBook := reflect.StructOf(rsfs)
-	return reflect.New(internalBook).Elem()
-}
-
-func parseBool(v PageBool) interface{} {
-
-	parse := map[PageBool]interface{}{0: false, 1: true, 2: math.NaN()}
+	parse := map[wordBool]interface{}{0: false, 1: true, 2: math.NaN()}
 
 	return parse[v]
 }
 
-func writeLine(book reflect.Value, words []Words) reflect.Value {
-
-	for i, v := range words {
-		book.Field(i).Set(reflect.ValueOf(v))
-	}
-
-	return book
-}
-
 func typeString() reflect.Type {
-	return reflect.TypeOf(PageString(LibraryName))
+	return reflect.TypeOf(wordString(LibraryName))
 }
 
 func typeInt() reflect.Type {
-	return reflect.TypeOf(PageInt(VersionGlobal))
+	return reflect.TypeOf(wordInt(VersionGlobal))
 }
 
 func typeFloat64() reflect.Type {
-	return reflect.TypeOf(PageFloat64(VersionSub))
+	return reflect.TypeOf(wordFloat64(VersionSub))
 }
 
 func typeBool() reflect.Type {
-	return reflect.TypeOf(PageBool(uint8(VersionGlobal)))
+	return reflect.TypeOf(wordBool(uint8(VersionGlobal)))
 }
 
 func typeDatetime() reflect.Type {
 	timeParse, _ := time.Parse("2006-01-02", FirstCommit)
-	return reflect.TypeOf(PageDatetime(timeParse))
+	return reflect.TypeOf(wordDatetime(timeParse))
 }
 
-func translateWord(text string, typeValue reflect.Type) (Words, error) {
+func translateWord(text string, typeValue reflect.Type) (Word, error) {
 
 	nanValueInput := ""
 	datetimeLayout := "2006-01-02"
 
 	switch typeValue {
 	case typeString():
-		return PageString(text), nil
+		return Word(reflect.ValueOf(wordString(text))), nil
 	case typeInt():
 		if text == nanValueInput {
-			return nil, fmt.Errorf("Error parsing Int to NaN")
+			return Word{}, fmt.Errorf("Error parsing Int to NaN")
 		}
 		result, err := strconv.Atoi(text)
-		return PageInt(result), err
+		return Word(reflect.ValueOf(wordInt(result))), err
 	case typeFloat64():
 		if text == nanValueInput {
-			return PageFloat64(math.NaN()), nil
+			return Word(reflect.ValueOf(wordFloat64(math.NaN()))), nil
 		}
 		result, err := strconv.ParseFloat(text, 64)
-		return PageFloat64(result), err
+		return Word(reflect.ValueOf(wordFloat64(result))), err
 	case typeBool():
 		if text == nanValueInput {
-			return PageBool(2), nil
+			return Word(reflect.ValueOf(wordBool(2))), nil
 		}
 		result, err := strconv.ParseBool(text)
 		if result {
-			return PageBool(uint8(1)), err
+			return Word(reflect.ValueOf(wordBool(uint8(1)))), err
 		} else {
-			return PageBool(uint8(0)), err
+			return Word(reflect.ValueOf(wordBool(uint8(0)))), err
 		}
 	case typeDatetime():
 		if text == nanValueInput {
 			valueDatetimeNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
-			return PageDatetime(valueDatetimeNaN), nil
+			return Word(reflect.ValueOf(wordDatetime(valueDatetimeNaN))), nil
 		}
 		result, err := time.Parse(datetimeLayout, text)
-		return PageDatetime(result), err
+		return Word(reflect.ValueOf(wordDatetime(result))), err
 	}
-	return nil, fmt.Errorf("Error to translate the word: %s", text)
+	return Word{}, fmt.Errorf("Error to translate the word: %s", text)
 }
