@@ -1,6 +1,7 @@
 package dataframe
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -27,6 +28,26 @@ func TestWriteWordString(t *testing.T) {
 
 	if wordStringResult.value != wordStringExpected.value || wordStringResult.isNaN != wordStringExpected.isNaN {
 		t.Errorf("Error wordString. Expected: %+v Result: %+v", wordStringExpected, wordStringResult)
+	}
+
+}
+
+func TestWriteLine(t *testing.T) {
+
+	nanLayout := ""
+
+	// Input with String
+	var1 := "Higor"
+	var2 := "Higor2"
+	var3 := "Higor3"
+
+	inputLine := []string{var1, var2, var3}
+	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}}
+
+	lineResult := WriteLine(inputLine, nanLayout)
+
+	if !reflect.DeepEqual(lineExpected, lineResult) {
+		t.Errorf("Both lines are different but equal expected. Expected: %v, Result: %v", lineExpected, lineResult)
 	}
 
 }

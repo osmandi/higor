@@ -76,3 +76,13 @@ func WriteWordString(text string, nanLayout string) WordString {
 	return wordString
 
 }
+
+func WriteLine(textInput []string, nanLayout string) Lines {
+	line := Lines{}
+	for _, v := range textInput {
+		word := WriteWordString(v, nanLayout)
+		line = append(line, word)
+	}
+
+	return line
+}
