@@ -3,6 +3,7 @@ package dataframe
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestWriteWordString(t *testing.T) {
@@ -60,7 +61,15 @@ func TestWriteLine(t *testing.T) {
 		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected, lineResult)
 	}
 
-	// Input with String + Bool [TODO]
+	// All values
+	inputLine2 := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
+	datetime2, _ := time.Parse(layoutDatetime, "2020-01-01")
+	lineExpected2 := Lines{WordString{value: "Higor"}, WordInt{value: int(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
+	lineResult2 := WriteLine(inputLine2, nanLayout, layoutDatetime)
+
+	if !reflect.DeepEqual(lineExpected2, lineResult2) {
+		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected2, lineResult2)
+	}
 
 }
 
