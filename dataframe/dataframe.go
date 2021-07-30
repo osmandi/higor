@@ -51,9 +51,11 @@ type Book []Lines
 
 // DataFrame Structure for DataFrame
 type DataFrame struct {
-	Columns []string
-	Values  Book
-	Shape   [2]int // [rowsNumber, columnsNumber]
+	Columns        []string
+	Values         Book
+	Shape          [2]int // [rowsNumber, columnsNumber]
+	NaNLayout      string
+	DatetimeLayout string
 }
 
 func WriteWordString(text string) WordString {
@@ -118,4 +120,10 @@ func translateWord(textInput, nanLayout, layoutDatetime string) (valueType strin
 	}
 
 	return "string", nil
+}
+
+// AddLine write a line in to book
+func (df *DataFrame) AddLine(inputText []string) {
+	lineTranslated := WriteLine(inputText, df.NaNLayout, df.DatetimeLayout)
+	df.Values = append(df.Values, lineTranslated)
 }
