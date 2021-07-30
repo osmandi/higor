@@ -89,6 +89,8 @@ func TestWriteLine(t *testing.T) {
 		t.Errorf("Both lines are different but equal expected. Expected: %v, Result: %v", lineExpected, lineResult)
 	}
 
+	// Input with String + Bool [TODO]
+
 }
 
 // Next steps:
