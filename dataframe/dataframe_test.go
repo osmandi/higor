@@ -90,18 +90,11 @@ func TestTranslateWord(t *testing.T) {
 }
 
 func TestAddLine(t *testing.T) {
-	nanLayout := ""
-	layoutDatetime := "2006-01-02"
 
-	dfExpected := DataFrame{}
-	dfResult := DataFrame{}
+	dfExpected := NewDataFrame()
+	dfResult := NewDataFrame()
 
-	dfExpected.NaNLayout = nanLayout
-	dfExpected.DatetimeLayout = layoutDatetime
-	dfResult.NaNLayout = nanLayout
-	dfResult.DatetimeLayout = layoutDatetime
-
-	datetime, _ := time.Parse(layoutDatetime, "2020-01-01")
+	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
 	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
 	lineExpected := Lines{WordString{value: "Higor"}, WordInt{value: int(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
 
@@ -115,15 +108,17 @@ func TestAddLine(t *testing.T) {
 
 }
 
-// TODO: DataFrame.String()
-// TODO: higor.ReadCSV()
+func TestNewDataFrame(t *testing.T) {
+	dfExpected := DataFrame{}
+	dfExpected.NaNLayout = ""
+	dfExpected.DatetimeLayout = "2006-01-02"
 
-// Next steps:
-/*
-Replace wordString to WordString, etc. And translate
-IsNaN function to know if a variable is NaN
-Stringers for each PageType custom (include NaN values)
-New function: schemaGenerator (to get dynamic schema) you can use maps and struct{} emtpy. Usar una goroutine que corrija en retroceso si llega haber un error en el schema seleccionado
-ReadCSV: Implement all functions to read csvs and iterate with columns empties
-Readme: Plasmar la analogía de los libros: Book, Page, Line, Word, etc
-*/
+	dfResult := NewDataFrame()
+
+	if !reflect.DeepEqual(dfExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
+	}
+
+}
+
+// TODO: DataFrame.String()

@@ -127,3 +127,9 @@ func (df *DataFrame) AddLine(inputText []string) {
 	lineTranslated := WriteLine(inputText, df.NaNLayout, df.DatetimeLayout)
 	df.Values = append(df.Values, lineTranslated)
 }
+
+// NewDataFrame Create a DataFrame with default values
+func NewDataFrame() DataFrame {
+	df := DataFrame{NaNLayout: "", DatetimeLayout: "2006-01-02"}
+	return df
+}
