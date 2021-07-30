@@ -92,6 +92,34 @@ func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 		switch trans := translateWord(v, nanLayout, layoutDatetime); trans {
 		case "NaN":
 			line = append(line, WordNaN{})
+		case "datetime":
+			datetime, err := time.Parse(layoutDatetime, v)
+			if err != nil {
+				panic(err)
+			}
+			line = append(line, WordDatetime{value: datetime})
+		case "int":
+			value, err := strconv.Atoi(v)
+			if err != nil {
+				panic(err)
+			}
+			line = append(line, WordInt{value: value})
+
+		case "bool":
+			value, err := strconv.ParseBool(v)
+			if err != nil {
+				panic(err)
+			}
+			line = append(line, WordBool{value: value})
+		case "float64":
+			value, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				panic(err)
+			}
+			line = append(line, WordFloat64{value: value})
+
+		default:
+			line = append(line, WordString{value: v})
 		}
 	}
 
