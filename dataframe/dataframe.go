@@ -89,8 +89,12 @@ func WriteWordBool(text string) WordBool {
 func WriteLine(textInput []string, nanLayout string) Lines {
 	line := Lines{}
 	for _, v := range textInput {
-		word := WriteWordString(v)
-		line = append(line, word)
+		switch {
+		case v == nanLayout:
+			line = append(line, WordNaN{})
+		default:
+			line = append(line, WordString{value: v})
+		}
 	}
 
 	return line

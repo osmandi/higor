@@ -48,9 +48,10 @@ func TestWriteLine(t *testing.T) {
 	var1 := "Higor"
 	var2 := "Higor2"
 	var3 := "Higor3"
+	var4NaN := nanLayout
 
-	inputLine := []string{var1, var2, var3}
-	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}}
+	inputLine := []string{var1, var2, var3, var4NaN}
+	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
 
 	lineResult := WriteLine(inputLine, nanLayout)
 
