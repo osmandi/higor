@@ -80,7 +80,7 @@ func TestTranslateWord(t *testing.T) {
 	result := []string{"NaN", "string", "int", "float64", "bool", "bool", "bool", "bool", "datetime"}
 
 	for i, v := range variables {
-		trans := translateWord(v, nanLayout, layoutDatetime)
+		trans, _ := translateWord(v, nanLayout, layoutDatetime)
 
 		if trans != result[i] {
 			t.Errorf("Both different but equal result. Expected: %s, Result: %s", result[i], trans)

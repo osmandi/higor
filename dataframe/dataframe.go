@@ -89,35 +89,18 @@ func WriteWordBool(text string) WordBool {
 func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	line := Lines{}
 	for _, v := range textInput {
-		switch trans := translateWord(v, nanLayout, layoutDatetime); trans {
+		switch trans, value := translateWord(v, nanLayout, layoutDatetime); trans {
 		case "NaN":
 			line = append(line, WordNaN{})
 		case "datetime":
-			datetime, err := time.Parse(layoutDatetime, v)
-			if err != nil {
-				panic(err)
-			}
-			line = append(line, WordDatetime{value: datetime})
+			line = append(line, WordDatetime{value: value.(time.Time)})
 		case "int":
-			value, err := strconv.Atoi(v)
-			if err != nil {
-				panic(err)
-			}
-			line = append(line, WordInt{value: value})
+			line = append(line, WordInt{value: value.(int)})
 
 		case "bool":
-			value, err := strconv.ParseBool(v)
-			if err != nil {
-				panic(err)
-			}
-			line = append(line, WordBool{value: value})
+			line = append(line, WordBool{value: value.(bool)})
 		case "float64":
-			value, err := strconv.ParseFloat(v, 64)
-			if err != nil {
-				panic(err)
-			}
-			line = append(line, WordFloat64{value: value})
-
+			line = append(line, WordFloat64{value: value.(float64)})
 		default:
 			line = append(line, WordString{value: v})
 		}
@@ -126,23 +109,23 @@ func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	return line
 }
 
-func translateWord(textInput, nanLayout, layoutDatetime string) string {
-	_, errDatetime := time.Parse(layoutDatetime, textInput)
-	_, errInt := strconv.Atoi(textInput)
-	_, errBool := strconv.ParseBool(textInput)
-	_, errFloat64 := strconv.ParseFloat(textInput, 64)
+func translateWord(textInput, nanLayout, layoutDatetime string) (valueType string, value interface{}) {
+	valueDatetime, errDatetime := time.Parse(layoutDatetime, textInput)
+	valueInt, errInt := strconv.Atoi(textInput)
+	valueBool, errBool := strconv.ParseBool(textInput)
+	valueFloat64, errFloat64 := strconv.ParseFloat(textInput, 64)
 	switch {
 	case textInput == nanLayout:
-		return "NaN"
+		return "NaN", nil
 	case errDatetime == nil:
-		return "datetime"
+		return "datetime", valueDatetime
 	case errInt == nil:
-		return "int"
+		return "int", valueInt
 	case errBool == nil:
-		return "bool"
+		return "bool", valueBool
 	case errFloat64 == nil:
-		return "float64"
+		return "float64", valueFloat64
 	}
 
-	return "string"
+	return "string", nil
 }
