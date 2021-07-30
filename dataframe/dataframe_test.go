@@ -43,6 +43,7 @@ func TestWriteWordBool(t *testing.T) {
 func TestWriteLine(t *testing.T) {
 
 	nanLayout := ""
+	layoutDatetime := "2006-01-02"
 
 	// Input with String
 	var1 := "Higor"
@@ -53,13 +54,29 @@ func TestWriteLine(t *testing.T) {
 	inputLine := []string{var1, var2, var3, var4NaN}
 	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
 
-	lineResult := WriteLine(inputLine, nanLayout)
+	lineResult := WriteLine(inputLine, nanLayout, layoutDatetime)
 
 	if !reflect.DeepEqual(lineExpected, lineResult) {
 		t.Errorf("Both lines are different but equal expected. Expected: %v, Result: %v", lineExpected, lineResult)
 	}
 
 	// Input with String + Bool [TODO]
+
+}
+
+func TestTranslateWord(t *testing.T) {
+	nanLayout := ""
+	layoutDatetime := "2006-01-02"
+	variables := []string{nanLayout, "Higor", "1", "1.2", "true", "True", "False", "false", "2020-02-01"}
+	result := []string{"NaN", "string", "int", "float64", "bool", "bool", "bool", "bool", "datetime"}
+
+	for i, v := range variables {
+		trans := translateWord(v, nanLayout, layoutDatetime)
+
+		if trans != result[i] {
+			t.Errorf("Both different but equal result. Expected: %s, Result: %s", result[i], trans)
+		}
+	}
 
 }
 

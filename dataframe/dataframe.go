@@ -86,16 +86,35 @@ func WriteWordBool(text string) WordBool {
 
 }
 
-func WriteLine(textInput []string, nanLayout string) Lines {
+func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	line := Lines{}
 	for _, v := range textInput {
-		switch {
-		case v == nanLayout:
+		switch trans := translateWord(v, nanLayout, layoutDatetime); trans {
+		case "NaN":
 			line = append(line, WordNaN{})
-		default:
-			line = append(line, WordString{value: v})
 		}
 	}
 
 	return line
+}
+
+func translateWord(textInput, nanLayout, layoutDatetime string) string {
+	_, errDatetime := time.Parse(layoutDatetime, textInput)
+	_, errInt := strconv.Atoi(textInput)
+	_, errBool := strconv.ParseBool(textInput)
+	_, errFloat64 := strconv.ParseFloat(textInput, 64)
+	switch {
+	case textInput == nanLayout:
+		return "NaN"
+	case errDatetime == nil:
+		return "datetime"
+	case errInt == nil:
+		return "int"
+	case errBool == nil:
+		return "bool"
+	case errFloat64 == nil:
+		return "float64"
+	}
+
+	return "string"
 }
