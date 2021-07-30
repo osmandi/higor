@@ -5,16 +5,6 @@ import (
 	"time"
 )
 
-// Higor description
-const (
-	LibraryName   = "Higor"
-	FirstCommit   = "2020-01-02"
-	Version       = "0.4.0"
-	VersionGlobal = 0
-	VersionSub    = 0.4
-	StableVersion = false
-)
-
 type Word interface {
 }
 
