@@ -1,9 +1,16 @@
 package higor
 
-import "testing"
+import (
+	"os/exec"
+	"strings"
+	"testing"
+)
 
 func TestVersion(t *testing.T) {
-	versionExpected := "v0.5.0"
+	c, b := exec.Command("git", "branch", "--show-current"), new(strings.Builder)
+	c.Stdout = b
+	c.Run()
+	versionExpected := strings.TrimRight(b.String(), "\n")
 	versionResult := Version
 
 	if versionExpected != versionResult {
