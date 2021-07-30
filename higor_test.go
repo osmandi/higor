@@ -12,7 +12,7 @@ import (
 func TestHelloHigor(t *testing.T) {
 
 	resultMessage := HelloHigor()
-	expectedMessage := "Hello from Higor :) v0.3.2"
+	expectedMessage := "Hello from Higor :) v0.5.0"
 
 	if resultMessage != expectedMessage {
 		t.Errorf("Message expected: '%s' but received: '%s'", expectedMessage, resultMessage)
@@ -303,3 +303,5 @@ func TestReadCSVWithIncorrectSchema(t *testing.T) {
 	ReadCSV(csvTempFilename, dataframe.Schema(schema))
 
 }
+
+// TODO: higor.ReadCSV() implementation
