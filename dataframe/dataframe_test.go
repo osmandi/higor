@@ -8,61 +8,34 @@ import (
 func TestWriteWordString(t *testing.T) {
 
 	textInput := "Hello Higor"
-	textInputNaN := ""
-	nanLayout := ""
 
 	// Normal input
-	wordStringResult := WriteWordString(textInput, nanLayout)
-	wordStringExpected := WordString{}
-	wordStringExpected.value = textInput
-	wordStringExpected.isNaN = false
+	wordStringResult := WriteWordString(textInput)
+	wordStringExpected := WordString{value: textInput}
 
-	if wordStringResult.value != wordStringExpected.value || wordStringResult.isNaN != wordStringExpected.isNaN {
+	if wordStringResult.value != wordStringExpected.value {
 		t.Errorf("Error wordString. Expected: %+v Result: %+v", wordStringExpected, wordStringResult)
 	}
-
-	// NaN input
-	wordStringResult = WriteWordString(textInputNaN, nanLayout)
-	wordStringExpected.value = textInputNaN
-	wordStringExpected.isNaN = true
-
-	if wordStringResult.value != wordStringExpected.value || wordStringResult.isNaN != wordStringExpected.isNaN {
-		t.Errorf("Error wordString. Expected: %+v Result: %+v", wordStringExpected, wordStringResult)
-	}
-
 }
 
 func TestWriteWordBool(t *testing.T) {
 	textInputFalse := "false"
 	textInputTrue := "true"
-	textInputNaN := ""
-	nanLayout := ""
 
 	// Input true
-	wordBoolResultTrue := WriteWordBool(textInputTrue, nanLayout)
-	wordBoolExpectedTrue := WordBool{}
-	wordBoolExpectedTrue.value = true
+	wordBoolResultTrue := WriteWordBool(textInputTrue)
+	wordBoolExpectedTrue := WordBool{value: true}
 
 	if !reflect.DeepEqual(wordBoolResultTrue, wordBoolExpectedTrue) {
 		t.Errorf("Both words are different but equal expected. Expected: %+v, Result: %+v", wordBoolExpectedTrue, wordBoolResultTrue)
 	}
 
 	// Input false
-	wordBoolResultFalse := WriteWordBool(textInputFalse, nanLayout)
-	wordBoolExpectedFalse := WordBool{}
-	wordBoolExpectedFalse.value = false
+	wordBoolResultFalse := WriteWordBool(textInputFalse)
+	wordBoolExpectedFalse := WordBool{value: false}
 
 	if !reflect.DeepEqual(wordBoolResultFalse, wordBoolExpectedFalse) {
 		t.Errorf("Both words are different but equal expected. Expected: %+v, Result: %+v", wordBoolExpectedFalse, wordBoolResultFalse)
-	}
-
-	// Input NaN
-	wordBoolResultNaN := WriteWordBool(textInputNaN, nanLayout)
-	wordBoolExpectedNaN := WordBool{}
-	wordBoolExpectedNaN.isNaN = true
-
-	if !reflect.DeepEqual(wordBoolResultNaN, wordBoolExpectedNaN) {
-		t.Errorf("Both words are different but equal expected. Expected: %+v, Result: %+v", wordBoolExpectedNaN, wordBoolResultNaN)
 	}
 
 }
@@ -75,13 +48,9 @@ func TestWriteLine(t *testing.T) {
 	var1 := "Higor"
 	var2 := "Higor2"
 	var3 := "Higor3"
-	var4NaN := nanLayout
-	wordStringNaN := WordString{}
-	wordStringNaN.value = var4NaN
-	wordStringNaN.isNaN = true
 
-	inputLine := []string{var1, var2, var3, var4NaN}
-	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, wordStringNaN}
+	inputLine := []string{var1, var2, var3}
+	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}}
 
 	lineResult := WriteLine(inputLine, nanLayout)
 
