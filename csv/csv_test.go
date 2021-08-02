@@ -20,9 +20,17 @@ func Sep(sep rune) CSVOptions {
 	}
 }
 
+// NaNLayout to set custom NaN format
 func NaNLayout(nanLayout string) CSVOptions {
 	return func(c *CSV) {
 		c.NaNLayout = nanLayout
+	}
+}
+
+// LazyQuotes True if the CSV has lazy quotes
+func LazyQuotes(lazyQuotes bool) CSVOptions {
+	return func(c *CSV) {
+		c.LazyQuotes = lazyQuotes
 	}
 }
 
