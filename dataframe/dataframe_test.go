@@ -122,3 +122,4 @@ func TestNewDataFrame(t *testing.T) {
 }
 
 // TODO: DataFrame.String()
+// TODO: DataFrame.IsEqual
