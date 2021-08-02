@@ -1,5 +1,7 @@
 package csv
 
+import "strings"
+
 // CSV struct to parse CSV to DataFrame
 type CSV struct {
 	Sep            rune
@@ -32,6 +34,15 @@ func LazyQuotes(lazyQuotes bool) CSVOptions {
 	return func(c *CSV) {
 		c.LazyQuotes = lazyQuotes
 	}
+}
+
+func parseDatetime(layout string) string {
+	layout = strings.ToLower(layout)
+	layout = strings.Replace(layout, "yyyy", "2006", -1)
+	layout = strings.Replace(layout, "mm", "01", -1)
+	layout = strings.Replace(layout, "dd", "02", -1)
+
+	return layout
 }
 
 // TODO: CSVCreateMock

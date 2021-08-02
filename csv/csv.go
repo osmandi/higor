@@ -47,6 +47,4 @@ func TestParseDatetimeLayout(t *testing.T) {
 		t.Errorf("Expected: %v\nResult: %v", datetimeLayoutExpected, datetimeLayoutResult)
 	}
 
-	// Timestamp
-
 }
