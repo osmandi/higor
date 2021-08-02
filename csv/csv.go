@@ -36,3 +36,17 @@ func TestLazyQuotes(t *testing.T) {
 		t.Errorf("LazyQuotes error. Expected: %v - But result: %v", lazyQuotes, csvResult.LazyQuotes)
 	}
 }
+
+func TestParseDatetimeLayout(t *testing.T) {
+	// Datetime
+	datetimeLayoutExpected := "2006-01-02"
+	datetimeLayoutInput := "yyyy-mm-dd"
+	datetimeLayoutResult := parseDatetime(datetimeLayoutInput)
+
+	if datetimeLayoutExpected != datetimeLayoutResult {
+		t.Errorf("Expected: %v\nResult: %v", datetimeLayoutExpected, datetimeLayoutResult)
+	}
+
+	// Timestamp
+
+}
