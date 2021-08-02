@@ -1,49 +1,52 @@
 package csv
 
-import "strings"
+import "testing"
 
-// CSV struct to parse CSV to DataFrame
-type CSV struct {
-	Sep            rune
-	LazyQuotes     bool
-	NaNLayout      string
-	DatetimeLayout string
-}
+// CSVOptions tests
+func TestSep(t *testing.T) {
+	sep := ';'
+	csvResult := &CSV{}
+	csvOptionInternal := Sep(sep)
+	csvOptionInternal(csvResult)
 
-// CSVOptions To apply optionals parameters
-type CSVOptions func(csv *CSV)
-
-// CSVOptions functions
-
-// Sep to set custom separator
-func Sep(sep rune) CSVOptions {
-	return func(c *CSV) {
-		c.Sep = sep
+	if csvResult.Sep != sep {
+		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
 	}
 }
 
-// NaNLayout to set custom NaN format
-func NaNLayout(nanLayout string) CSVOptions {
-	return func(c *CSV) {
-		c.NaNLayout = nanLayout
+func TestNaNLayout(t *testing.T) {
+	nanLayout := "nan"
+	csvResult := &CSV{}
+	csvOptionInternal := NaNLayout(nanLayout)
+	csvOptionInternal(csvResult)
+
+	if csvResult.NaNLayout != nanLayout {
+		t.Errorf("NaN error. Expected: %v - But result: %v", nanLayout, csvResult.NaNLayout)
+	}
+
+}
+
+func TestLazyQuotes(t *testing.T) {
+	lazyQuotes := false
+	csvResult := &CSV{}
+	csvOptionInternal := LazyQuotes(lazyQuotes)
+	csvOptionInternal(csvResult)
+
+	if csvResult.LazyQuotes != lazyQuotes {
+		t.Errorf("LazyQuotes error. Expected: %v - But result: %v", lazyQuotes, csvResult.LazyQuotes)
 	}
 }
 
-// LazyQuotes True if the CSV has lazy quotes
-func LazyQuotes(lazyQuotes bool) CSVOptions {
-	return func(c *CSV) {
-		c.LazyQuotes = lazyQuotes
+func TestDatetimeLayout(t *testing.T) {
+	datetimeLayout := "yyyy-MM-dd"
+	csvResult := &CSV{}
+	csvOptionInternal := DatetimeLayout(datetimeLayout)
+	csvOptionInternal(csvResult)
+
+	if csvResult.DatetimeLayout != datetimeLayout {
+		t.Errorf("Expected: %v\nResult: %v", datetimeLayout, csvResult.DatetimeLayout)
 	}
+
 }
 
-func parseDatetime(layout string) string {
-	layout = strings.ToLower(layout)
-	layout = strings.Replace(layout, "yyyy", "2006", -1)
-	layout = strings.Replace(layout, "mm", "01", -1)
-	layout = strings.Replace(layout, "dd", "02", -1)
-
-	return layout
-}
-
-// TODO: CSVCreateMock
-// TODO: ReadCSV (Sep, nanLayout, datetimeLayout)
+// TODO: Improve datetimeLayout formarted

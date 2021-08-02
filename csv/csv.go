@@ -1,50 +1,42 @@
 package csv
 
-import "testing"
+// CSV struct to parse CSV to DataFrame
+type CSV struct {
+	Sep            rune
+	NaNLayout      string
+	LazyQuotes     bool
+	DatetimeLayout string
+}
 
-// CSVOptions tests
-func TestSep(t *testing.T) {
-	sep := ';'
-	csvResult := &CSV{}
-	csvOptionInternal := Sep(sep)
-	csvOptionInternal(csvResult)
+// CSVOptions To apply optionals parameters
+type CSVOptions func(csv *CSV)
 
-	if csvResult.Sep != sep {
-		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
+// CSVOptions functions
+
+// Sep to set custom separator
+func Sep(sep rune) CSVOptions {
+	return func(c *CSV) {
+		c.Sep = sep
 	}
 }
 
-func TestNaNLayout(t *testing.T) {
-	nanLayout := "nan"
-	csvResult := &CSV{}
-	csvOptionInternal := NaNLayout(nanLayout)
-	csvOptionInternal(csvResult)
-
-	if csvResult.NaNLayout != nanLayout {
-		t.Errorf("NaN error. Expected: %v - But result: %v", nanLayout, csvResult.NaNLayout)
-	}
-
-}
-
-func TestLazyQuotes(t *testing.T) {
-	lazyQuotes := false
-	csvResult := &CSV{}
-	csvOptionInternal := LazyQuotes(lazyQuotes)
-	csvOptionInternal(csvResult)
-
-	if csvResult.LazyQuotes != lazyQuotes {
-		t.Errorf("LazyQuotes error. Expected: %v - But result: %v", lazyQuotes, csvResult.LazyQuotes)
+// NaNLayout to set custom NaN format
+func NaNLayout(nanLayout string) CSVOptions {
+	return func(c *CSV) {
+		c.NaNLayout = nanLayout
 	}
 }
 
-func TestParseDatetimeLayout(t *testing.T) {
-	// Datetime
-	datetimeLayoutExpected := "2006-01-02"
-	datetimeLayoutInput := "yyyy-mm-dd"
-	datetimeLayoutResult := parseDatetime(datetimeLayoutInput)
-
-	if datetimeLayoutExpected != datetimeLayoutResult {
-		t.Errorf("Expected: %v\nResult: %v", datetimeLayoutExpected, datetimeLayoutResult)
+// LazyQuotes True if the CSV has lazy quotes
+func LazyQuotes(lazyQuotes bool) CSVOptions {
+	return func(c *CSV) {
+		c.LazyQuotes = lazyQuotes
 	}
+}
 
+// DatetimeLayout Set layout to parse datetime columns
+func DatetimeLayout(datetimeLayout string) CSVOptions {
+	return func(c *CSV) {
+		c.DatetimeLayout = datetimeLayout
+	}
 }
