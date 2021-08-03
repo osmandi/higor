@@ -24,7 +24,7 @@ func TestVersion(t *testing.T) {
 func TestReadCSV(t *testing.T) {
 
 	// Normal comparation
-	inputData := [][]string{[]string{"name", "age"}, []string{"pepito", "21"}, []string{"juanito", "22"}, []string{"pepita", "23"}, []string{"juanita", "24"}}
+	inputData := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", "24"}}
 	dfExpected := dataframe.NewDataFrame()
 	dfExpected.Columns = inputData[0]
 	dfExpected.Shape = [2]int{4, 2}
