@@ -26,17 +26,6 @@ func TestNaNLayout(t *testing.T) {
 
 }
 
-func TestLazyQuotes(t *testing.T) {
-	lazyQuotes := false
-	csvResult := &CSV{}
-	csvOptionInternal := LazyQuotes(lazyQuotes)
-	csvOptionInternal(csvResult)
-
-	if csvResult.LazyQuotes != lazyQuotes {
-		t.Errorf("LazyQuotes error. Expected: %v - But result: %v", lazyQuotes, csvResult.LazyQuotes)
-	}
-}
-
 func TestDatetimeLayout(t *testing.T) {
 	datetimeLayout := "yyyy-MM-dd"
 	csvResult := &CSV{}
@@ -48,5 +37,3 @@ func TestDatetimeLayout(t *testing.T) {
 	}
 
 }
-
-// TODO: Improve datetimeLayout formarted

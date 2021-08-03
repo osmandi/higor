@@ -72,7 +72,6 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaNCustom, dfResult)
 	}
 
-	// TODO: LazyQuotes comparation
 	// TODO: Custom Datetime comparation
 	// TODO: Without columns
 	// TODO: More rows than columns

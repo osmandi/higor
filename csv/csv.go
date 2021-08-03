@@ -27,13 +27,6 @@ func NaNLayout(nanLayout string) CSVOptions {
 	}
 }
 
-// LazyQuotes True if the CSV has lazy quotes
-func LazyQuotes(lazyQuotes bool) CSVOptions {
-	return func(c *CSV) {
-		c.LazyQuotes = lazyQuotes
-	}
-}
-
 // DatetimeLayout Set layout to parse datetime columns
 func DatetimeLayout(datetimeLayout string) CSVOptions {
 	return func(c *CSV) {
