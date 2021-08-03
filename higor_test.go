@@ -48,7 +48,7 @@ func TestReadCSV(t *testing.T) {
 	// Normal NaN
 	inputDataNaN := [][]string{{"name", "age"}, {"pepito", "21"}, {"", "22"}, {"pepita", ""}, {"juanita", "24"}}
 	dfExpectedNaN := dataframe.NewDataFrame()
-	dfExpectedNaN.Columns = inputData[0]
+	dfExpectedNaN.Columns = inputDataNaN[0]
 	dfExpectedNaN.Shape = [2]int{4, 2}
 	for _, v := range inputDataNaN[1:] {
 		dfExpectedNaN.AddLine(v)
@@ -58,8 +58,21 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaN, dfResult)
 	}
 
+	// NaN custom
+	inputDataNaNCustom := [][]string{{"name", "age"}, {"pepito", "21"}, {"None", "22"}, {"pepita", "None"}, {"juanita", "24"}}
+	dfExpectedNaNCustom := dataframe.NewDataFrame()
+	dfExpectedNaNCustom.Columns = inputDataNaNCustom[0]
+	dfExpectedNaNCustom.Shape = [2]int{4, 2}
+	dfExpectedNaNCustom.NaNLayout = "None"
+	for _, v := range inputDataNaNCustom[1:] {
+		dfExpectedNaNCustom.AddLine(v)
+	}
+	dfResult = ReadCSV("csv_examples/nan_custom.csv", csv.NaNLayout("None"))
+	if !reflect.DeepEqual(dfExpectedNaNCustom, dfResult) {
+		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaNCustom, dfResult)
+	}
+
 	// TODO: LazyQuotes comparation
-	// TODO: Custom NaN comparation
 	// TODO: Custom Datetime comparation
 	// TODO: Without columns
 	// TODO: More rows than columns

@@ -88,7 +88,6 @@ func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 			line = append(line, WordDatetime{value: value.(time.Time)})
 		case "int":
 			line = append(line, WordInt{value: value.(int)})
-
 		case "bool":
 			line = append(line, WordBool{value: value.(bool)})
 		case "float64":
@@ -97,7 +96,6 @@ func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 			line = append(line, WordString{value: v})
 		}
 	}
-
 	return line
 }
 

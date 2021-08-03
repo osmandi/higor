@@ -17,6 +17,7 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 	csvInternal := &c.CSV{}
 	// Default values
 	csvInternal.Sep = ','
+	csvInternal.NaNLayout = ""
 
 	for _, csvOption := range csvOptions {
 		csvOption(csvInternal)
@@ -34,6 +35,7 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	// Set options
 	records.Comma = csvInternal.Sep
+	df.NaNLayout = csvInternal.NaNLayout
 
 	csvLines, err := records.ReadAll()
 	if err != nil {
