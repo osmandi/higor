@@ -2,6 +2,8 @@ package higor
 
 import (
 	"encoding/csv"
+	"fmt"
+	"io"
 	"os"
 
 	c "github.com/osmandi/higor/csv"
@@ -37,11 +39,33 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 	records.Comma = csvInternal.Sep
 	df.NaNLayout = csvInternal.NaNLayout
 
-	csvLines, err := records.ReadAll()
-	if err != nil {
-		panic(err)
-	}
+	csvLines := [][]string{}
+	columnsNoName := 0
 
+	for {
+		line, err := records.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			if *&err.(*csv.ParseError).Err == csv.ErrFieldCount {
+				// Add columns if not exists
+				fmt.Println("Fix extra columns!")
+				columnsDiff := len(line) - len(csvLines[0])
+				if columnsDiff != columnsNoName {
+					for i := 0; i < columnsDiff; i++ {
+						csvLines[0] = append(csvLines[0], fmt.Sprintf("NoName: %d", columnsNoName))
+						columnsNoName += 1
+					}
+				}
+			} else {
+				panic(err)
+			}
+		}
+
+		csvLines = append(csvLines, line)
+
+	}
 	df.Columns = csvLines[0]
 	df.Shape = [2]int{len(csvLines[1:]), len(csvLines[0])}
 

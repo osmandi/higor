@@ -86,8 +86,21 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedWithoutColumns, dfResult)
 	}
 
+	// More rows than columns
+	inputDataMoreRowsThanColumns := [][]string{{"name", "age", "NoName: 0"}, {"pepito", "21", "1"}, {"juanito", "22", "2"}, {"pepita", "23", "3"}, {"juanita", "24", "4"}}
+	dfExpectedMoreRowsThanColumns := dataframe.NewDataFrame()
+	dfExpectedMoreRowsThanColumns.Columns = inputDataMoreRowsThanColumns[0]
+	dfExpectedMoreRowsThanColumns.Shape = [2]int{4, 3}
+	for _, v := range inputDataMoreRowsThanColumns[1:] {
+		dfExpectedMoreRowsThanColumns.AddLine(v)
+	}
+	dfResult = ReadCSV("csv_examples/more_columns_than_rows.csv")
+
+	if !reflect.DeepEqual(dfExpectedMoreRowsThanColumns, dfResult) {
+		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedMoreRowsThanColumns, dfResult)
+	}
+
 	// TODO: Custom Datetime comparation
-	// TODO: Without columns
 	// TODO: More rows than columns
 
 }
