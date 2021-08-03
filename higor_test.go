@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/osmandi/higor/csv"
 	"github.com/osmandi/higor/dataframe"
 )
 
@@ -38,7 +39,25 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
 	}
 
-	// TODO: Custom Sep comparation
+	// Custom separator
+	dfResult = ReadCSV("csv_examples/sep.csv", csv.Sep(';'))
+	if !reflect.DeepEqual(dfExpected, dfResult) {
+		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
+	}
+
+	// Normal NaN
+	inputDataNaN := [][]string{{"name", "age"}, {"pepito", "21"}, {"", "22"}, {"pepita", ""}, {"juanita", "24"}}
+	dfExpectedNaN := dataframe.NewDataFrame()
+	dfExpectedNaN.Columns = inputData[0]
+	dfExpectedNaN.Shape = [2]int{4, 2}
+	for _, v := range inputDataNaN[1:] {
+		dfExpectedNaN.AddLine(v)
+	}
+	dfResult = ReadCSV("csv_examples/nan.csv")
+	if !reflect.DeepEqual(dfExpectedNaN, dfResult) {
+		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaN, dfResult)
+	}
+
 	// TODO: LazyQuotes comparation
 	// TODO: Custom NaN comparation
 	// TODO: Custom Datetime comparation

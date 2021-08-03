@@ -14,6 +14,14 @@ const Version string = "v0.5.0"
 func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 	df := dataframe.NewDataFrame()
 
+	csvInternal := &c.CSV{}
+	// Default values
+	csvInternal.Sep = ','
+
+	for _, csvOption := range csvOptions {
+		csvOption(csvInternal)
+	}
+
 	csvFile, err := os.Open(filename)
 
 	if err != nil {
@@ -22,7 +30,12 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	defer csvFile.Close()
 
-	csvLines, err := csv.NewReader(csvFile).ReadAll()
+	records := csv.NewReader(csvFile)
+
+	// Set options
+	records.Comma = csvInternal.Sep
+
+	csvLines, err := records.ReadAll()
 	if err != nil {
 		panic(err)
 	}
