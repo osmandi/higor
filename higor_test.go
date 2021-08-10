@@ -100,8 +100,4 @@ func TestReadCSV(t *testing.T) {
 	if !reflect.DeepEqual(dfExpectedMoreRowsThanColumns, dfResult) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedMoreRowsThanColumns, dfResult)
 	}
-
-	// TODO: Custom Datetime comparation
-	// TODO: More rows than columns
-
 }
