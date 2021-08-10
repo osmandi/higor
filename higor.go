@@ -2,7 +2,6 @@ package higor
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"os"
 
@@ -40,7 +39,6 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 	df.NaNLayout = csvInternal.NaNLayout
 
 	csvLines := [][]string{}
-	columnsNoName := 0
 
 	for {
 		line, err := records.Read()
@@ -49,15 +47,8 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 		}
 		if err != nil {
 			if *&err.(*csv.ParseError).Err == csv.ErrFieldCount {
-				// Add columns if not exists
-				fmt.Println("Fix extra columns!")
-				columnsDiff := len(line) - len(csvLines[0])
-				if columnsDiff != columnsNoName {
-					for i := 0; i < columnsDiff; i++ {
-						csvLines[0] = append(csvLines[0], fmt.Sprintf("NoName: %d", columnsNoName))
-						columnsNoName += 1
-					}
-				}
+				// More rows than columns. Return only validated rows
+				line = line[:len(csvLines[0])]
 			} else {
 				panic(err)
 			}

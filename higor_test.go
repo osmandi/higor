@@ -87,10 +87,11 @@ func TestReadCSV(t *testing.T) {
 	}
 
 	// More rows than columns
-	inputDataMoreRowsThanColumns := [][]string{{"name", "age", "NoName: 0"}, {"pepito", "21", "1"}, {"juanito", "22", "2"}, {"pepita", "23", "3"}, {"juanita", "24", "4"}}
+	// TODO: Create errors
+	inputDataMoreRowsThanColumns := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", "24"}}
 	dfExpectedMoreRowsThanColumns := dataframe.NewDataFrame()
 	dfExpectedMoreRowsThanColumns.Columns = inputDataMoreRowsThanColumns[0]
-	dfExpectedMoreRowsThanColumns.Shape = [2]int{4, 3}
+	dfExpectedMoreRowsThanColumns.Shape = [2]int{4, 2}
 	for _, v := range inputDataMoreRowsThanColumns[1:] {
 		dfExpectedMoreRowsThanColumns.AddLine(v)
 	}
