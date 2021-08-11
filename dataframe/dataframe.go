@@ -188,3 +188,17 @@ func (df DataFrame) Head(rowsLimit ...int) DataFrame {
 
 	return df
 }
+
+// Tail Save the last 10 dataframe rows
+func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
+	if len(rowsLimit) == 0 {
+		df.Values = df.Values[len(df.Values)-10:]
+		df.Shape[0] = len(df.Values)
+	} else {
+		df.Values = df.Values[len(df.Values)-rowsLimit[0]:]
+		df.Shape[0] = len(df.Values)
+	}
+
+	return df
+
+}

@@ -178,7 +178,7 @@ func TestHead(t *testing.T) {
 	dfHeadExpected.Shape[0] = 10
 
 	if !reflect.DeepEqual(dfHeadExpected, dfHead) {
-		t.Errorf("DataFrame diffrent but equal expected.")
+		t.Errorf("DataFrame different but equal expected.")
 	}
 
 	dfHead5 := df.Head(5)
@@ -187,7 +187,51 @@ func TestHead(t *testing.T) {
 	dfHeadExpected5.Shape[0] = 5
 
 	if !reflect.DeepEqual(dfHead5, dfHeadExpected5) {
-		t.Errorf("DataFrame diffrent but equal expected.\nExpected:%+v\nResult:\n%+v", dfHeadExpected5, dfHead5)
+		t.Errorf("DataFrame different but equal expected.\nExpected:%+v\nResult:\n%+v", dfHeadExpected5, dfHead5)
 	}
 
+}
+
+func TestTail(t *testing.T) {
+	df := NewDataFrame()
+	input := [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	df.Columns = input[0]
+	df.Shape = [2]int{14, 2}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	dfTail := df.Tail()
+	dfTailExpected := df
+	dfTailExpected.Values = df.Values[4:]
+	dfTailExpected.Shape[0] = 10
+
+	if !reflect.DeepEqual(dfTail, dfTailExpected) {
+		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected, dfTail)
+	}
+
+	dfTail5 := df.Tail(5)
+	dfTailExpected5 := df
+	dfTailExpected5.Values = df.Values[9:]
+	dfTailExpected5.Shape[0] = 5
+
+	if !reflect.DeepEqual(dfTail5, dfTailExpected5) {
+		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected5, dfTail5)
+	}
 }
