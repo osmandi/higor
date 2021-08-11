@@ -190,6 +190,25 @@ func TestHead(t *testing.T) {
 		t.Errorf("DataFrame different but equal expected.\nExpected:%+v\nResult:\n%+v", dfHeadExpected5, dfHead5)
 	}
 
+	// Less than 10 rows
+	dfLess := NewDataFrame()
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfLess.Columns = input[0]
+	dfLess.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		dfLess.AddLine(v)
+	}
+
+	dfLessHead := dfLess.Head()
+	if !reflect.DeepEqual(dfLess, dfLessHead) {
+		t.Errorf("Dataframes different but equal expected")
+	}
 }
 
 func TestTail(t *testing.T) {
@@ -212,7 +231,7 @@ func TestTail(t *testing.T) {
 		{"juanita", ""},
 	}
 	df.Columns = input[0]
-	df.Shape = [2]int{14, 2}
+	df.Shape = [2]int{4, 2}
 	for _, v := range input[1:] {
 		df.AddLine(v)
 	}
@@ -233,5 +252,26 @@ func TestTail(t *testing.T) {
 
 	if !reflect.DeepEqual(dfTail5, dfTailExpected5) {
 		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected5, dfTail5)
+	}
+
+	// Less than 10 rows
+	dfLess := NewDataFrame()
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+
+	dfLess.Columns = input[0]
+	dfLess.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		dfLess.AddLine(v)
+	}
+
+	dfLessTail := dfLess.Tail()
+	if !reflect.DeepEqual(dfLess, dfLessTail) {
+		t.Errorf("Dataframes different but equal expected")
 	}
 }
