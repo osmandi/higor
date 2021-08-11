@@ -35,12 +35,6 @@ type WordFloat64 struct {
 	value float64
 }
 
-// wordInt Data type for numbers
-type WordInt struct {
-	Word
-	value int
-}
-
 // wordDatetime To date dates with support for NaN values
 type WordDatetime struct {
 	Word
@@ -90,8 +84,6 @@ func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 			line = append(line, WordNaN{})
 		case "datetime":
 			line = append(line, WordDatetime{value: value.(time.Time)})
-		case "int":
-			line = append(line, WordInt{value: value.(int)})
 		case "bool":
 			line = append(line, WordBool{value: value.(bool)})
 		case "float64":
@@ -114,10 +106,10 @@ func translateWord(textInput, nanLayout, layoutDatetime string) (valueType strin
 	case errDatetime == nil:
 		return "datetime", valueDatetime
 	case errInt == nil:
-		return "int", valueInt
+		return "float64", float64(valueInt)
 	case errBool == nil:
 		return "bool", valueBool
-	case errFloat64 == nil:
+	case errFloat64 == nil || errInt == nil:
 		return "float64", valueFloat64
 	}
 
@@ -146,8 +138,6 @@ func (df DataFrame) String() string {
 			switch j.(type) {
 			case WordString:
 				value = j.(WordString).value
-			case WordInt:
-				value = strconv.Itoa(j.(WordInt).value)
 			case WordBool:
 				value = strconv.FormatBool(j.(WordBool).value)
 			case WordFloat64:

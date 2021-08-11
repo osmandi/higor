@@ -65,7 +65,7 @@ func TestWriteLine(t *testing.T) {
 	// All values
 	inputLine2 := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
 	datetime2, _ := time.Parse(layoutDatetime, "2020-01-01")
-	lineExpected2 := Lines{WordString{value: "Higor"}, WordInt{value: int(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
+	lineExpected2 := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
 	lineResult2 := WriteLine(inputLine2, nanLayout, layoutDatetime)
 
 	if !reflect.DeepEqual(lineExpected2, lineResult2) {
@@ -78,7 +78,7 @@ func TestTranslateWord(t *testing.T) {
 	nanLayout := ""
 	layoutDatetime := "2006-01-02"
 	variables := []string{nanLayout, "Higor", "1", "1.2", "true", "True", "False", "false", "2020-02-01"}
-	result := []string{"NaN", "string", "int", "float64", "bool", "bool", "bool", "bool", "datetime"}
+	result := []string{"NaN", "string", "float64", "float64", "bool", "bool", "bool", "bool", "datetime"}
 
 	for i, v := range variables {
 		trans, _ := translateWord(v, nanLayout, layoutDatetime)
@@ -97,7 +97,7 @@ func TestAddLine(t *testing.T) {
 
 	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
 	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
-	lineExpected := Lines{WordString{value: "Higor"}, WordInt{value: int(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
+	lineExpected := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
 
 	dfExpected.Values = Book{lineExpected}
 
