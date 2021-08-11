@@ -122,7 +122,6 @@ func TestNewDataFrame(t *testing.T) {
 
 }
 
-// TODO: Custom string dataframe
 func TestString(t *testing.T) {
 	df := NewDataFrame()
 	input := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
@@ -146,4 +145,49 @@ func TestString(t *testing.T) {
 	if expected != result {
 		t.Errorf("Dataframe Print Different.\nExpected:\n%s\nResult:\n%s", expected, result)
 	}
+}
+
+func TestHead(t *testing.T) {
+	df := NewDataFrame()
+	input := [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	df.Columns = input[0]
+	df.Shape = [2]int{14, 2}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	dfHead := df.Head()
+	dfHeadExpected := df
+	dfHeadExpected.Values = df.Values[:10]
+	dfHeadExpected.Shape[0] = 10
+
+	if !reflect.DeepEqual(dfHeadExpected, dfHead) {
+		t.Errorf("DataFrame diffrent but equal expected.")
+	}
+
+	dfHead5 := df.Head(5)
+	dfHeadExpected5 := df
+	dfHeadExpected5.Values = df.Values[:5]
+	dfHeadExpected5.Shape[0] = 5
+
+	if !reflect.DeepEqual(dfHead5, dfHeadExpected5) {
+		t.Errorf("DataFrame diffrent but equal expected.\nExpected:%+v\nResult:\n%+v", dfHeadExpected5, dfHead5)
+	}
+
 }
