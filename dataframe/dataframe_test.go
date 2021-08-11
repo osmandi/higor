@@ -1,6 +1,7 @@
 package dataframe
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -121,5 +122,28 @@ func TestNewDataFrame(t *testing.T) {
 
 }
 
-// TODO: DataFrame.String()
-// TODO: DataFrame.IsEqual
+// TODO: Custom string dataframe
+func TestString(t *testing.T) {
+	df := NewDataFrame()
+	input := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", ""}}
+	df.Columns = input[0]
+	df.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	expected := `+---------+-----+
+|  NAME   | AGE |
++---------+-----+
+| pepito  |  21 |
+| juanito |  22 |
+| pepita  |  23 |
+| juanita | NaN |
++---------+-----+
+`
+	result := fmt.Sprint(df)
+
+	if expected != result {
+		t.Errorf("Dataframe Print Different.\nExpected:\n%s\nResult:\n%s", expected, result)
+	}
+}

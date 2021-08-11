@@ -1,8 +1,12 @@
 package dataframe
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 type Word interface {
@@ -130,4 +134,42 @@ func (df *DataFrame) AddLine(inputText []string) {
 func NewDataFrame() DataFrame {
 	df := DataFrame{NaNLayout: "", DatetimeLayout: "2006-01-02"}
 	return df
+}
+
+// Stringer
+func (df DataFrame) String() string {
+	data := [][]string{}
+	for _, v := range df.Values {
+		dataInternal := []string{}
+		for _, j := range v {
+			value := ""
+			switch j.(type) {
+			case WordString:
+				value = j.(WordString).value
+			case WordInt:
+				value = strconv.Itoa(j.(WordInt).value)
+			case WordBool:
+				value = strconv.FormatBool(j.(WordBool).value)
+			case WordFloat64:
+				value = strconv.FormatFloat(j.(WordFloat64).value, 'E', -1, 64)
+			case WordDatetime:
+				value = fmt.Sprintf("%v", j.(WordDatetime).value)
+			case WordNaN:
+				value = "NaN"
+			}
+			dataInternal = append(dataInternal, value)
+		}
+
+		data = append(data, dataInternal)
+	}
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	table.SetHeader(df.Columns)
+	table.AppendBulk(data)
+	table.SetBorder(true)
+	table.SetCenterSeparator("+")
+
+	table.Render()
+
+	return tableString.String()
 }
