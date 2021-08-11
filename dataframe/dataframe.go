@@ -151,7 +151,7 @@ func (df DataFrame) String() string {
 			case WordBool:
 				value = strconv.FormatBool(j.(WordBool).value)
 			case WordFloat64:
-				value = strconv.FormatFloat(j.(WordFloat64).value, 'E', -1, 64)
+				value = fmt.Sprintf("%g", j.(WordFloat64).value)
 			case WordDatetime:
 				value = fmt.Sprintf("%v", j.(WordDatetime).value)
 			case WordNaN:
@@ -165,6 +165,7 @@ func (df DataFrame) String() string {
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
 	table.SetHeader(df.Columns)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	table.AppendBulk(data)
 	table.SetBorder(true)
 	table.SetCenterSeparator("+")

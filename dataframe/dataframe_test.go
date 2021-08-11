@@ -125,7 +125,7 @@ func TestNewDataFrame(t *testing.T) {
 // TODO: Custom string dataframe
 func TestString(t *testing.T) {
 	df := NewDataFrame()
-	input := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", ""}}
+	input := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
 	df.Columns = input[0]
 	df.Shape = [2]int{4, 2}
 	for _, v := range input[1:] {
@@ -135,9 +135,9 @@ func TestString(t *testing.T) {
 	expected := `+---------+-----+
 |  NAME   | AGE |
 +---------+-----+
-| pepito  |  21 |
-| juanito |  22 |
-| pepita  |  23 |
+| pepito  | 21  |
+| juanito | 22  |
+| pepita  | 2.3 |
 | juanita | NaN |
 +---------+-----+
 `
