@@ -56,6 +56,8 @@ type DataFrame struct {
 	DatetimeLayout string
 }
 
+var index int = 0
+
 func WriteWordString(text string) WordString {
 	wordString := WordString{value: text}
 	return wordString
@@ -78,6 +80,8 @@ func WriteWordBool(text string) WordBool {
 
 func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	line := Lines{}
+	line = append(line, strconv.Itoa(index))
+	index += 1
 	for _, v := range textInput {
 		switch trans, value := translateWord(v, nanLayout, layoutDatetime); trans {
 		case "NaN":
@@ -141,7 +145,9 @@ func (df DataFrame) String() string {
 	}
 	tableString := &strings.Builder{}
 	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(df.Columns)
+	header := []string{""}
+	header = append(header, df.Columns...)
+	table.SetHeader(header)
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	table.AppendBulk(data)
 	table.SetBorder(true)
@@ -228,9 +234,12 @@ func findIndex(base, find []string) []int {
 func (df DataFrame) Select(columns ...string) DataFrame {
 	index := findIndex(df.Columns, columns)
 	book := make(Book, len(df.Values))
+	for i := range book {
+		book[i] = append(book[i], df.Values[i][0])
+	}
 	for _, v := range index {
 		for j, k := range df.Values {
-			book[j] = append(book[j], k[v])
+			book[j] = append(book[j], k[v+1])
 		}
 	}
 
@@ -248,7 +257,7 @@ func (df *DataFrame) Drop(columns ...string) {
 	for _, v := range index {
 		// Remove values
 		for j, k := range df.Values {
-			df.Values[j] = append(k[:v], k[v+1:]...)
+			df.Values[j] = append(k[:v+1], k[v+2:]...)
 		}
 
 		// Remove columns

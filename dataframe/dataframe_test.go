@@ -54,9 +54,10 @@ func TestWriteLine(t *testing.T) {
 	var4NaN := nanLayout
 
 	inputLine := []string{var1, var2, var3, var4NaN}
-	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
+	lineExpected := Lines{"0", WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
 
 	lineResult := WriteLine(inputLine, nanLayout, layoutDatetime)
+	index = 0
 
 	if !reflect.DeepEqual(lineExpected, lineResult) {
 		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected, lineResult)
@@ -65,8 +66,9 @@ func TestWriteLine(t *testing.T) {
 	// All values
 	inputLine2 := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
 	datetime2, _ := time.Parse(layoutDatetime, "2020-01-01")
-	lineExpected2 := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
+	lineExpected2 := Lines{"0", WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
 	lineResult2 := WriteLine(inputLine2, nanLayout, layoutDatetime)
+	index = 0
 
 	if !reflect.DeepEqual(lineExpected2, lineResult2) {
 		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected2, lineResult2)
@@ -97,11 +99,12 @@ func TestAddLine(t *testing.T) {
 
 	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
 	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
-	lineExpected := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
+	lineExpected := Lines{"0", WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
 
 	dfExpected.Values = Book{lineExpected}
 
 	dfResult.AddLine(inputLine)
+	index = 0
 
 	if !reflect.DeepEqual(dfExpected, dfResult) {
 		t.Errorf("Dataframes different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
@@ -131,14 +134,16 @@ func TestString(t *testing.T) {
 		df.AddLine(v)
 	}
 
-	expected := `+---------+-----+
-|  NAME   | AGE |
-+---------+-----+
-| pepito  | 21  |
-| juanito | 22  |
-| pepita  | 2.3 |
-| juanita | NaN |
-+---------+-----+
+	index = 0
+
+	expected := `+---+---------+-----+
+|   |  NAME   | AGE |
++---+---------+-----+
+| 0 | pepito  | 21  |
+| 1 | juanito | 22  |
+| 2 | pepita  | 2.3 |
+| 3 | juanita | NaN |
++---+---------+-----+
 `
 	result := fmt.Sprint(df)
 
@@ -171,6 +176,8 @@ func TestHead(t *testing.T) {
 	for _, v := range input[1:] {
 		df.AddLine(v)
 	}
+
+	index = 0
 
 	dfHead := df.Head()
 	dfHeadExpected := df
@@ -205,6 +212,8 @@ func TestHead(t *testing.T) {
 		dfLess.AddLine(v)
 	}
 
+	index = 0
+
 	dfLessHead := dfLess.Head()
 	if !reflect.DeepEqual(dfLess, dfLessHead) {
 		t.Errorf("Dataframes different but equal expected")
@@ -235,6 +244,8 @@ func TestTail(t *testing.T) {
 	for _, v := range input[1:] {
 		df.AddLine(v)
 	}
+
+	index = 0
 
 	dfTail := df.Tail()
 	dfTailExpected := df
@@ -270,6 +281,8 @@ func TestTail(t *testing.T) {
 		dfLess.AddLine(v)
 	}
 
+	index = 0
+
 	dfLessTail := dfLess.Tail()
 	if !reflect.DeepEqual(dfLess, dfLessTail) {
 		t.Errorf("Dataframes different but equal expected")
@@ -292,6 +305,8 @@ func TestSelect(t *testing.T) {
 		df.AddLine(v)
 	}
 
+	index = 0
+
 	// Select two columns
 	dfSelect := NewDataFrame()
 	input = [][]string{
@@ -306,6 +321,8 @@ func TestSelect(t *testing.T) {
 	for _, v := range input[1:] {
 		dfSelect.AddLine(v)
 	}
+
+	index = 0
 
 	dfSelected2 := df.Select("name", "age")
 	dfSelected2.Shape[1] = 2
@@ -328,6 +345,8 @@ func TestSelect(t *testing.T) {
 	for _, v := range input[1:] {
 		dfSelect1.AddLine(v)
 	}
+
+	index = 0
 
 	dfSelected1 := df.Select("name")
 	dfSelected1.Shape[1] = 1
@@ -366,6 +385,8 @@ func TestDrop(t *testing.T) {
 		df.AddLine(v)
 	}
 
+	index = 0
+
 	// Drop column "data"
 	dfDrop1 := NewDataFrame()
 	input = [][]string{
@@ -380,6 +401,8 @@ func TestDrop(t *testing.T) {
 	for _, v := range input[1:] {
 		dfDrop1.AddLine(v)
 	}
+
+	index = 0
 
 	df.Drop("data")
 
@@ -402,6 +425,8 @@ func TestDrop(t *testing.T) {
 		df.AddLine(v)
 	}
 
+	index = 0
+
 	df.Drop("data", "age")
 
 	dfDrop2 := NewDataFrame()
@@ -417,6 +442,8 @@ func TestDrop(t *testing.T) {
 	for _, v := range input[1:] {
 		dfDrop2.AddLine(v)
 	}
+
+	index = 0
 
 	if !reflect.DeepEqual(dfDrop2, df) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfDrop2, df)
