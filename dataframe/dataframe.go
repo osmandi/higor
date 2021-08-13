@@ -134,20 +134,7 @@ func (df DataFrame) String() string {
 	for _, v := range df.Values {
 		dataInternal := []string{}
 		for _, j := range v {
-			value := ""
-			switch j.(type) {
-			case WordString:
-				value = j.(WordString).value
-			case WordBool:
-				value = strconv.FormatBool(j.(WordBool).value)
-			case WordFloat64:
-				value = fmt.Sprintf("%g", j.(WordFloat64).value)
-			case WordDatetime:
-				value = fmt.Sprintf("%v", j.(WordDatetime).value)
-			case WordNaN:
-				value = "NaN"
-			}
-			dataInternal = append(dataInternal, value)
+			dataInternal = append(dataInternal, fmt.Sprint(j))
 		}
 
 		data = append(data, dataInternal)
@@ -163,6 +150,26 @@ func (df DataFrame) String() string {
 	table.Render()
 
 	return tableString.String()
+}
+
+func (w WordNaN) String() string {
+	return "NaN"
+}
+
+func (w WordString) String() string {
+	return w.value
+}
+
+func (w WordBool) String() string {
+	return strconv.FormatBool(w.value)
+}
+
+func (w WordFloat64) String() string {
+	return fmt.Sprintf("%g", w.value)
+}
+
+func (w WordDatetime) String() string {
+	return fmt.Sprintf("%v", w.value)
 }
 
 // Head Save first 10 dataframe rows
