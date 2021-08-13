@@ -101,3 +101,5 @@ func TestReadCSV(t *testing.T) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedMoreRowsThanColumns, dfResult)
 	}
 }
+
+// TODO: Implement concurrency and test

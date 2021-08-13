@@ -91,6 +91,6 @@ Result:
 - Print DataFrames (completly, head, tail)
 
 ## Next features:
-- Column manipulate (select, update, drop, create, group)
-- Implement statistics functions (Mean, Median, etc)
+- Column manipulate (select, drop, create, filter)
+- Implement GroupBy functions (count, max, mean, median, min, sum)
 - Implement concurrency on internal functions

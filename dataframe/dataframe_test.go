@@ -275,3 +275,8 @@ func TestTail(t *testing.T) {
 		t.Errorf("Dataframes different but equal expected")
 	}
 }
+
+// TODO: Select columns
+// TODO: Drop columns
+// TODO: Filter columns
+// TODO: Create columns
