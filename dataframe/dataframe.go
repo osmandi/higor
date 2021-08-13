@@ -146,6 +146,7 @@ func (df DataFrame) String() string {
 	table.AppendBulk(data)
 	table.SetBorder(true)
 	table.SetCenterSeparator("+")
+	table.SetAutoFormatHeaders(false)
 
 	table.Render()
 

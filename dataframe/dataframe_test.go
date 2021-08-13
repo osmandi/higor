@@ -124,7 +124,7 @@ func TestNewDataFrame(t *testing.T) {
 
 func TestString(t *testing.T) {
 	df := NewDataFrame()
-	input := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
+	input := [][]string{{"NAME", "AGE"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
 	df.Columns = input[0]
 	df.Shape = [2]int{4, 2}
 	for _, v := range input[1:] {
