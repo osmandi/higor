@@ -56,7 +56,7 @@ type DataFrame struct {
 	DatetimeLayout string
 }
 
-var index int = 0
+var Index int = 0
 
 func WriteWordString(text string) WordString {
 	wordString := WordString{value: text}
@@ -80,8 +80,8 @@ func WriteWordBool(text string) WordBool {
 
 func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	line := Lines{}
-	line = append(line, strconv.Itoa(index))
-	index += 1
+	line = append(line, strconv.Itoa(Index))
+	Index += 1
 	for _, v := range textInput {
 		switch trans, value := translateWord(v, nanLayout, layoutDatetime); trans {
 		case "NaN":
