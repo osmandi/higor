@@ -240,3 +240,21 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 
 	return df
 }
+
+// TODO: Implement errors for columns not find
+// Drop to delete a row
+func (df *DataFrame) Drop(columns ...string) {
+	index := findIndex(df.Columns, columns)
+	for _, v := range index {
+		// Remove values
+		for j, k := range df.Values {
+			df.Values[j] = append(k[:v], k[v+1:]...)
+		}
+
+		// Remove columns
+		df.Columns = append(df.Columns[:v], df.Columns[v+1:]...)
+	}
+
+	df.Shape[1] = len(df.Columns)
+
+}

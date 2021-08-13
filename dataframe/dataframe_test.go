@@ -276,7 +276,6 @@ func TestTail(t *testing.T) {
 	}
 }
 
-// TODO: Select columns
 func TestSelect(t *testing.T) {
 	// Base
 	df := NewDataFrame()
@@ -347,6 +346,80 @@ func TestFindIndex(t *testing.T) {
 
 	if !reflect.DeepEqual(expected, result) {
 		t.Errorf("Index Failed.\nExpected:\n%v\nResult:\n%v", expected, result)
+	}
+
+}
+
+func TestDrop(t *testing.T) {
+	// Base
+	df := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	df.Columns = input[0]
+	df.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	// Drop column "data"
+	dfDrop1 := NewDataFrame()
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfDrop1.Columns = input[0]
+	dfDrop1.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		dfDrop1.AddLine(v)
+	}
+
+	df.Drop("data")
+
+	if !reflect.DeepEqual(df, dfDrop1) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfDrop1, df)
+	}
+
+	// Drop columns "data" and "age"
+	df = NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	df.Columns = input[0]
+	df.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	df.Drop("data", "age")
+
+	dfDrop2 := NewDataFrame()
+	input = [][]string{
+		{"name"},
+		{"pepito"},
+		{"juanito"},
+		{"pepita"},
+		{"juanita"},
+	}
+	dfDrop2.Columns = input[0]
+	dfDrop2.Shape = [2]int{4, 1}
+	for _, v := range input[1:] {
+		dfDrop2.AddLine(v)
+	}
+
+	if !reflect.DeepEqual(dfDrop2, df) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfDrop2, df)
 	}
 
 }
