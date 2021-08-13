@@ -424,6 +424,5 @@ func TestDrop(t *testing.T) {
 
 }
 
-// TODO: Drop columns
 // TODO: Filter columns
 // TODO: Create columns

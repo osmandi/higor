@@ -89,8 +89,9 @@ Result:
 ## What does higor know how to do today?
 - ReadCSV (With custom NaN, custom Separator)
 - Print DataFrames (completly, head, tail)
+- Column manipulations (Select, Drop)
 
 ## Next features:
-- Column manipulate (select, drop, create, filter)
+- Column manipulate (create, filter)
 - Implement GroupBy functions (count, max, mean, median, min, sum)
 - Implement concurrency on internal functions
