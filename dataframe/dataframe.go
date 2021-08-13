@@ -207,3 +207,35 @@ func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
 	return df
 
 }
+
+// TODO: Apply concurrency and implement errors for keys not find
+// findIndex to find index
+func findIndex(base, find []string) []int {
+	index := []int{}
+	for _, column := range find {
+		for i, v := range base {
+			if column == v {
+				index = append(index, i)
+			}
+		}
+	}
+
+	return index
+}
+
+// Select to select a row
+func (df DataFrame) Select(columns ...string) DataFrame {
+	index := findIndex(df.Columns, columns)
+	book := make(Book, len(df.Values))
+	for _, v := range index {
+		for j, k := range df.Values {
+			book[j] = append(book[j], k[v])
+		}
+	}
+
+	df.Values = book
+	df.Columns = columns
+	df.Shape[1] = len(df.Columns)
+
+	return df
+}

@@ -277,6 +277,80 @@ func TestTail(t *testing.T) {
 }
 
 // TODO: Select columns
+func TestSelect(t *testing.T) {
+	// Base
+	df := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	df.Columns = input[0]
+	df.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+
+	// Select two columns
+	dfSelect := NewDataFrame()
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfSelect.Columns = input[0]
+	dfSelect.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		dfSelect.AddLine(v)
+	}
+
+	dfSelected2 := df.Select("name", "age")
+	dfSelected2.Shape[1] = 2
+
+	if !reflect.DeepEqual(dfSelected2, dfSelect) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfSelect, dfSelected2)
+	}
+
+	// Select one columns
+	dfSelect1 := NewDataFrame()
+	input = [][]string{
+		{"name"},
+		{"pepito"},
+		{"juanito"},
+		{"pepita"},
+		{"juanita"},
+	}
+	dfSelect1.Columns = input[0]
+	dfSelect1.Shape = [2]int{4, 1}
+	for _, v := range input[1:] {
+		dfSelect1.AddLine(v)
+	}
+
+	dfSelected1 := df.Select("name")
+	dfSelected1.Shape[1] = 1
+
+	if !reflect.DeepEqual(dfSelected1, dfSelect1) {
+		t.Errorf("Dataframe different but equal expected")
+	}
+
+}
+
+func TestFindIndex(t *testing.T) {
+	listBase := []string{"col1", "col2", "col3"}
+	listFind := []string{"col1", "col3", "col2"}
+	expected := []int{0, 2, 1}
+	result := findIndex(listBase, listFind)
+
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("Index Failed.\nExpected:\n%v\nResult:\n%v", expected, result)
+	}
+
+}
+
 // TODO: Drop columns
 // TODO: Filter columns
 // TODO: Create columns
