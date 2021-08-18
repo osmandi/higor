@@ -570,5 +570,17 @@ func TestNewWordFloat64(t *testing.T) {
 	}
 }
 
+func TestNewDatetime(t *testing.T) {
+	df := NewDataFrame()
+	timeValue := "2020-01-02"
+	value, _ := time.Parse(df.DatetimeLayout, timeValue)
+	wordDatetime := NewWordDatetime(timeValue)
+
+	if value != wordDatetime.value {
+		t.Errorf("Error on Datetime. Expected: %v. But result: %v", value, wordDatetime.value)
+	}
+
+}
+
 // TODO: Add another NewWord methods for Float64, string, etc
 // TODO: Filter columns
