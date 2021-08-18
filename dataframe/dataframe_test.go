@@ -589,5 +589,4 @@ func TestNewDatetime(t *testing.T) {
 
 }
 
-// TODO: Add another NewWord methods for Float64, string, etc
 // TODO: Filter columns
