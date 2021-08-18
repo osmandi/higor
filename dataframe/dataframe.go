@@ -494,9 +494,26 @@ func (df DataFrame) WhereGreaterOrEqual(colName string, filterValue interface{})
 
 // GetValues To get a slices by the values
 func (df DataFrame) GetValues() []Word {
+	// TODO: Creater error for more than one columns
 	words := []Word{}
 	for _, v := range df.Values {
 		words = append(words, v[0])
 	}
 	return words
+}
+
+// Add to add elements
+func (df *DataFrame) Add(colName string, valueInput interface{}) {
+	colIndex := findIndex(df.Columns, []string{colName})[0]
+
+	for _, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordString:
+			v[colIndex] = NewWordString(v[colIndex].(WordString).value + valueInput.(string))
+		case WordFloat64:
+			v[colIndex] = NewWordFloat64(v[colIndex].(WordFloat64).value + valueInput.(float64))
+		default:
+			fmt.Errorf("Columnt %s not supported for Add method", colName)
+		}
+	}
 }

@@ -717,3 +717,44 @@ func TestGetValues(t *testing.T) {
 	}
 
 }
+
+func TestAdd(t *testing.T) {
+	dfExpected := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito2", "23", "true"},
+		{"juanito2", "24", "false"},
+		{"pepita2", "4.3", "true"},
+		{"juanita2", "", "false"},
+	}
+	dfExpected.Columns = input[0]
+	dfExpected.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfExpected.AddLine(v)
+	}
+
+	dfBase := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	// Add String
+	dfBase.Add("name", "2")
+
+	// Add float64
+	dfBase.Add("age", float64(2))
+
+	if !reflect.DeepEqual(dfExpected, dfBase) {
+		t.Errorf("Add error.\nExpected:\n%v\nResult:\n%v", dfExpected, dfBase)
+	}
+
+}
