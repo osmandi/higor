@@ -331,6 +331,11 @@ func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFram
 				book = append(book, v)
 				newIndex = append(newIndex, df.Index[i])
 			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
 
 		}
 	}
