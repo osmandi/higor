@@ -64,7 +64,5 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 		df.AddLine(v)
 	}
 
-	dataframe.Index = 0
-
 	return df
 }

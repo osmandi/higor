@@ -29,14 +29,12 @@ func TestReadCSV(t *testing.T) {
 	dfExpected := dataframe.NewDataFrame()
 	dfExpected.Columns = inputData[0]
 	dfExpected.Shape = [2]int{4, 2}
+
 	for _, v := range inputData[1:] {
 		dfExpected.AddLine(v)
 	}
 
-	dataframe.Index = 0
-
 	dfResult := ReadCSV("csv_examples/simple.csv")
-
 	if !reflect.DeepEqual(dfExpected, dfResult) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
 	}
@@ -55,8 +53,9 @@ func TestReadCSV(t *testing.T) {
 	for _, v := range inputDataNaN[1:] {
 		dfExpectedNaN.AddLine(v)
 	}
-	dataframe.Index = 0
+
 	dfResult = ReadCSV("csv_examples/nan.csv")
+
 	if !reflect.DeepEqual(dfExpectedNaN, dfResult) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaN, dfResult)
 	}
@@ -70,8 +69,9 @@ func TestReadCSV(t *testing.T) {
 	for _, v := range inputDataNaNCustom[1:] {
 		dfExpectedNaNCustom.AddLine(v)
 	}
-	dataframe.Index = 0
+
 	dfResult = ReadCSV("csv_examples/nan_custom.csv", csv.NaNLayout("None"))
+
 	if !reflect.DeepEqual(dfExpectedNaNCustom, dfResult) {
 		t.Errorf("Both DataFrame are different but equal expected.\nExpected: %+v\nResult: %+v", dfExpectedNaNCustom, dfResult)
 	}
@@ -84,7 +84,7 @@ func TestReadCSV(t *testing.T) {
 	for _, v := range inputDataWithoutColumns[1:] {
 		dfExpectedWithoutColumns.AddLine(v)
 	}
-	dataframe.Index = 0
+
 	dfResult = ReadCSV("csv_examples/without_columns.csv")
 
 	if !reflect.DeepEqual(dfExpectedWithoutColumns, dfResult) {
@@ -101,7 +101,6 @@ func TestReadCSV(t *testing.T) {
 		dfExpectedMoreRowsThanColumns.AddLine(v)
 	}
 
-	dataframe.Index = 0
 	dfResult = ReadCSV("csv_examples/more_columns_than_rows.csv")
 
 	if !reflect.DeepEqual(dfExpectedMoreRowsThanColumns, dfResult) {
