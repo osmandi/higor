@@ -383,3 +383,25 @@ func (df DataFrame) WhereNotEqual(colName string, filterValue interface{}) DataF
 
 	return df
 }
+
+// WhereLess To find elements with <
+func (df DataFrame) WhereLess(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.Columns, []string{colName})[0]
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value < filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}

@@ -578,6 +578,39 @@ func TestWhereNotEqual(t *testing.T) {
 
 }
 
+func TestWhereLess(t *testing.T) {
+	dfBase := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	dfWhereLessExpected := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepita", "2.3", "true"},
+	}
+	dfWhereLessExpected.Columns = input[0]
+	dfWhereLessExpected.Shape = [2]int{1, 3}
+	for _, v := range input[1:] {
+		dfWhereLessExpected.AddLine(v)
+	}
+	dfWhereLessExpected.Index = []uint{2}
+	dfResult := dfBase.WhereLess("age", float64(3))
+	if !reflect.DeepEqual(dfWhereLessExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereLessExpected, dfResult)
+	}
+
+}
+
 func TestNewWordBool(t *testing.T) {
 	// Word True
 	wordTrue := NewWordBool(true)
