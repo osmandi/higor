@@ -722,14 +722,14 @@ func TestAdd(t *testing.T) {
 	// dfExpectedString
 	dfExpectedString := NewDataFrame()
 	input := [][]string{
-		{"name", "age", "data"},
-		{"pepito2", "21", "true"},
-		{"juanito2", "22", "false"},
-		{"pepita2", "2.3", "true"},
-		{"juanita2", "", "false"},
+		{"name"},
+		{"pepito2"},
+		{"juanito2"},
+		{"pepita2"},
+		{"juanita2"},
 	}
 	dfExpectedString.Columns = input[0]
-	dfExpectedString.Shape = [2]int{4, 3}
+	dfExpectedString.Shape = [2]int{4, 1}
 	for _, v := range input[1:] {
 		dfExpectedString.AddLine(v)
 	}
@@ -737,14 +737,14 @@ func TestAdd(t *testing.T) {
 	// dfExpectedFloat
 	dfExpectedFloat := NewDataFrame()
 	input = [][]string{
-		{"name", "age", "data"},
-		{"pepito", "23", "true"},
-		{"juanito", "24", "false"},
-		{"pepita", "4.3", "true"},
-		{"juanita", "", "false"},
+		{"age"},
+		{"23"},
+		{"24"},
+		{"4.3"},
+		{""},
 	}
 	dfExpectedFloat.Columns = input[0]
-	dfExpectedFloat.Shape = [2]int{4, 3}
+	dfExpectedFloat.Shape = [2]int{4, 1}
 	for _, v := range input[1:] {
 		dfExpectedFloat.AddLine(v)
 	}
@@ -765,13 +765,13 @@ func TestAdd(t *testing.T) {
 	}
 
 	// Add String
-	dfAddString := dfBase.Add("name", "2")
+	dfAddString := dfBase.Select("name").Add("2")
 	if !reflect.DeepEqual(dfExpectedString, dfAddString) {
 		t.Errorf("Add function error.\nExpected:\n%v\nResult:\n%v", dfExpectedString, dfAddString)
 	}
 
 	// Add float64
-	dfAddFloat := dfBase.Add("age", float64(2))
+	dfAddFloat := dfBase.Select("age").Add(float64(2))
 	if !reflect.DeepEqual(dfExpectedFloat, dfAddFloat) {
 		t.Errorf("Add function error.\nEpected:\n%v\nResult:\n%v", dfExpectedFloat, dfAddFloat)
 	}

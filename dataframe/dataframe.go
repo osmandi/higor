@@ -503,17 +503,14 @@ func (df DataFrame) GetValues() []Word {
 }
 
 // Add to add elements
-func (df DataFrame) Add(colName string, valueInput interface{}) DataFrame {
-	colIndex := findIndex(df.Columns, []string{colName})[0]
-
+func (df DataFrame) Add(valueInput interface{}) DataFrame {
+	// TODO: Create error for more than one columns
 	for _, v := range df.Values {
-		switch v[colIndex].(type) {
+		switch v[0].(type) {
 		case WordString:
-			v[colIndex] = NewWordString(v[colIndex].(WordString).value + valueInput.(string))
+			v[0] = NewWordString(v[0].(WordString).value + valueInput.(string))
 		case WordFloat64:
-			v[colIndex] = NewWordFloat64(v[colIndex].(WordFloat64).value + valueInput.(float64))
-		default:
-			fmt.Errorf("Columnt %s not supported for Add method", colName)
+			v[0] = NewWordFloat64(v[0].(WordFloat64).value + valueInput.(float64))
 		}
 	}
 
