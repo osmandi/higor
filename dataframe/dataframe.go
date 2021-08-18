@@ -199,6 +199,16 @@ func NewWordFloat64(value float64) WordFloat64 {
 	return WordFloat64{value: value}
 }
 
+// NewWordDatetime To create WordDatetime
+func NewWordDatetime(format, value string) WordDatetime {
+	timeParsed, err := time.Parse(format, value)
+	if err != nil {
+		panic(err)
+	}
+
+	return WordDatetime{value: timeParsed}
+}
+
 // Head Save first 10 dataframe rows
 func (df DataFrame) Head(rowsLimit ...int) DataFrame {
 	// Return 10 first rows
