@@ -241,6 +241,7 @@ func TestTail(t *testing.T) {
 	dfTailExpected := df
 	dfTailExpected.Values = df.Values[4:]
 	dfTailExpected.Shape[0] = 10
+	dfTailExpected.Index = []uint{4, 5, 6, 7, 8, 9, 10, 11, 12, 13}
 
 	if !reflect.DeepEqual(dfTail, dfTailExpected) {
 		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected, dfTail)
@@ -250,6 +251,7 @@ func TestTail(t *testing.T) {
 	dfTailExpected5 := df
 	dfTailExpected5.Values = df.Values[9:]
 	dfTailExpected5.Shape[0] = 5
+	dfTailExpected5.Index = []uint{9, 10, 11, 12, 13}
 
 	if !reflect.DeepEqual(dfTail5, dfTailExpected5) {
 		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected5, dfTail5)

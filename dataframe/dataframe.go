@@ -212,11 +212,13 @@ func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
 	if len(rowsLimit) == 0 {
 		if len(df.Values) >= 10 {
 			df.Values = df.Values[len(df.Values)-10:]
+			df.Index = df.Index[len(df.Index)-10:]
 		}
 		df.Shape[0] = len(df.Values)
 	} else {
 		if len(df.Values) >= rowsLimit[0] {
 			df.Values = df.Values[len(df.Values)-rowsLimit[0]:]
+			df.Index = df.Index[len(df.Index)-rowsLimit[0]:]
 		}
 		df.Shape[0] = len(df.Values)
 	}
