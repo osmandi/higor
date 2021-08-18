@@ -397,6 +397,38 @@ func (df DataFrame) WhereLess(colName string, filterValue interface{}) DataFrame
 				book = append(book, v)
 				newIndex = append(newIndex, df.Index[i])
 			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.Before(filterValue.(time.Time)) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereGreater To find elements with >
+func (df DataFrame) WhereGreater(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.Columns, []string{colName})[0]
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value > filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.After(filterValue.(time.Time)) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
 		}
 	}
 	df.Values = book

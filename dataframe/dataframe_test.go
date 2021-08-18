@@ -593,6 +593,7 @@ func TestWhereLess(t *testing.T) {
 		dfBase.AddLine(v)
 	}
 
+	// Float64 comparison
 	dfWhereLessExpected := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
@@ -607,6 +608,43 @@ func TestWhereLess(t *testing.T) {
 	dfResult := dfBase.WhereLess("age", float64(3))
 	if !reflect.DeepEqual(dfWhereLessExpected, dfResult) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereLessExpected, dfResult)
+	}
+
+	// TODO: Datetime comparison
+
+}
+
+func TestWhereGreater(t *testing.T) {
+	dfBase := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	// Float64 comparison
+	dfWhereGreaterExpected := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+	}
+	dfWhereGreaterExpected.Columns = input[0]
+	dfWhereGreaterExpected.Shape = [2]int{2, 3}
+	for _, v := range input[1:] {
+		dfWhereGreaterExpected.AddLine(v)
+	}
+	dfWhereGreaterExpected.Index = []uint{0, 1}
+	dfResult := dfBase.WhereGreater("age", float64(3))
+	if !reflect.DeepEqual(dfWhereGreaterExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereGreaterExpected, dfResult)
 	}
 
 }
