@@ -552,5 +552,23 @@ func TestNewWordBool(t *testing.T) {
 	}
 }
 
-// TODO: Add another methods for Float64, string, etc
+func TestNewWordString(t *testing.T) {
+	value := "Hello"
+	wordString := NewWordString(value)
+
+	if wordString.value != value {
+		t.Errorf("Error on string creation. Expected: %s. But result: %s", value, wordString.value)
+	}
+}
+
+func TestNewWordFloat64(t *testing.T) {
+	value := float64(4)
+	wordFloat64 := NewWordFloat64(value)
+
+	if wordFloat64.value != value {
+		t.Errorf("Error on Float64 creation. Expected: %v. But result: %v", value, wordFloat64)
+	}
+}
+
+// TODO: Add another NewWord methods for Float64, string, etc
 // TODO: Filter columns

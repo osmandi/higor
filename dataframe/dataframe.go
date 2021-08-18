@@ -184,9 +184,19 @@ func (w WordDatetime) String() string {
 	return fmt.Sprintf("%v", w.value)
 }
 
-// Words Creator
+// NewWordBool To create a WordBool
 func NewWordBool(value bool) WordBool {
 	return WordBool{value: value}
+}
+
+// NewWordString To create a WordString
+func NewWordString(value string) WordString {
+	return WordString{value: value}
+}
+
+// NewWordFloat64 To create a WordFloat64
+func NewWordFloat64(value float64) WordFloat64 {
+	return WordFloat64{value: value}
 }
 
 // Head Save first 10 dataframe rows
