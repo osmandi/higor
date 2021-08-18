@@ -770,21 +770,6 @@ func TestAdd(t *testing.T) {
 		t.Errorf("Add function error.\nExpected:\n%v\nResult:\n%v", dfExpectedString, dfAddString)
 	}
 
-	// Base
-	dfBase = NewDataFrame()
-	input = [][]string{
-		{"name", "age", "data"},
-		{"pepito", "21", "true"},
-		{"juanito", "22", "false"},
-		{"pepita", "2.3", "true"},
-		{"juanita", "", "false"},
-	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
-
 	// Add float64
 	dfAddFloat := dfBase.Add("age", float64(2))
 	if !reflect.DeepEqual(dfExpectedFloat, dfAddFloat) {
