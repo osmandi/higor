@@ -719,20 +719,37 @@ func TestGetValues(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	dfExpected := NewDataFrame()
+	// dfExpectedString
+	dfExpectedString := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
-		{"pepito2", "23", "true"},
-		{"juanito2", "24", "false"},
-		{"pepita2", "4.3", "true"},
+		{"pepito2", "21", "true"},
+		{"juanito2", "22", "false"},
+		{"pepita2", "2.3", "true"},
 		{"juanita2", "", "false"},
 	}
-	dfExpected.Columns = input[0]
-	dfExpected.Shape = [2]int{4, 3}
+	dfExpectedString.Columns = input[0]
+	dfExpectedString.Shape = [2]int{4, 3}
 	for _, v := range input[1:] {
-		dfExpected.AddLine(v)
+		dfExpectedString.AddLine(v)
 	}
 
+	// dfExpectedFloat
+	dfExpectedFloat := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "23", "true"},
+		{"juanito", "24", "false"},
+		{"pepita", "4.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfExpectedFloat.Columns = input[0]
+	dfExpectedFloat.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfExpectedFloat.AddLine(v)
+	}
+
+	// Base
 	dfBase := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
@@ -748,13 +765,30 @@ func TestAdd(t *testing.T) {
 	}
 
 	// Add String
-	dfBase.Add("name", "2")
+	dfAddString := dfBase.Add("name", "2")
+	if !reflect.DeepEqual(dfExpectedString, dfAddString) {
+		t.Errorf("Add function error.\nExpected:\n%v\nResult:\n%v", dfExpectedString, dfAddString)
+	}
+
+	// Base
+	dfBase = NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
 
 	// Add float64
-	dfBase.Add("age", float64(2))
-
-	if !reflect.DeepEqual(dfExpected, dfBase) {
-		t.Errorf("Add error.\nExpected:\n%v\nResult:\n%v", dfExpected, dfBase)
+	dfAddFloat := dfBase.Add("age", float64(2))
+	if !reflect.DeepEqual(dfExpectedFloat, dfAddFloat) {
+		t.Errorf("Add function error.\nEpected:\n%v\nResult:\n%v", dfExpectedFloat, dfAddFloat)
 	}
 
 }

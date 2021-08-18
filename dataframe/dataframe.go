@@ -503,7 +503,7 @@ func (df DataFrame) GetValues() []Word {
 }
 
 // Add to add elements
-func (df *DataFrame) Add(colName string, valueInput interface{}) {
+func (df DataFrame) Add(colName string, valueInput interface{}) DataFrame {
 	colIndex := findIndex(df.Columns, []string{colName})[0]
 
 	for _, v := range df.Values {
@@ -516,4 +516,6 @@ func (df *DataFrame) Add(colName string, valueInput interface{}) {
 			fmt.Errorf("Columnt %s not supported for Add method", colName)
 		}
 	}
+
+	return df
 }
