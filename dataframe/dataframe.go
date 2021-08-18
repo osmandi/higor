@@ -345,3 +345,41 @@ func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFram
 
 	return df
 }
+
+// WhereNotEqual To find elements with != comparator
+func (df DataFrame) WhereNotEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.Columns, []string{colName})[0]
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordBool:
+			if v[colIndex].(WordBool).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordString:
+			if v[colIndex].(WordString).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}

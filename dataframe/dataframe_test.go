@@ -544,6 +544,40 @@ func TestWhereEqual(t *testing.T) {
 
 }
 
+func TestWhereNotEqual(t *testing.T) {
+	dfBase := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	dfWhereNotEqualBool := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"juanito", "22", "false"},
+		{"juanita", "", "false"},
+	}
+	dfWhereNotEqualBool.Columns = input[0]
+	dfWhereNotEqualBool.Shape = [2]int{2, 3}
+	for _, v := range input[1:] {
+		dfWhereNotEqualBool.AddLine(v)
+	}
+	dfWhereNotEqualBool.Index = []uint{1, 3}
+	dfResult := dfBase.WhereNotEqual("data", true)
+	if !reflect.DeepEqual(dfWhereNotEqualBool, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereNotEqualBool, dfResult)
+	}
+
+}
+
 func TestNewWordBool(t *testing.T) {
 	// Word True
 	wordTrue := NewWordBool(true)
