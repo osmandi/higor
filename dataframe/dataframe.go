@@ -54,6 +54,7 @@ type DataFrame struct {
 	Shape          [2]int // [rowsNumber, columnsNumber]
 	NaNLayout      string
 	DatetimeLayout string
+	Index          []uint
 }
 
 var Index int = 0
@@ -80,8 +81,8 @@ func WriteWordBool(text string) WordBool {
 
 func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
 	line := Lines{}
-	line = append(line, strconv.Itoa(Index))
-	Index += 1
+	//	line = append(line, strconv.Itoa(Index))
+	//	Index += 1
 	for _, v := range textInput {
 		switch trans, value := translateWord(v, nanLayout, layoutDatetime); trans {
 		case "NaN":
@@ -124,6 +125,13 @@ func translateWord(textInput, nanLayout, layoutDatetime string) (valueType strin
 func (df *DataFrame) AddLine(inputText []string) {
 	lineTranslated := WriteLine(inputText, df.NaNLayout, df.DatetimeLayout)
 	df.Values = append(df.Values, lineTranslated)
+	totalIndex := len(df.Index)
+	if totalIndex == 0 {
+		df.Index = []uint{0}
+	} else {
+		df.Index = append(df.Index, df.Index[len(df.Index)-1]+1)
+	}
+
 }
 
 // NewDataFrame Create a DataFrame with default values
@@ -135,8 +143,9 @@ func NewDataFrame() DataFrame {
 // Stringer
 func (df DataFrame) String() string {
 	data := [][]string{}
-	for _, v := range df.Values {
+	for i, v := range df.Values {
 		dataInternal := []string{}
+		dataInternal = append(dataInternal, fmt.Sprint(df.Index[i]))
 		for _, j := range v {
 			dataInternal = append(dataInternal, fmt.Sprint(j))
 		}
@@ -239,12 +248,10 @@ func findIndex(base, find []string) []int {
 func (df DataFrame) Select(columns ...string) DataFrame {
 	index := findIndex(df.Columns, columns)
 	book := make(Book, len(df.Values))
-	for i := range book {
-		book[i] = append(book[i], df.Values[i][0])
-	}
+
 	for _, v := range index {
 		for j, k := range df.Values {
-			book[j] = append(book[j], k[v+1])
+			book[j] = append(book[j], k[v])
 		}
 	}
 
@@ -262,7 +269,7 @@ func (df *DataFrame) Drop(columns ...string) {
 	for _, v := range index {
 		// Remove values
 		for j, k := range df.Values {
-			df.Values[j] = append(k[:v+1], k[v+2:]...)
+			df.Values[j] = append(k[:v], k[v+1:]...)
 		}
 
 		// Remove columns
@@ -275,9 +282,33 @@ func (df *DataFrame) Drop(columns ...string) {
 
 // Insert to add a new column with its values
 func (df *DataFrame) Insert(colName string, values []Word) {
+	// TODO: Warning for values len more or less than df.Values
 	df.Columns = append(df.Columns, colName)
 	df.Shape[1] += 1
 	for i := range df.Values {
 		df.Values[i] = append(df.Values[i], values[i])
 	}
+}
+
+// WhereEqual To find elements with == comparator
+func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.Columns, []string{colName})[0]
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordBool:
+			if v[colIndex].(WordBool).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
 }

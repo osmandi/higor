@@ -54,7 +54,7 @@ func TestWriteLine(t *testing.T) {
 	var4NaN := nanLayout
 
 	inputLine := []string{var1, var2, var3, var4NaN}
-	lineExpected := Lines{"0", WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
+	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
 
 	lineResult := WriteLine(inputLine, nanLayout, layoutDatetime)
 	Index = 0
@@ -66,7 +66,7 @@ func TestWriteLine(t *testing.T) {
 	// All values
 	inputLine2 := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
 	datetime2, _ := time.Parse(layoutDatetime, "2020-01-01")
-	lineExpected2 := Lines{"0", WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
+	lineExpected2 := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
 	lineResult2 := WriteLine(inputLine2, nanLayout, layoutDatetime)
 	Index = 0
 
@@ -99,15 +99,15 @@ func TestAddLine(t *testing.T) {
 
 	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
 	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
-	lineExpected := Lines{"0", WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
+	lineExpected := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
 
 	dfExpected.Values = Book{lineExpected}
+	dfExpected.Index = []uint{0}
 
 	dfResult.AddLine(inputLine)
-	Index = 0
 
 	if !reflect.DeepEqual(dfExpected, dfResult) {
-		t.Errorf("Dataframes different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
+		t.Errorf("Dataframes different but equal expected.\nExpected: %+v\nResult: %+v\ndfResult.Index=%v", dfExpected, dfResult, dfResult.Index)
 	}
 
 }
@@ -492,6 +492,46 @@ func TestInsert(t *testing.T) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfExpected, dfBase)
 	}
 
+	// TODO: Insert another word types
+
+}
+
+func TestWhere(t *testing.T) {
+	dfBase := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	Index = 0
+
+	// Where "data" == true
+	dfBaseWhereDataTrue := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"pepita", "2.3", "true"},
+	}
+	dfBaseWhereDataTrue.Columns = input[0]
+	dfBaseWhereDataTrue.Shape = [2]int{2, 3}
+	for _, v := range input[1:] {
+		dfBaseWhereDataTrue.AddLine(v)
+	}
+	dfBaseWhereDataTrue.Index = []uint{0, 2}
+
+	dfResult := dfBase.WhereEqual("data", true)
+	if !reflect.DeepEqual(dfBaseWhereDataTrue, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue.Index, dfResult.Index)
+	}
+
 }
 
 func TestNewWordBool(t *testing.T) {
@@ -509,6 +549,6 @@ func TestNewWordBool(t *testing.T) {
 	}
 }
 
+// TODO: Add another methods for Float64, string, etc
 // TODO: Filter columns
-// TODO: Create columns
 // TODO: Refactor "index = 0"
