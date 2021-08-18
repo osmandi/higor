@@ -36,17 +36,9 @@ The aim of Higor is to provide a library that allows you to work with different 
 go get -v -u github.com/osmandi/higor
 ```
 
-## Say hello to Higor
+## Hello Gorld
 
-**sample.csv** Content:
-```
-colFloat64,colString,colBool,colDatetime,colAny
-2,no,true,2021-01-30,1.2
-5,hello,false,none,true
-none,hello,false,none,none
-none,none,false,none,helloText
-5,hello,false,none,2021-02-03
-```
+[Download iris.csv](https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv)
 
 ```Go
 package main
@@ -61,23 +53,65 @@ import (
 
 
 func main() {
-	df := hg.ReadCSV("sample.csv", csv.NaNLayout("none"))
-	fmt.Println(df)
+	df := higor.ReadCSV("iris.csv")
+	fmt.Println("Head:")
+	fmt.Println(df.Head(5))
+	fmt.Println("Tail:")
+	fmt.Println(df.Tail(5))
+	fmt.Println(`Select "sepal.width","sepal.width","variety" columns:`)
+	fmt.Println(df.Select("sepal.width", "sepal.width", "variety").Head(5))
+	df.Drop("variety")
+	fmt.Println(`Drop "variety" column:`)
+	fmt.Println(df.Head(5))
 }
 ```
 
 Result:
 
 ```Bash
-+------------+-----------+---------+-------------------------------+-------------------------------+
-| COLFLOAT64 | COLSTRING | COLBOOL |          COLDATETIME          |            COLANY             |
-+------------+-----------+---------+-------------------------------+-------------------------------+
-| 2          | no        | true    | 2021-01-30 00:00:00 +0000 UTC | 1.2                           |
-| 5          | hello     | false   | NaN                           | true                          |
-| NaN        | hello     | false   | NaN                           | NaN                           |
-| NaN        | NaN       | false   | NaN                           | helloText                     |
-| 5          | hello     | false   | NaN                           | 2021-02-03 00:00:00 +0000 UTC |
-+------------+-----------+---------+-------------------------------+-------------------------------+
+Head:
++---+--------------+-------------+--------------+-------------+---------+
+|   | sepal.length | sepal.width | petal.length | petal.width | variety |
++---+--------------+-------------+--------------+-------------+---------+
+| 0 | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 1 | 4.9          | 3           | 1.4          | 0.2         | Setosa  |
+| 2 | 4.7          | 3.2         | 1.3          | 0.2         | Setosa  |
+| 3 | 4.6          | 3.1         | 1.5          | 0.2         | Setosa  |
+| 4 | 5            | 3.6         | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+--------------+-------------+---------+
+
+Tail:
++-----+--------------+-------------+--------------+-------------+-----------+
+|     | sepal.length | sepal.width | petal.length | petal.width |  variety  |
++-----+--------------+-------------+--------------+-------------+-----------+
+| 145 | 6.7          | 3           | 5.2          | 2.3         | Virginica |
+| 146 | 6.3          | 2.5         | 5            | 1.9         | Virginica |
+| 147 | 6.5          | 3           | 5.2          | 2           | Virginica |
+| 148 | 6.2          | 3.4         | 5.4          | 2.3         | Virginica |
+| 149 | 5.9          | 3           | 5.1          | 1.8         | Virginica |
++-----+--------------+-------------+--------------+-------------+-----------+
+
+Select "sepal.width","sepal.width","variety" columns:
++---+-------------+-------------+---------+
+|   | sepal.width | sepal.width | variety |
++---+-------------+-------------+---------+
+| 0 | 3.5         | 3.5         | Setosa  |
+| 1 | 3           | 3           | Setosa  |
+| 2 | 3.2         | 3.2         | Setosa  |
+| 3 | 3.1         | 3.1         | Setosa  |
+| 4 | 3.6         | 3.6         | Setosa  |
++---+-------------+-------------+---------+
+
+Drop "variety" column:
++---+--------------+-------------+--------------+-------------+
+|   | sepal.length | sepal.width | petal.length | petal.width |
++---+--------------+-------------+--------------+-------------+
+| 0 | 5.1          | 3.5         | 1.4          | 0.2         |
+| 1 | 4.9          | 3           | 1.4          | 0.2         |
+| 2 | 4.7          | 3.2         | 1.3          | 0.2         |
+| 3 | 4.6          | 3.1         | 1.5          | 0.2         |
+| 4 | 5            | 3.6         | 1.4          | 0.2         |
++---+--------------+-------------+--------------+-------------+
 ```
 
 ## How to contribute?
