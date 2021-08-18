@@ -431,14 +431,14 @@ func TestInsert(t *testing.T) {
 
 	dfExpected := NewDataFrame()
 	input := [][]string{
-		{"name", "age", "data"},
-		{"pepito", "21", "true"},
-		{"juanito", "22", "false"},
-		{"pepita", "2.3", "true"},
-		{"juanita", "", "false"},
+		{"name", "age", "data", "last_name", "year_experience", "birthdate"},
+		{"pepito", "21", "true", "pepote", "2", "2020-01-02"},
+		{"juanito", "22", "false", "susano", "3", "2021-02-04"},
+		{"pepita", "2.3", "true", "mulano", "8", "2019-04-02"},
+		{"juanita", "", "false", "pentano", "100", "2018-12-30"},
 	}
 	dfExpected.Columns = input[0]
-	dfExpected.Shape = [2]int{4, 3}
+	dfExpected.Shape = [2]int{4, 6}
 	for _, v := range input[1:] {
 		dfExpected.AddLine(v)
 	}
@@ -457,14 +457,21 @@ func TestInsert(t *testing.T) {
 		dfBase.AddLine(v)
 	}
 
-	// Result
+	// Bool inserts
 	dfBase.Insert("data", []Word{NewWordBool(true), NewWordBool(false), NewWordBool(true), NewWordBool(false)})
+
+	// String inserts
+	dfBase.Insert("last_name", []Word{NewWordString("pepote"), NewWordString("susano"), NewWordString("mulano"), NewWordString("pentano")})
+
+	// Float64 inserts
+	dfBase.Insert("year_experience", []Word{NewWordFloat64(float64(2)), NewWordFloat64(float64(3)), NewWordFloat64(float64(8)), NewWordFloat64(float64(100))})
+
+	// Datetime inserts
+	dfBase.Insert("birthdate", []Word{NewWordDatetime(dfBase.DatetimeLayout, "2020-01-02"), NewWordDatetime(dfBase.DatetimeLayout, "2021-02-04"), NewWordDatetime(dfBase.DatetimeLayout, "2019-04-02"), NewWordDatetime(dfBase.DatetimeLayout, "2018-12-30")})
 
 	if !reflect.DeepEqual(dfExpected, dfBase) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfExpected, dfBase)
 	}
-
-	// TODO: Insert another word types
 
 }
 
