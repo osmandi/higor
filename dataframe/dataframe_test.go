@@ -610,7 +610,7 @@ func TestWhereLess(t *testing.T) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereLessExpected, dfResult)
 	}
 
-	// TODO: Datetime comparison
+	// TODO: Datetime comparison Test
 
 }
 
@@ -694,4 +694,26 @@ func TestNewDatetime(t *testing.T) {
 
 }
 
-// TODO: Filter columns
+func TestGetValues(t *testing.T) {
+	dfBase := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	// One column
+	expected := []Word{NewWordString("pepito"), NewWordString("juanito"), NewWordString("pepita"), NewWordString("juanita")}
+	result := dfBase.Select("name").GetValues()
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("GetValuesError. Expected: %v. Result: %v", expected, result)
+	}
+
+}

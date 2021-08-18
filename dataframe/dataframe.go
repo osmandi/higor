@@ -491,3 +491,12 @@ func (df DataFrame) WhereGreaterOrEqual(colName string, filterValue interface{})
 
 	return df
 }
+
+// GetValues To get a slices by the values
+func (df DataFrame) GetValues() []Word {
+	words := []Word{}
+	for _, v := range df.Values {
+		words = append(words, v[0])
+	}
+	return words
+}
