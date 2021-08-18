@@ -451,6 +451,64 @@ func TestDrop(t *testing.T) {
 
 }
 
+func TestInsert(t *testing.T) {
+
+	dfExpected := NewDataFrame()
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfExpected.Columns = input[0]
+	dfExpected.Shape = [2]int{4, 3}
+	for _, v := range input[1:] {
+		dfExpected.AddLine(v)
+	}
+
+	Index = 0
+
+	dfBase := NewDataFrame()
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfBase.Columns = input[0]
+	dfBase.Shape = [2]int{4, 2}
+	for _, v := range input[1:] {
+		dfBase.AddLine(v)
+	}
+
+	Index = 0
+
+	// Result
+	dfBase.Insert("data", []Word{NewWordBool(true), NewWordBool(false), NewWordBool(true), NewWordBool(false)})
+
+	if !reflect.DeepEqual(dfExpected, dfBase) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfExpected, dfBase)
+	}
+
+}
+
+func TestNewWordBool(t *testing.T) {
+	// Word True
+	wordTrue := NewWordBool(true)
+
+	if wordTrue.value == false {
+		t.Errorf("Expected True but result: %t", wordTrue)
+	}
+
+	wordFalse := NewWordBool(false)
+
+	if wordFalse.value == true {
+		t.Errorf("Expected False but result: %t", wordFalse)
+	}
+}
+
 // TODO: Filter columns
 // TODO: Create columns
 // TODO: Refactor "index = 0"

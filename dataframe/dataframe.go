@@ -179,6 +179,11 @@ func (w WordDatetime) String() string {
 	return fmt.Sprintf("%v", w.value)
 }
 
+// Words Creator
+func NewWordBool(value bool) WordBool {
+	return WordBool{value: value}
+}
+
 // Head Save first 10 dataframe rows
 func (df DataFrame) Head(rowsLimit ...int) DataFrame {
 	// Return 10 first rows
@@ -266,4 +271,13 @@ func (df *DataFrame) Drop(columns ...string) {
 
 	df.Shape[1] = len(df.Columns)
 
+}
+
+// Insert to add a new column with its values
+func (df *DataFrame) Insert(colName string, values []Word) {
+	df.Columns = append(df.Columns, colName)
+	df.Shape[1] += 1
+	for i := range df.Values {
+		df.Values[i] = append(df.Values[i], values[i])
+	}
 }
