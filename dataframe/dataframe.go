@@ -301,6 +301,16 @@ func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFram
 				book = append(book, v)
 				newIndex = append(newIndex, df.Index[i])
 			}
+		case WordString:
+			if v[colIndex].(WordString).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
 
 		}
 	}

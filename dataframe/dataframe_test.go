@@ -468,7 +468,7 @@ func TestInsert(t *testing.T) {
 
 }
 
-func TestWhere(t *testing.T) {
+func TestWhereEqual(t *testing.T) {
 	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
@@ -483,7 +483,7 @@ func TestWhere(t *testing.T) {
 		dfBase.AddLine(v)
 	}
 
-	// Where "data" == true
+	// Where equal Bool
 	dfBaseWhereDataTrue := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
@@ -496,10 +496,43 @@ func TestWhere(t *testing.T) {
 		dfBaseWhereDataTrue.AddLine(v)
 	}
 	dfBaseWhereDataTrue.Index = []uint{0, 2}
-
 	dfResult := dfBase.WhereEqual("data", true)
 	if !reflect.DeepEqual(dfBaseWhereDataTrue, dfResult) {
-		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue.Index, dfResult.Index)
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue, dfResult)
+	}
+
+	// Where equal String
+	dfBaseWhereString := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+	}
+	dfBaseWhereString.Columns = input[0]
+	dfBaseWhereString.Shape = [2]int{1, 3}
+	for _, v := range input[1:] {
+		dfBaseWhereString.AddLine(v)
+	}
+	dfBaseWhereString.Index = []uint{0}
+	dfResult = dfBase.WhereEqual("name", "pepito")
+	if !reflect.DeepEqual(dfBaseWhereString, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue, dfResult)
+	}
+
+	// Where equal float64
+	dfBaseFloat64 := NewDataFrame()
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+	}
+	dfBaseFloat64.Columns = input[0]
+	dfBaseFloat64.Shape = [2]int{1, 3}
+	for _, v := range input[1:] {
+		dfBaseFloat64.AddLine(v)
+	}
+	dfBaseFloat64.Index = []uint{0}
+	dfResult = dfBase.WhereEqual("age", float64(21))
+	if !reflect.DeepEqual(dfBaseFloat64, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseFloat64, dfResult)
 	}
 
 }
