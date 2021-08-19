@@ -139,7 +139,7 @@ func (df *DataFrame) AddLine(inputText []string) {
 
 // NewDataFrame Create a DataFrame with default values
 func NewDataFrame() DataFrame {
-	df := DataFrame{NaNLayout: "", DatetimeLayout: "2006-01-02"} // YYYY-MM-DD
+	df := DataFrame{NaNLayout: "", DatetimeLayout: "2006-01-02", ColumnIndex: make(map[string]int)} // YYYY-MM-DD
 	return df
 }
 
