@@ -257,6 +257,7 @@ func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
 // TODO: Apply concurrency and implement errors for keys not find
 // findIndex to find index
 func findIndex(base, find []string) []int {
+	// TODO: Implement ColumnIndex to find column index
 	index := []int{}
 	for _, column := range find {
 		for i, v := range base {
