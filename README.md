@@ -36,7 +36,7 @@ The aim of Higor is to provide a library that allows you to work with different 
 go get -v -u github.com/osmandi/higor
 ```
 
-## Hello Gorld
+## How to use Higor?
 
 [Download iris.csv](https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv)
 
@@ -46,20 +46,46 @@ package main
 import (
 	"fmt"
 
-    "github.com/osmandi/higor/csv"
+	"github.com/osmandi/higor"
 )
 
-
 func main() {
+	// Print Head
 	df := higor.ReadCSV("iris.csv")
 	fmt.Println("Head:")
 	fmt.Println(df.Head(5))
+
+	// Print Tail
 	fmt.Println("Tail:")
 	fmt.Println(df.Tail(5))
+
+	// Select columns
 	fmt.Println(`Select "sepal.width","sepal.width","variety" columns:`)
 	fmt.Println(df.Select("sepal.width", "sepal.width", "variety").Head(5))
-	df.Drop("variety")
-	fmt.Println(`Drop "variety" column:`)
+
+	// Apply filters (WhereEqual, WhereNotEqual, WhereGreater, WhereLess, WhereGreaterOrEqual, WhereLessOrEqual)
+	fmt.Println(`Where "variety" == "Setosa":`)
+	fmt.Println(df.WhereEqual("variety", "Setosa").Head(5))
+	fmt.Println(`Where "sepal.length" > 5:`)
+	fmt.Println(df.WhereGreater("sepal.length", float64(5)).Head(5))
+	fmt.Println(`Where "variety" != "Setosa":`)
+	fmt.Println(df.WhereNotEqual("variety", "Setosa").Head(5))
+	fmt.Println(`Where "sepal.width" > 4 && "variety" != "Versicolor":`)
+	fmt.Println(df.WhereGreater("sepal.width", float64(4)).WhereNotEqual("variety", "Versicolor").Tail(5))
+
+	// Drop one or more columns
+	fmt.Println(`Drop "sepal.width", "sepal.length" columns:`)
+	df.Drop("sepal.width", "sepal.length")
+	fmt.Println(df.Head(5))
+
+	// Insert and Sum
+	fmt.Println(`Insert new column called "petal.length2" where "petal.length" + 100`)
+	df.Insert("petal.length2", df.Column("petal.length").Add(float64(100)))
+	fmt.Println(df.Head(5))
+
+	// Insert and concat
+	fmt.Println(`Insert new column called "variety2" where "variety" column + " Iris"`)
+	df.Insert("variety2", df.Column("variety").Add(" Iris"))
 	fmt.Println(df.Head(5))
 }
 ```
@@ -100,16 +126,80 @@ Select "sepal.width","sepal.width","variety" columns:
 | 4 | 3.6         | 3.6         | Setosa  |
 +---+-------------+-------------+---------+
 
-Drop "variety" column:
-+---+--------------+-------------+--------------+-------------+
-|   | sepal.length | sepal.width | petal.length | petal.width |
-+---+--------------+-------------+--------------+-------------+
-| 0 | 5.1          | 3.5         | 1.4          | 0.2         |
-| 1 | 4.9          | 3           | 1.4          | 0.2         |
-| 2 | 4.7          | 3.2         | 1.3          | 0.2         |
-| 3 | 4.6          | 3.1         | 1.5          | 0.2         |
-| 4 | 5            | 3.6         | 1.4          | 0.2         |
-+---+--------------+-------------+--------------+-------------+
+Where "variety" == "Setosa":
++---+--------------+-------------+--------------+-------------+---------+
+|   | sepal.length | sepal.width | petal.length | petal.width | variety |
++---+--------------+-------------+--------------+-------------+---------+
+| 0 | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 1 | 4.9          | 3           | 1.4          | 0.2         | Setosa  |
+| 2 | 4.7          | 3.2         | 1.3          | 0.2         | Setosa  |
+| 3 | 4.6          | 3.1         | 1.5          | 0.2         | Setosa  |
+| 4 | 5            | 3.6         | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+--------------+-------------+---------+
+
+Where "sepal.length" > 5:
++----+--------------+-------------+--------------+-------------+---------+
+|    | sepal.length | sepal.width | petal.length | petal.width | variety |
++----+--------------+-------------+--------------+-------------+---------+
+| 0  | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 5  | 5.4          | 3.9         | 1.7          | 0.4         | Setosa  |
+| 10 | 5.4          | 3.7         | 1.5          | 0.2         | Setosa  |
+| 14 | 5.8          | 4           | 1.2          | 0.2         | Setosa  |
+| 15 | 5.7          | 4.4         | 1.5          | 0.4         | Setosa  |
++----+--------------+-------------+--------------+-------------+---------+
+
+Where "variety" != "Setosa":
++----+--------------+-------------+--------------+-------------+------------+
+|    | sepal.length | sepal.width | petal.length | petal.width |  variety   |
++----+--------------+-------------+--------------+-------------+------------+
+| 50 | 7            | 3.2         | 4.7          | 1.4         | Versicolor |
+| 51 | 6.4          | 3.2         | 4.5          | 1.5         | Versicolor |
+| 52 | 6.9          | 3.1         | 4.9          | 1.5         | Versicolor |
+| 53 | 5.5          | 2.3         | 4            | 1.3         | Versicolor |
+| 54 | 6.5          | 2.8         | 4.6          | 1.5         | Versicolor |
++----+--------------+-------------+--------------+-------------+------------+
+
+Where "sepal.width" > 4 && "variety" != "Versicolor":
++----+--------------+-------------+--------------+-------------+---------+
+|    | sepal.length | sepal.width | petal.length | petal.width | variety |
++----+--------------+-------------+--------------+-------------+---------+
+| 15 | 5.7          | 4.4         | 1.5          | 0.4         | Setosa  |
+| 32 | 5.2          | 4.1         | 1.5          | 0.1         | Setosa  |
+| 33 | 5.5          | 4.2         | 1.4          | 0.2         | Setosa  |
++----+--------------+-------------+--------------+-------------+---------+
+
+Drop "sepal.width", "sepal.length" columns:
++---+--------------+-------------+---------+
+|   | petal.length | petal.width | variety |
++---+--------------+-------------+---------+
+| 0 | 1.4          | 0.2         | Setosa  |
+| 1 | 1.4          | 0.2         | Setosa  |
+| 2 | 1.3          | 0.2         | Setosa  |
+| 3 | 1.5          | 0.2         | Setosa  |
+| 4 | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+---------+
+
+Insert new column called "petal.length2" where "petal.length" + 100
++---+--------------+-------------+---------+---------------+
+|   | petal.length | petal.width | variety | petal.length2 |
++---+--------------+-------------+---------+---------------+
+| 0 | 1.4          | 0.2         | Setosa  | 101.4         |
+| 1 | 1.4          | 0.2         | Setosa  | 101.4         |
+| 2 | 1.3          | 0.2         | Setosa  | 101.3         |
+| 3 | 1.5          | 0.2         | Setosa  | 101.5         |
+| 4 | 1.4          | 0.2         | Setosa  | 101.4         |
++---+--------------+-------------+---------+---------------+
+
+Insert new column called "variety2" where "variety" column + " Iris"
++---+--------------+-------------+---------+---------------+-------------+
+|   | petal.length | petal.width | variety | petal.length2 |  variety2   |
++---+--------------+-------------+---------+---------------+-------------+
+| 0 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
+| 1 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
+| 2 | 1.3          | 0.2         | Setosa  | 101.3         | Setosa Iris |
+| 3 | 1.5          | 0.2         | Setosa  | 101.5         | Setosa Iris |
+| 4 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
++---+--------------+-------------+---------+---------------+-------------+
 ```
 
 ## How to contribute?
