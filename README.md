@@ -214,6 +214,5 @@ Insert new column called "variety2" where "variety" column + " Iris"
 - Column manipulations (Select, Drop)
 
 ## Next features:
-- Column manipulate (create, filter)
 - Implement GroupBy functions (count, max, mean, median, min, sum)
 - Implement concurrency on internal functions
