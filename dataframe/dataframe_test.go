@@ -694,30 +694,6 @@ func TestNewDatetime(t *testing.T) {
 
 }
 
-func TestGetValues(t *testing.T) {
-	dfBase := NewDataFrame()
-	input := [][]string{
-		{"name", "age", "data"},
-		{"pepito", "21", "true"},
-		{"juanito", "22", "false"},
-		{"pepita", "2.3", "true"},
-		{"juanita", "", "false"},
-	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
-
-	// One column
-	expected := []Word{NewWordString("pepito"), NewWordString("juanito"), NewWordString("pepita"), NewWordString("juanita")}
-	result := dfBase.Select("name").GetValues()
-	if !reflect.DeepEqual(expected, result) {
-		t.Errorf("GetValuesError. Expected: %v. Result: %v", expected, result)
-	}
-
-}
-
 func TestAdd(t *testing.T) {
 	// dfExpectedString
 	dfExpectedString := ColumnType{

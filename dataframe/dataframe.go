@@ -509,19 +509,8 @@ func (df DataFrame) WhereGreaterOrEqual(colName string, filterValue interface{})
 	return df
 }
 
-// GetValues To get a slices by the values
-func (df DataFrame) GetValues() []Word {
-	// TODO: Creater error for more than one columns
-	words := []Word{}
-	for _, v := range df.Values {
-		words = append(words, v[0])
-	}
-	return words
-}
-
 // Add to add elements
 func (ct ColumnType) Add(valueInput interface{}) []Word {
-	// TODO: Create error for more than one columns
 	for i, v := range ct.values {
 		switch v.(type) {
 		case WordString:
