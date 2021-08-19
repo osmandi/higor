@@ -280,6 +280,23 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 	return df
 }
 
+type ColumnType struct {
+	values  Lines
+	colName string
+}
+
+// Column To select DataFrame with one column
+func (df DataFrame) Column(columnName string) ColumnType {
+	index := findIndex(df.Columns, []string{columnName})[0]
+	columnType := ColumnType{}
+	for _, v := range df.Values {
+		columnType.values = append(columnType.values, v[index])
+	}
+	columnType.colName = columnName
+
+	return columnType
+}
+
 // TODO: Implement errors for columns not find
 // Drop to delete a row
 func (df *DataFrame) Drop(columns ...string) {
