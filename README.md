@@ -211,7 +211,7 @@ Insert new column called "variety2" where "variety" column + " Iris"
 ## What does higor know how to do today?
 - ReadCSV (With custom NaN, custom Separator)
 - Print DataFrames (completly, head, tail)
-- Column manipulations (Select, Drop)
+- Column manipulations (Select, Drop, Insert, Add)
 
 ## Next features:
 - Implement GroupBy functions (count, max, mean, median, min, sum)
