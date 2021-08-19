@@ -23,16 +23,11 @@ func TestVersion(t *testing.T) {
 }
 
 func TestReadCSV(t *testing.T) {
+	// TODO: Add ColumnIndex
 
 	// Normal comparation
 	inputData := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", "24"}}
-	dfExpected := dataframe.NewDataFrame()
-	dfExpected.Columns = inputData[0]
-	dfExpected.Shape = [2]int{4, 2}
-
-	for _, v := range inputData[1:] {
-		dfExpected.AddLine(v)
-	}
+	dfExpected := dataframe.NewDataFrame(inputData)
 
 	dfResult := ReadCSV("csv_examples/simple.csv")
 	if !reflect.DeepEqual(dfExpected, dfResult) {
@@ -47,12 +42,7 @@ func TestReadCSV(t *testing.T) {
 
 	// Normal NaN
 	inputDataNaN := [][]string{{"name", "age"}, {"pepito", "21"}, {"", "22"}, {"pepita", ""}, {"juanita", "24"}}
-	dfExpectedNaN := dataframe.NewDataFrame()
-	dfExpectedNaN.Columns = inputDataNaN[0]
-	dfExpectedNaN.Shape = [2]int{4, 2}
-	for _, v := range inputDataNaN[1:] {
-		dfExpectedNaN.AddLine(v)
-	}
+	dfExpectedNaN := dataframe.NewDataFrame(inputDataNaN)
 
 	dfResult = ReadCSV("csv_examples/nan.csv")
 
@@ -62,13 +52,7 @@ func TestReadCSV(t *testing.T) {
 
 	// NaN custom
 	inputDataNaNCustom := [][]string{{"name", "age"}, {"pepito", "21"}, {"None", "22"}, {"pepita", "None"}, {"juanita", "24"}}
-	dfExpectedNaNCustom := dataframe.NewDataFrame()
-	dfExpectedNaNCustom.Columns = inputDataNaNCustom[0]
-	dfExpectedNaNCustom.Shape = [2]int{4, 2}
-	dfExpectedNaNCustom.NaNLayout = "None"
-	for _, v := range inputDataNaNCustom[1:] {
-		dfExpectedNaNCustom.AddLine(v)
-	}
+	dfExpectedNaNCustom := dataframe.NewDataFrame(inputDataNaNCustom)
 
 	dfResult = ReadCSV("csv_examples/nan_custom.csv", csv.NaNLayout("None"))
 
@@ -78,12 +62,7 @@ func TestReadCSV(t *testing.T) {
 
 	// Without columns
 	inputDataWithoutColumns := [][]string{{"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", "24"}}
-	dfExpectedWithoutColumns := dataframe.NewDataFrame()
-	dfExpectedWithoutColumns.Columns = inputDataWithoutColumns[0]
-	dfExpectedWithoutColumns.Shape = [2]int{3, 2}
-	for _, v := range inputDataWithoutColumns[1:] {
-		dfExpectedWithoutColumns.AddLine(v)
-	}
+	dfExpectedWithoutColumns := dataframe.NewDataFrame(inputDataWithoutColumns)
 
 	dfResult = ReadCSV("csv_examples/without_columns.csv")
 
@@ -94,12 +73,7 @@ func TestReadCSV(t *testing.T) {
 	// More rows than columns
 	// TODO: Create errors
 	inputDataMoreRowsThanColumns := [][]string{{"name", "age"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "23"}, {"juanita", "24"}}
-	dfExpectedMoreRowsThanColumns := dataframe.NewDataFrame()
-	dfExpectedMoreRowsThanColumns.Columns = inputDataMoreRowsThanColumns[0]
-	dfExpectedMoreRowsThanColumns.Shape = [2]int{4, 2}
-	for _, v := range inputDataMoreRowsThanColumns[1:] {
-		dfExpectedMoreRowsThanColumns.AddLine(v)
-	}
+	dfExpectedMoreRowsThanColumns := dataframe.NewDataFrame(inputDataMoreRowsThanColumns)
 
 	dfResult = ReadCSV("csv_examples/more_columns_than_rows.csv")
 

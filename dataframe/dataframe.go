@@ -138,8 +138,22 @@ func (df *DataFrame) AddLine(inputText []string) {
 }
 
 // NewDataFrame Create a DataFrame with default values
-func NewDataFrame() DataFrame {
-	df := DataFrame{NaNLayout: "", DatetimeLayout: "2006-01-02", ColumnIndex: make(map[string]int)} // YYYY-MM-DD
+func NewDataFrame(input [][]string) DataFrame {
+	df := DataFrame{
+		NaNLayout:      "",
+		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+		ColumnIndex:    make(map[string]int),
+		Columns:        input[0],
+	}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+	df.Shape[0] = len(df.Values)
+	df.Shape[1] = len(df.Columns)
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+
 	return df
 }
 
@@ -256,15 +270,11 @@ func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
 
 // TODO: Apply concurrency and implement errors for keys not find
 // findIndex to find index
-func findIndex(base, find []string) []int {
-	// TODO: Implement ColumnIndex to find column index
-	index := []int{}
-	for _, column := range find {
-		for i, v := range base {
-			if column == v {
-				index = append(index, i)
-			}
-		}
+func findIndex(columnIndex map[string]int, columnName string) int {
+	index, ok := columnIndex[columnName]
+
+	if ok != true {
+		panic(fmt.Sprintf(`Column: "%s" doesn't exists`, columnName))
 	}
 
 	return index
@@ -272,10 +282,14 @@ func findIndex(base, find []string) []int {
 
 // Select to select a row
 func (df DataFrame) Select(columns ...string) DataFrame {
-	index := findIndex(df.Columns, columns)
+	indexs := []int{}
+	for _, v := range columns {
+		indexs = append(indexs, findIndex(df.ColumnIndex, v))
+	}
+
 	book := make(Book, len(df.Values))
 
-	for _, v := range index {
+	for _, v := range indexs {
 		for j, k := range df.Values {
 			book[j] = append(book[j], k[v])
 		}
@@ -285,16 +299,16 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 	df.Columns = columns
 	df.Shape[1] = len(df.Columns)
 
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+
 	return df
 }
 
 // Column To select DataFrame with one column
 func (df DataFrame) Column(columnName string) ColumnType {
-	index, ok := df.ColumnIndex[columnName]
-	if ok != true {
-		panic(fmt.Sprintf("Column: %s doesn't exists", columnName))
-	}
-
+	index := df.ColumnIndex[columnName]
 	columnType := ColumnType{}
 	for _, v := range df.Values {
 		columnType.values = append(columnType.values, v[index])
@@ -307,8 +321,12 @@ func (df DataFrame) Column(columnName string) ColumnType {
 // TODO: Implement errors for columns not find
 // Drop to delete a row
 func (df *DataFrame) Drop(columns ...string) {
-	index := findIndex(df.Columns, columns)
-	for _, v := range index {
+	indexs := []int{}
+	for _, v := range columns {
+		indexs = append(indexs, findIndex(df.ColumnIndex, v))
+	}
+
+	for _, v := range indexs {
 		// Remove values
 		for j, k := range df.Values {
 			df.Values[j] = append(k[:v], k[v+1:]...)
@@ -319,6 +337,10 @@ func (df *DataFrame) Drop(columns ...string) {
 	}
 
 	df.Shape[1] = len(df.Columns)
+
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
 
 }
 
@@ -336,7 +358,7 @@ func (df *DataFrame) Insert(colName string, values []Word) {
 func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {
@@ -374,7 +396,7 @@ func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFram
 func (df DataFrame) WhereNotEqual(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {
@@ -412,7 +434,7 @@ func (df DataFrame) WhereNotEqual(colName string, filterValue interface{}) DataF
 func (df DataFrame) WhereLess(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {
@@ -439,7 +461,7 @@ func (df DataFrame) WhereLess(colName string, filterValue interface{}) DataFrame
 func (df DataFrame) WhereGreater(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {
@@ -466,7 +488,7 @@ func (df DataFrame) WhereGreater(colName string, filterValue interface{}) DataFr
 func (df DataFrame) WhereOrEqual(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {
@@ -493,7 +515,7 @@ func (df DataFrame) WhereOrEqual(colName string, filterValue interface{}) DataFr
 func (df DataFrame) WhereGreaterOrEqual(colName string, filterValue interface{}) DataFrame {
 	book := Book{}
 	newIndex := []uint{}
-	colIndex := findIndex(df.Columns, []string{colName})[0]
+	colIndex := findIndex(df.ColumnIndex, colName)
 
 	for i, v := range df.Values {
 		switch v[colIndex].(type) {

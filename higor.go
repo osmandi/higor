@@ -13,7 +13,6 @@ const Version string = "v0.5.0"
 
 // ReadCSV Read a file with CSV format
 func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
-	df := dataframe.NewDataFrame()
 
 	csvInternal := &c.CSV{}
 	// Default values
@@ -36,7 +35,6 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	// Set options
 	records.Comma = csvInternal.Sep
-	df.NaNLayout = csvInternal.NaNLayout
 
 	csvLines := [][]string{}
 
@@ -57,12 +55,8 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 		csvLines = append(csvLines, line)
 
 	}
-	df.Columns = csvLines[0]
-	df.Shape = [2]int{len(csvLines[1:]), len(csvLines[0])}
-
-	for _, v := range csvLines[1:] {
-		df.AddLine(v)
-	}
+	df := dataframe.NewDataFrame(csvLines)
+	df.NaNLayout = csvInternal.NaNLayout
 
 	return df
 }

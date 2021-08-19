@@ -91,9 +91,8 @@ func TestTranslateWord(t *testing.T) {
 }
 
 func TestAddLine(t *testing.T) {
-
-	dfExpected := NewDataFrame()
-	dfResult := NewDataFrame()
+	dfExpected := DataFrame{}
+	dfResult := DataFrame{}
 
 	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
 	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
@@ -115,8 +114,7 @@ func TestNewDataFrame(t *testing.T) {
 	dfExpected.NaNLayout = ""
 	dfExpected.DatetimeLayout = "2006-01-02"
 	dfExpected.ColumnIndex = make(map[string]int)
-
-	dfResult := NewDataFrame()
+	dfResult := DataFrame{}
 
 	if !reflect.DeepEqual(dfExpected, dfResult) {
 		t.Errorf("Dataframes different but equal expected.\nExpected: %+v\nResult: %+v", dfExpected, dfResult)
@@ -125,13 +123,8 @@ func TestNewDataFrame(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	df := NewDataFrame()
 	input := [][]string{{"NAME", "AGE"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
-	df.Columns = input[0]
-	df.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df := NewDataFrame(input)
 
 	expected := `+---+---------+-----+
 |   |  NAME   | AGE |
@@ -150,7 +143,6 @@ func TestString(t *testing.T) {
 }
 
 func TestHead(t *testing.T) {
-	df := NewDataFrame()
 	input := [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -168,11 +160,7 @@ func TestHead(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	df.Columns = input[0]
-	df.Shape = [2]int{14, 2}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df := NewDataFrame(input)
 
 	dfHead := df.Head()
 	dfHeadExpected := df
@@ -193,7 +181,6 @@ func TestHead(t *testing.T) {
 	}
 
 	// Less than 10 rows
-	dfLess := NewDataFrame()
 	input = [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -201,11 +188,7 @@ func TestHead(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	dfLess.Columns = input[0]
-	dfLess.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		dfLess.AddLine(v)
-	}
+	dfLess := NewDataFrame(input)
 
 	dfLessHead := dfLess.Head()
 	if !reflect.DeepEqual(dfLess, dfLessHead) {
@@ -214,7 +197,6 @@ func TestHead(t *testing.T) {
 }
 
 func TestTail(t *testing.T) {
-	df := NewDataFrame()
 	input := [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -232,11 +214,7 @@ func TestTail(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	df.Columns = input[0]
-	df.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df := NewDataFrame(input)
 
 	dfTail := df.Tail()
 	dfTailExpected := df
@@ -259,7 +237,6 @@ func TestTail(t *testing.T) {
 	}
 
 	// Less than 10 rows
-	dfLess := NewDataFrame()
 	input = [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -267,12 +244,7 @@ func TestTail(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-
-	dfLess.Columns = input[0]
-	dfLess.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		dfLess.AddLine(v)
-	}
+	dfLess := NewDataFrame(input)
 
 	dfLessTail := dfLess.Tail()
 	if !reflect.DeepEqual(dfLess, dfLessTail) {
@@ -282,7 +254,6 @@ func TestTail(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 	// Base
-	df := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -290,14 +261,9 @@ func TestSelect(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	df.Columns = input[0]
-	df.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df := NewDataFrame(input)
 
 	// Select two columns
-	dfSelect := NewDataFrame()
 	input = [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -305,11 +271,7 @@ func TestSelect(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	dfSelect.Columns = input[0]
-	dfSelect.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		dfSelect.AddLine(v)
-	}
+	dfSelect := NewDataFrame(input)
 
 	dfSelected2 := df.Select("name", "age")
 	dfSelected2.Shape[1] = 2
@@ -319,7 +281,6 @@ func TestSelect(t *testing.T) {
 	}
 
 	// Select one columns
-	dfSelect1 := NewDataFrame()
 	input = [][]string{
 		{"name"},
 		{"pepito"},
@@ -327,11 +288,7 @@ func TestSelect(t *testing.T) {
 		{"pepita"},
 		{"juanita"},
 	}
-	dfSelect1.Columns = input[0]
-	dfSelect1.Shape = [2]int{4, 1}
-	for _, v := range input[1:] {
-		dfSelect1.AddLine(v)
-	}
+	dfSelect1 := NewDataFrame(input)
 
 	dfSelected1 := df.Select("name")
 	dfSelected1.Shape[1] = 1
@@ -343,10 +300,17 @@ func TestSelect(t *testing.T) {
 }
 
 func TestFindIndex(t *testing.T) {
-	listBase := []string{"col1", "col2", "col3"}
+	//	listBase := []string{"col1", "col2", "col3"}
 	listFind := []string{"col1", "col3", "col2"}
 	expected := []int{0, 2, 1}
-	result := findIndex(listBase, listFind)
+	result := []int{}
+	columnIndex := make(map[string]int)
+	columnIndex["col1"] = 0
+	columnIndex["col3"] = 2
+	columnIndex["col2"] = 1
+	for _, v := range listFind {
+		result = append(result, findIndex(columnIndex, v))
+	}
 
 	if !reflect.DeepEqual(expected, result) {
 		t.Errorf("Index Failed.\nExpected:\n%v\nResult:\n%v", expected, result)
@@ -356,7 +320,6 @@ func TestFindIndex(t *testing.T) {
 
 func TestDrop(t *testing.T) {
 	// Base
-	df := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -364,14 +327,9 @@ func TestDrop(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	df.Columns = input[0]
-	df.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df := NewDataFrame(input)
 
 	// Drop column "data"
-	dfDrop1 := NewDataFrame()
 	input = [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -379,11 +337,7 @@ func TestDrop(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	dfDrop1.Columns = input[0]
-	dfDrop1.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		dfDrop1.AddLine(v)
-	}
+	dfDrop1 := NewDataFrame(input)
 
 	df.Drop("data")
 
@@ -392,7 +346,6 @@ func TestDrop(t *testing.T) {
 	}
 
 	// Drop columns "data" and "age"
-	df = NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -400,15 +353,10 @@ func TestDrop(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	df.Columns = input[0]
-	df.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
+	df = NewDataFrame(input)
 
 	df.Drop("data", "age")
 
-	dfDrop2 := NewDataFrame()
 	input = [][]string{
 		{"name"},
 		{"pepito"},
@@ -416,11 +364,7 @@ func TestDrop(t *testing.T) {
 		{"pepita"},
 		{"juanita"},
 	}
-	dfDrop2.Columns = input[0]
-	dfDrop2.Shape = [2]int{4, 1}
-	for _, v := range input[1:] {
-		dfDrop2.AddLine(v)
-	}
+	dfDrop2 := NewDataFrame(input)
 
 	if !reflect.DeepEqual(dfDrop2, df) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfDrop2, df)
@@ -430,7 +374,6 @@ func TestDrop(t *testing.T) {
 
 func TestInsert(t *testing.T) {
 
-	dfExpected := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data", "last_name", "year_experience", "birthdate"},
 		{"pepito", "21", "true", "pepote", "2", "2020-01-02"},
@@ -438,13 +381,8 @@ func TestInsert(t *testing.T) {
 		{"pepita", "2.3", "true", "mulano", "8", "2019-04-02"},
 		{"juanita", "", "false", "pentano", "100", "2018-12-30"},
 	}
-	dfExpected.Columns = input[0]
-	dfExpected.Shape = [2]int{4, 6}
-	for _, v := range input[1:] {
-		dfExpected.AddLine(v)
-	}
+	dfExpected := NewDataFrame(input)
 
-	dfBase := NewDataFrame()
 	input = [][]string{
 		{"name", "age"},
 		{"pepito", "21"},
@@ -452,11 +390,7 @@ func TestInsert(t *testing.T) {
 		{"pepita", "2.3"},
 		{"juanita", ""},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 2}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
+	dfBase := NewDataFrame(input)
 
 	// Bool inserts
 	dfBase.Insert("data", []Word{NewWordBool(true), NewWordBool(false), NewWordBool(true), NewWordBool(false)})
@@ -477,7 +411,6 @@ func TestInsert(t *testing.T) {
 }
 
 func TestWhereEqual(t *testing.T) {
-	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -485,24 +418,15 @@ func TestWhereEqual(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
+	dfBase := NewDataFrame(input)
 
 	// Where equal Bool
-	dfBaseWhereDataTrue := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
 		{"pepita", "2.3", "true"},
 	}
-	dfBaseWhereDataTrue.Columns = input[0]
-	dfBaseWhereDataTrue.Shape = [2]int{2, 3}
-	for _, v := range input[1:] {
-		dfBaseWhereDataTrue.AddLine(v)
-	}
+	dfBaseWhereDataTrue := NewDataFrame(input)
 	dfBaseWhereDataTrue.Index = []uint{0, 2}
 	dfResult := dfBase.WhereEqual("data", true)
 	if !reflect.DeepEqual(dfBaseWhereDataTrue, dfResult) {
@@ -510,16 +434,11 @@ func TestWhereEqual(t *testing.T) {
 	}
 
 	// Where equal String
-	dfBaseWhereString := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
 	}
-	dfBaseWhereString.Columns = input[0]
-	dfBaseWhereString.Shape = [2]int{1, 3}
-	for _, v := range input[1:] {
-		dfBaseWhereString.AddLine(v)
-	}
+	dfBaseWhereString := NewDataFrame(input)
 	dfBaseWhereString.Index = []uint{0}
 	dfResult = dfBase.WhereEqual("name", "pepito")
 	if !reflect.DeepEqual(dfBaseWhereString, dfResult) {
@@ -527,7 +446,7 @@ func TestWhereEqual(t *testing.T) {
 	}
 
 	// Where equal float64
-	dfBaseFloat64 := NewDataFrame()
+	dfBaseFloat64 := NewDataFrame(input)
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -546,7 +465,6 @@ func TestWhereEqual(t *testing.T) {
 }
 
 func TestWhereNotEqual(t *testing.T) {
-	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -554,23 +472,14 @@ func TestWhereNotEqual(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
+	dfBase := NewDataFrame(input)
 
-	dfWhereNotEqualBool := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"juanito", "22", "false"},
 		{"juanita", "", "false"},
 	}
-	dfWhereNotEqualBool.Columns = input[0]
-	dfWhereNotEqualBool.Shape = [2]int{2, 3}
-	for _, v := range input[1:] {
-		dfWhereNotEqualBool.AddLine(v)
-	}
+	dfWhereNotEqualBool := NewDataFrame(input)
 	dfWhereNotEqualBool.Index = []uint{1, 3}
 	dfResult := dfBase.WhereNotEqual("data", true)
 	if !reflect.DeepEqual(dfWhereNotEqualBool, dfResult) {
@@ -580,7 +489,6 @@ func TestWhereNotEqual(t *testing.T) {
 }
 
 func TestWhereLess(t *testing.T) {
-	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -588,23 +496,14 @@ func TestWhereLess(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
+	dfBase := NewDataFrame(input)
 
 	// Float64 comparison
-	dfWhereLessExpected := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepita", "2.3", "true"},
 	}
-	dfWhereLessExpected.Columns = input[0]
-	dfWhereLessExpected.Shape = [2]int{1, 3}
-	for _, v := range input[1:] {
-		dfWhereLessExpected.AddLine(v)
-	}
+	dfWhereLessExpected := NewDataFrame(input)
 	dfWhereLessExpected.Index = []uint{2}
 	dfResult := dfBase.WhereLess("age", float64(3))
 	if !reflect.DeepEqual(dfWhereLessExpected, dfResult) {
@@ -616,7 +515,6 @@ func TestWhereLess(t *testing.T) {
 }
 
 func TestWhereGreater(t *testing.T) {
-	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -624,25 +522,17 @@ func TestWhereGreater(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
+	dfBase := NewDataFrame(input)
 
 	// Float64 comparison
-	dfWhereGreaterExpected := NewDataFrame()
 	input = [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
 		{"juanito", "22", "false"},
 	}
-	dfWhereGreaterExpected.Columns = input[0]
-	dfWhereGreaterExpected.Shape = [2]int{2, 3}
-	for _, v := range input[1:] {
-		dfWhereGreaterExpected.AddLine(v)
-	}
+	dfWhereGreaterExpected := NewDataFrame(input)
 	dfWhereGreaterExpected.Index = []uint{0, 1}
+
 	dfResult := dfBase.WhereGreater("age", float64(3))
 	if !reflect.DeepEqual(dfWhereGreaterExpected, dfResult) {
 		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereGreaterExpected, dfResult)
@@ -684,7 +574,8 @@ func TestNewWordFloat64(t *testing.T) {
 }
 
 func TestNewDatetime(t *testing.T) {
-	df := NewDataFrame()
+	df := DataFrame{}
+	df.DatetimeLayout = "2006-01-02"
 	timeValue := "2020-01-02"
 	value, _ := time.Parse(df.DatetimeLayout, timeValue)
 	wordDatetime := NewWordDatetime(df.DatetimeLayout, timeValue)
@@ -709,7 +600,6 @@ func TestAdd(t *testing.T) {
 	}
 
 	// Base
-	dfBase := NewDataFrame()
 	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
@@ -717,14 +607,7 @@ func TestAdd(t *testing.T) {
 		{"pepita", "2.3", "true"},
 		{"juanita", "", "false"},
 	}
-	dfBase.Columns = input[0]
-	dfBase.Shape = [2]int{4, 3}
-	for _, v := range input[1:] {
-		dfBase.AddLine(v)
-	}
-	dfBase.ColumnIndex["name"] = 0
-	dfBase.ColumnIndex["age"] = 1
-	dfBase.ColumnIndex["data"] = 2
+	dfBase := NewDataFrame(input)
 
 	// Add String
 	dfAddString := dfBase.Column("name").Add("2")
