@@ -36,73 +36,171 @@ The aim of Higor is to provide a library that allows you to work with different 
 go get -v -u github.com/osmandi/higor
 ```
 
-## Say hello to Higor
+## How to use Higor?
+
+[Download iris.csv](https://gist.githubusercontent.com/netj/8836201/raw/6f9306ad21398ea43cba4f7d537619d0e07d5ae3/iris.csv)
 
 ```Go
 package main
 
 import (
 	"fmt"
-	"time"
 
-	hg "github.com/osmandi/higor"
-	"github.com/osmandi/higor/dataframe"
+	"github.com/osmandi/higor"
 )
 
-type myTime time.Time
-
 func main() {
-	fmt.Println(hg.HelloHigor())
-	fmt.Println("")
+	// Print Head
+	df := higor.ReadCSV("iris.csv")
+	fmt.Println("Head:")
+	fmt.Println(df.Head(5))
 
-	// sample.csv content:
-	/*
-		colFloat64,colString,colBool,colDatetime,colAny
-		2,no,true,2021-01-30,1.2
-		5,hello,false,none,true
-		none,hello,false,none,none
-		none,none,false,none,helloText
-		5,hello,false,none,2021-02-03
-	*/
+	// Print Tail
+	fmt.Println("Tail:")
+	fmt.Println(df.Tail(5))
 
-	schema := dataframe.Book{
-		dataframe.PageFloat64{},  // colFloat64
-		dataframe.PageString{},   // colString
-		dataframe.PageBool{},     // colBool
-		dataframe.PageDatetime{}, // colDatetime
-		dataframe.PageAny{},      // colAny
-	}
-	dateformat := "YYYY-MM-DD"
-	none := "none" // Support for custom NaN values, default is ""
-	df := hg.ReadCSV("sample.csv", dataframe.Schema(schema), dataframe.Dateformat(dateformat), dataframe.None(none))
-	fmt.Println(df)
+	// Select columns
+	fmt.Println(`Select "sepal.width","sepal.width","variety" columns:`)
+	fmt.Println(df.Select("sepal.width", "sepal.width", "variety").Head(5))
+
+	// Apply filters (WhereEqual, WhereNotEqual, WhereGreater, WhereLess, WhereGreaterOrEqual, WhereLessOrEqual)
+	fmt.Println(`Where "variety" == "Setosa":`)
+	fmt.Println(df.WhereEqual("variety", "Setosa").Head(5))
+	fmt.Println(`Where "sepal.length" > 5:`)
+	fmt.Println(df.WhereGreater("sepal.length", float64(5)).Head(5))
+	fmt.Println(`Where "variety" != "Setosa":`)
+	fmt.Println(df.WhereNotEqual("variety", "Setosa").Head(5))
+	fmt.Println(`Where "sepal.width" > 4 && "variety" != "Versicolor":`)
+	fmt.Println(df.WhereGreater("sepal.width", float64(4)).WhereNotEqual("variety", "Versicolor").Tail(5))
+
+	// Drop one or more columns
+	fmt.Println(`Drop "sepal.width", "sepal.length" columns:`)
+	df.Drop("sepal.width", "sepal.length")
+	fmt.Println(df.Head(5))
+
+	// Insert and Sum
+	fmt.Println(`Insert new column called "petal.length2" where "petal.length" + 100`)
+	df.Insert("petal.length2", df.Column("petal.length").Add(float64(100)))
+	fmt.Println(df.Head(5))
+
+	// Insert and concat
+	fmt.Println(`Insert new column called "variety2" where "variety" column + " Iris"`)
+	df.Insert("variety2", df.Column("variety").Add(" Iris"))
+	fmt.Println(df.Head(5))
 }
 ```
 
 Result:
 
 ```Bash
-Hello from Higor :) v0.3.2
+Head:
++---+--------------+-------------+--------------+-------------+---------+
+|   | sepal.length | sepal.width | petal.length | petal.width | variety |
++---+--------------+-------------+--------------+-------------+---------+
+| 0 | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 1 | 4.9          | 3           | 1.4          | 0.2         | Setosa  |
+| 2 | 4.7          | 3.2         | 1.3          | 0.2         | Setosa  |
+| 3 | 4.6          | 3.1         | 1.5          | 0.2         | Setosa  |
+| 4 | 5            | 3.6         | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+--------------+-------------+---------+
 
-+------------+-----------+---------+-------------------------------+------------+
-| COLFLOAT64 | COLSTRING | COLBOOL |          COLDATETIME          |   COLANY   |
-+------------+-----------+---------+-------------------------------+------------+
-|          2 | no        | true    | 2021-01-30 00:00:00 +0000 UTC |        1.2 |
-|          5 | hello     | false   | NaN                           | true       |
-| NaN        | hello     | false   | NaN                           | NaN        |
-| NaN        | NaN       | false   | NaN                           | helloText  |
-|          5 | hello     | false   | NaN                           | 2021-02-03 |
-+------------+-----------+---------+-------------------------------+------------+
+Tail:
++-----+--------------+-------------+--------------+-------------+-----------+
+|     | sepal.length | sepal.width | petal.length | petal.width |  variety  |
++-----+--------------+-------------+--------------+-------------+-----------+
+| 145 | 6.7          | 3           | 5.2          | 2.3         | Virginica |
+| 146 | 6.3          | 2.5         | 5            | 1.9         | Virginica |
+| 147 | 6.5          | 3           | 5.2          | 2           | Virginica |
+| 148 | 6.2          | 3.4         | 5.4          | 2.3         | Virginica |
+| 149 | 5.9          | 3           | 5.1          | 1.8         | Virginica |
++-----+--------------+-------------+--------------+-------------+-----------+
+
+Select "sepal.width","sepal.width","variety" columns:
++---+-------------+-------------+---------+
+|   | sepal.width | sepal.width | variety |
++---+-------------+-------------+---------+
+| 0 | 3.5         | 3.5         | Setosa  |
+| 1 | 3           | 3           | Setosa  |
+| 2 | 3.2         | 3.2         | Setosa  |
+| 3 | 3.1         | 3.1         | Setosa  |
+| 4 | 3.6         | 3.6         | Setosa  |
++---+-------------+-------------+---------+
+
+Where "variety" == "Setosa":
++---+--------------+-------------+--------------+-------------+---------+
+|   | sepal.length | sepal.width | petal.length | petal.width | variety |
++---+--------------+-------------+--------------+-------------+---------+
+| 0 | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 1 | 4.9          | 3           | 1.4          | 0.2         | Setosa  |
+| 2 | 4.7          | 3.2         | 1.3          | 0.2         | Setosa  |
+| 3 | 4.6          | 3.1         | 1.5          | 0.2         | Setosa  |
+| 4 | 5            | 3.6         | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+--------------+-------------+---------+
+
+Where "sepal.length" > 5:
++----+--------------+-------------+--------------+-------------+---------+
+|    | sepal.length | sepal.width | petal.length | petal.width | variety |
++----+--------------+-------------+--------------+-------------+---------+
+| 0  | 5.1          | 3.5         | 1.4          | 0.2         | Setosa  |
+| 5  | 5.4          | 3.9         | 1.7          | 0.4         | Setosa  |
+| 10 | 5.4          | 3.7         | 1.5          | 0.2         | Setosa  |
+| 14 | 5.8          | 4           | 1.2          | 0.2         | Setosa  |
+| 15 | 5.7          | 4.4         | 1.5          | 0.4         | Setosa  |
++----+--------------+-------------+--------------+-------------+---------+
+
+Where "variety" != "Setosa":
++----+--------------+-------------+--------------+-------------+------------+
+|    | sepal.length | sepal.width | petal.length | petal.width |  variety   |
++----+--------------+-------------+--------------+-------------+------------+
+| 50 | 7            | 3.2         | 4.7          | 1.4         | Versicolor |
+| 51 | 6.4          | 3.2         | 4.5          | 1.5         | Versicolor |
+| 52 | 6.9          | 3.1         | 4.9          | 1.5         | Versicolor |
+| 53 | 5.5          | 2.3         | 4            | 1.3         | Versicolor |
+| 54 | 6.5          | 2.8         | 4.6          | 1.5         | Versicolor |
++----+--------------+-------------+--------------+-------------+------------+
+
+Where "sepal.width" > 4 && "variety" != "Versicolor":
++----+--------------+-------------+--------------+-------------+---------+
+|    | sepal.length | sepal.width | petal.length | petal.width | variety |
++----+--------------+-------------+--------------+-------------+---------+
+| 15 | 5.7          | 4.4         | 1.5          | 0.4         | Setosa  |
+| 32 | 5.2          | 4.1         | 1.5          | 0.1         | Setosa  |
+| 33 | 5.5          | 4.2         | 1.4          | 0.2         | Setosa  |
++----+--------------+-------------+--------------+-------------+---------+
+
+Drop "sepal.width", "sepal.length" columns:
++---+--------------+-------------+---------+
+|   | petal.length | petal.width | variety |
++---+--------------+-------------+---------+
+| 0 | 1.4          | 0.2         | Setosa  |
+| 1 | 1.4          | 0.2         | Setosa  |
+| 2 | 1.3          | 0.2         | Setosa  |
+| 3 | 1.5          | 0.2         | Setosa  |
+| 4 | 1.4          | 0.2         | Setosa  |
++---+--------------+-------------+---------+
+
+Insert new column called "petal.length2" where "petal.length" + 100
++---+--------------+-------------+---------+---------------+
+|   | petal.length | petal.width | variety | petal.length2 |
++---+--------------+-------------+---------+---------------+
+| 0 | 1.4          | 0.2         | Setosa  | 101.4         |
+| 1 | 1.4          | 0.2         | Setosa  | 101.4         |
+| 2 | 1.3          | 0.2         | Setosa  | 101.3         |
+| 3 | 1.5          | 0.2         | Setosa  | 101.5         |
+| 4 | 1.4          | 0.2         | Setosa  | 101.4         |
++---+--------------+-------------+---------+---------------+
+
+Insert new column called "variety2" where "variety" column + " Iris"
++---+--------------+-------------+---------+---------------+-------------+
+|   | petal.length | petal.width | variety | petal.length2 |  variety2   |
++---+--------------+-------------+---------+---------------+-------------+
+| 0 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
+| 1 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
+| 2 | 1.3          | 0.2         | Setosa  | 101.3         | Setosa Iris |
+| 3 | 1.5          | 0.2         | Setosa  | 101.5         | Setosa Iris |
+| 4 | 1.4          | 0.2         | Setosa  | 101.4         | Setosa Iris |
++---+--------------+-------------+---------+---------------+-------------+
 ```
-
-## Column types with support for NaN values
-- PageString: To save any string value. For example: "Hello Higor", "value".
-- PageDatetime: To save datetime values. For example: "2021-01-30 00:00:00 +0000 UTC".
-- PageFloat64: To save numbers integers and floats. For example: 1, 1.2.
-- PageAny: To save any data type. For example: 1, "dos", true, etc.
-
-## Column types without support for NaN values
-- PageBool: To save values type bool. For example: true, false.
 
 ## How to contribute?
 - Give this repo a star.
@@ -110,47 +208,11 @@ Hello from Higor :) v0.3.2
 - Use this library and if you have some issues please put it on issues section with the Data.
 - If you need a specific feature, please create a PR to README.md to request it.
 
-# Releases version
-
-> Actual version: v0.3.2
-
-## v0.3.0: DataType by column
-- [x] Delete footer
-- [x] Set schema to read a CSV with parsing values
-- [x] Save values with a specific DataType slice instead a interface
-- [x] DataType for datetime values
-- [x] DataType for datetime values with custom format
-
-## v0.3.1: DataTypes reading unexpeding
-- [x] ReadCSV with none values - PageFloat64
-- [x] ReadCSV with none values - PageAny
-- [x] ReadCSV with none values - PageString
-- [x] ReadCSV with none values - PageDatetime
-- [x] ReadCSV custom none values setting
-- [x] ReadCSV correct print NaN values
-- [x] Message for incorrect schema
-- [x] Set what PageTypes has None values support
-- [x] Goal: Read [iris.csv](https://gist.github.com/netj/8836201) file successfully
-
-## v0.3.2: Improve DataFrame print it
-- [x] Print tail dataframe
-- [x] Print head DataFrame
-
-## v0.4.0: Change core to Dynamic Struct instead maps and better support for NaN values
-
-## v0.4.1: Improve importing and exporting CSV
-- [ ] Print DataFrame with index
-- [ ] Export with nils values
-- [ ] Export without header
-- [ ] Export without index
-- [ ] Read CSV with automatic DataTypes setting
-
-## v0.4.2: Improve features
-- [ ] Custom datetime format by each column
-- [ ] Set a way to ignore rows with NaN values
-- [ ] Set a way to change to PageAny if found None values whe that is not supported on the schema
+## What does higor know how to do today?
+- ReadCSV (With custom NaN, custom Separator)
+- Print DataFrames (completly, head, tail)
+- Column manipulations (Select, Drop, Insert, Add)
 
 ## Next features:
-- Column manipulate (select, update, drop, create, group)
-- Implement statistics functions (Mean, Median, etc)
-- Implement concurrency by default
+- Implement GroupBy functions (count, max, mean, median, min, sum)
+- Implement concurrency on internal functions

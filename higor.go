@@ -2,114 +2,60 @@ package higor
 
 import (
 	"encoding/csv"
-	"fmt"
-	"math"
+	"io"
 	"os"
-	"strconv"
-	"strings"
-	"time"
 
+	c "github.com/osmandi/higor/csv"
 	"github.com/osmandi/higor/dataframe"
 )
 
-var Version string = "v0.3.2"
+const Version string = "v0.5.0"
 
-// HelloHigor Print a simple message to check if Higor are installed correctly
-// and print the version installed
-func HelloHigor() string {
+// ReadCSV Read a file with CSV format
+func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
-	helloMessage := fmt.Sprintf("Hello from Higor :) %s", Version)
-	return helloMessage
-}
-
-/////////
-// CSV /
-///////
-
-// ReadCSV Read a CSV file and save it as a DataFrame
-func ReadCSV(filename string, opts ...dataframe.CSVOption) dataframe.DataFrame {
-	csvInternal := &dataframe.CSV{}
+	csvInternal := &c.CSV{}
+	// Default values
 	csvInternal.Sep = ','
-	csvInternal.None = ""
-	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+	csvInternal.NaNLayout = ""
 
-	for _, opt := range opts {
-		opt(csvInternal)
+	for _, csvOption := range csvOptions {
+		csvOption(csvInternal)
 	}
 
-	// Open file
 	csvFile, err := os.Open(filename)
-	dataframe.ErrorChecker(err)
+
+	if err != nil {
+		panic(err)
+	}
+
 	defer csvFile.Close()
 
-	// Read CSV
-	csvReader := csv.NewReader(csvFile)
-	csvReader.Comma = csvInternal.Sep
+	records := csv.NewReader(csvFile)
 
-	// Convert CSV to [][]string
-	csv, err := csvReader.ReadAll()
-	dataframe.ErrorChecker(err)
+	// Set options
+	records.Comma = csvInternal.Sep
 
-	df := dataframe.DataFrame{}
-	df.Columns = csv[0]
-	df.Values = dataframe.Book{}
-	df.Shape = [2]int{len(csv) - 1, len(csv[0])}
-	layout := "2006-01-02" // Dafault: YYYY-MM-DD
+	csvLines := [][]string{}
 
-	if csvInternal.Dateformat != "" {
-		value := strings.Replace(csvInternal.Dateformat, "YYYY", "2006", 1)
-		value = strings.Replace(value, "MM", "01", 1)
-		value = strings.Replace(value, "DD", "02", 1)
-		layout = value
-	}
-
-	// If schema is set
-	if len(csvInternal.Schema) > 0 {
-		df.Values = csvInternal.Schema
-
-		for _, rowValue := range csv[1:] {
-			for columnIndex, columnValue := range rowValue {
-
-				switch df.Values[columnIndex].(type) {
-				case dataframe.PageString:
-					if columnValue != csvInternal.None {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), columnValue)
-					} else {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageString), "")
-					}
-				case dataframe.PageFloat64:
-					if columnValue != csvInternal.None {
-						valueFloat64, err := strconv.ParseFloat(columnValue, 64)
-						dataframe.ErrorSchema(df.Columns[columnIndex], "PageFloat64", columnValue, err)
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), valueFloat64)
-					} else {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageFloat64), math.NaN())
-					}
-				case dataframe.PageBool:
-					valueBool, err := strconv.ParseBool(columnValue)
-					dataframe.ErrorSchema(df.Columns[columnIndex], "PageBool", columnValue, err)
-					df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageBool), valueBool)
-				case dataframe.PageDatetime:
-					if columnValue != csvInternal.None {
-						dateValue, err := time.Parse(layout, columnValue)
-						dataframe.ErrorSchema(df.Columns[columnIndex], "PageDatetime", columnValue, err)
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateValue)
-					} else {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageDatetime), dateNaN)
-					}
-				case dataframe.PageAny:
-					if columnValue != csvInternal.None {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), columnValue)
-					} else {
-						df.Values[columnIndex] = append(df.Values[columnIndex].(dataframe.PageAny), math.NaN())
-					}
-
-				}
-
-			}
-
+	for {
+		line, err := records.Read()
+		if err == io.EOF {
+			break
 		}
+		if err != nil {
+			if *&err.(*csv.ParseError).Err == csv.ErrFieldCount {
+				// More rows than columns. Return only validated rows
+				line = line[:len(csvLines[0])]
+			} else {
+				panic(err)
+			}
+		}
+
+		csvLines = append(csvLines, line)
+
 	}
+	df := dataframe.NewDataFrame(csvLines, csvInternal.NaNLayout)
 
 	return df
 }

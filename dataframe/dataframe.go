@@ -1,420 +1,567 @@
 package dataframe
 
 import (
-	"encoding/csv"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"math"
-	"os"
-	"reflect"
+	"strconv"
 	"strings"
-	"testing"
 	"time"
 
 	"github.com/olekukonko/tablewriter"
 )
 
-// PageAny To save any data type, when if you don't know what data type is and with support for NaN values
-type PageAny []interface{}
+type Word interface {
+}
 
-// PageString Data type for string values with support for NaN values
-type PageString []string
+// WordNaN to save NaN values
+type WordNaN struct {
+	Word
+}
 
-// PageBool Data type for boolean values. Not support for NaN values
-type PageBool []bool
+// wordString Data type for string values with support for NaN values
+type WordString struct {
+	Word
+	value string
+}
 
-// PageFloat64 Data type for numbers and float values with support for NaN values
-type PageFloat64 []float64
+// wordBool Data type for boolean values. Not support for NaN values
+type WordBool struct {
+	Word
+	value bool
+}
 
-// PageDatetime To date dates with support for NaN values
-type PageDatetime []time.Time
+// wordFloat64 Data type for numbers and float values with support for NaN values
+type WordFloat64 struct {
+	Word
+	value float64
+}
 
-// Book Interface to save a DataFrame
-type Book []interface{}
+// wordDatetime To date dates with support for NaN values
+type WordDatetime struct {
+	Word
+	value time.Time
+}
+
+// Lines It's a row
+type Lines []Word
+
+// Book save multiple lines
+type Book []Lines
 
 // DataFrame Structure for DataFrame
 type DataFrame struct {
-	Columns []string
-	Values  Book
-	Shape   [2]int // [rowsNumber, columnsNumber]
+	Columns        []string
+	Values         Book
+	Shape          [2]int // [rowsNumber, columnsNumber]
+	NaNLayout      string
+	DatetimeLayout string
+	Index          []uint
+	ColumnIndex    map[string]int
 }
 
-// IsEqual to kown if two DataFrame are equal
-func IsEqual(dataFrame1, dataFrame2 DataFrame) (bool, string) {
-	columnComparation := reflect.DeepEqual(dataFrame1.Columns, dataFrame2.Columns)
+// ColumnType Operations by column
+type ColumnType struct {
+	values  []Word
+	colName string
+}
 
-	// Columns comparation
-	if !columnComparation {
-		return false, "Columns are different"
-	}
-
-	// Values comparation
-	valuesDataFrame1 := dataFrame1.Values
-	valuesDataFrame2 := dataFrame2.Values
-
-	if len(valuesDataFrame1) != len(valuesDataFrame2) {
-		return false, ""
-	}
-
-	for i, v := range valuesDataFrame1 {
-		switch v.(type) {
-		case PageString:
-			for i2, v2 := range v.(PageString) {
-				v3 := valuesDataFrame2[i].(PageString)[i2]
-				if v2 != v3 {
-					return false, fmt.Sprintf("PageStringError: v2: %v | v3: %v", v2, v3)
-				}
-			}
-		case PageBool:
-			for i2, v2 := range v.(PageBool) {
-				v3 := valuesDataFrame2[i].(PageBool)[i2]
-				if v2 != v3 {
-					return false, fmt.Sprintf("PageBoolError: v2: %v | v3: %v", v2, v3)
-				}
-			}
-		case PageFloat64:
-			for i2, v2 := range v.(PageFloat64) {
-				v3 := valuesDataFrame2[i].(PageFloat64)[i2]
-				if math.IsNaN(v2) != math.IsNaN(v3) {
-					return false, fmt.Sprintf("PageFloat64ErrorIsNaN: v2: %v | v3: %v | v2 == v3: %v", math.IsNaN(v2), math.IsNaN(v3), math.IsNaN(v2) == math.IsNaN(v3))
-				} else if v2 != v3 && !math.IsNaN(v2) {
-					return false, fmt.Sprintf("PageFloat64ErrorComparation: v2: %v | v3: %v | v2 == v3: %v", v2, v3, v2 == v3)
-				}
-			}
-		case PageAny:
-			for i2, v2 := range v.(PageAny) {
-				if fmt.Sprintf("%T", v2) == "float64" {
-					if math.IsNaN(v2.(float64)) != math.IsNaN(valuesDataFrame2[i].(PageAny)[i2].(float64)) {
-						return false, ""
-					}
-
-				} else if v2 != valuesDataFrame2[i].(PageAny)[i2] {
-					fmt.Println("PageAny")
-					fmt.Printf("v2: %v, v3: %v\n", v2, valuesDataFrame2[i].(PageAny)[i2])
-					fmt.Printf("v2 == v3: %v\n", v2 == valuesDataFrame2[i].(PageAny)[i2])
-					return false, ""
-				}
-			}
-
-		}
-	}
-
-	return true, ""
+func WriteWordString(text string) WordString {
+	wordString := WordString{value: text}
+	return wordString
 
 }
 
-// IsNaN To know if a interface{} is NaN
-func IsNaN(a interface{}) bool {
-	switch a.(type) {
-	case time.Time:
-		return a.(time.Time).IsZero()
-	case string:
-		if a.(string) == "" {
-			return true
-		}
-	}
+func WriteWordBool(text string) WordBool {
 
-	return false
-}
+	parseBool, err := strconv.ParseBool(text)
 
-/////////
-// CSV /
-///////
-
-// CSVCreatorMock sample csv to tests
-func CSVCreatorMock(data [][]string, separator rune) *os.File {
-	// Temp file
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTest-*.csv")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	writer := csv.NewWriter(tmpFile)
-	writer.Comma = separator
-	for _, value := range data {
-		err := writer.Write(value)
-		if err != nil {
-			log.Fatal(err)
+	wordBool := WordBool{value: parseBool}
+
+	return wordBool
+
+}
+
+func WriteLine(textInput []string, nanLayout, layoutDatetime string) Lines {
+	line := Lines{}
+	for _, v := range textInput {
+		switch trans, value := translateWord(v, nanLayout, layoutDatetime); trans {
+		case "NaN":
+			line = append(line, WordNaN{})
+		case "datetime":
+			line = append(line, WordDatetime{value: value.(time.Time)})
+		case "bool":
+			line = append(line, WordBool{value: value.(bool)})
+		case "float64":
+			line = append(line, WordFloat64{value: value.(float64)})
+		default:
+			line = append(line, WordString{value: v})
 		}
 	}
-
-	writer.Flush()
-
-	if err := tmpFile.Close(); err != nil {
-		log.Fatal(err)
-	}
-	return tmpFile
-
+	return line
 }
 
-// CSVChecker To Check csv result
-func CSVChecker(dataExpected, dataResult [][]string, t *testing.T) {
-	if !reflect.DeepEqual(dataExpected, dataResult) {
-		t.Errorf("Header with errors. \nExpected: \n%s. \nReceived: \n%s", dataExpected, dataResult)
-	}
-}
-
-// DataFrameChecker To check if two DataFrame are equal
-func DataFrameChecker(dfExpected, dfResult DataFrame, t *testing.T) {
-	isEqual, message := IsEqual(dfExpected, dfResult)
-	if !isEqual {
-		t.Errorf("dfExpected and dfResult are distinct: %s.\ndfExpected: \n%v \ndfResult: \n%v", message, dfExpected, dfResult)
-		t.Errorf("Values:\n - dfExpected.Values: %v\n - dfResult.Values: %s\n", dfExpected.Values, dfResult.Values)
-		t.Errorf("Columns:\n - dfExpected.Columns: %v\n - dfResult.Columns: %s\n", dfExpected.Columns, dfResult.Columns)
+func translateWord(textInput, nanLayout, layoutDatetime string) (valueType string, value interface{}) {
+	valueDatetime, errDatetime := time.Parse(layoutDatetime, textInput)
+	valueInt, errInt := strconv.Atoi(textInput)
+	valueBool, errBool := strconv.ParseBool(textInput)
+	valueFloat64, errFloat64 := strconv.ParseFloat(textInput, 64)
+	switch {
+	case textInput == nanLayout:
+		return "NaN", nil
+	case errDatetime == nil:
+		return "datetime", valueDatetime
+	case errInt == nil:
+		return "float64", float64(valueInt)
+	case errBool == nil:
+		return "bool", valueBool
+	case errFloat64 == nil || errInt == nil:
+		return "float64", valueFloat64
 	}
 
+	return "string", nil
 }
 
-//////
-
-// CSV type
-type CSV struct {
-	Sep        rune
-	LineString string
-	LazyQuotes bool
-	Schema     Book
-	Dateformat string
-	None       string
-}
-
-// ErrorChecker to kown if there are error
-func ErrorChecker(err error) {
-	if err != nil {
-		log.Fatal(err)
+// AddLine write a line in to book
+func (df *DataFrame) AddLine(inputText []string) {
+	lineTranslated := WriteLine(inputText, df.NaNLayout, df.DatetimeLayout)
+	df.Values = append(df.Values, lineTranslated)
+	totalIndex := len(df.Index)
+	if totalIndex == 0 {
+		df.Index = []uint{0}
+	} else {
+		df.Index = append(df.Index, df.Index[len(df.Index)-1]+1)
 	}
+
 }
 
-// ErrorSchema to kown if there is error when read an schema
-func ErrorSchema(colName string, pageName string, dataValue interface{}, err error) {
-	if err != nil {
-		log.Fatalf("The schema \"%s\" is incorrect for column \"%s\". Error parsing: \"%v\".\n\t\t You can use PageAny to save any data value.", pageName, colName, dataValue)
-	}
-}
-
-// CSVOption alternative parameters
-type CSVOption func(c *CSV)
-
-// Sep CSV separator in rune type: ',', ';', '|', etc...
-func Sep(separator rune) CSVOption {
-	return func(c *CSV) {
-		c.Sep = separator
-	}
-}
-
-// Schema set the schema
-func Schema(schema Book) CSVOption {
-	return func(c *CSV) {
-		c.Schema = schema
-	}
-}
-
-// None to set custom value for None
-func None(none string) CSVOption {
-	return func(c *CSV) {
-		c.None = none
-	}
-}
-
-// Dateformat Set date format in all columns
-func Dateformat(dateformat string) CSVOption {
-	return func(c *CSV) {
-		c.Dateformat = dateformat
-	}
-}
-
-// GetValues get all values
-func (df DataFrame) GetValues() [][]string {
-	return trasposeRows(df)
-}
-
-func trasposeRows(df DataFrame) [][]string {
-
-	data := make([][]string, df.Shape[0])
-
-	for i := range df.Columns {
-		colValues := df.Values[i]
-		switch colValues.(type) {
-		case PageString:
-			for i2, v2 := range colValues.(PageString) {
-				if IsNaN(v2) {
-					data[i2] = append(data[i2], "NaN")
-				} else {
-					data[i2] = append(data[i2], v2)
-
-				}
-			}
-
-		case PageFloat64:
-			for i2, v2 := range colValues.(PageFloat64) {
-				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
-			}
-
-		case PageBool:
-			for i2, v2 := range colValues.(PageBool) {
-				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
-			}
-
-		case PageAny:
-			for i2, v2 := range colValues.(PageAny) {
-				data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
-			}
-
-		case PageDatetime:
-			for i2, v2 := range colValues.(PageDatetime) {
-				if IsNaN(v2) {
-					data[i2] = append(data[i2], "NaN")
-				} else {
-					data[i2] = append(data[i2], fmt.Sprintf("%v", v2))
-				}
-			}
+// NewDataFrame Create a DataFrame with default values
+func NewDataFrame(input [][]string, NaN string) DataFrame {
+	if input == nil {
+		return DataFrame{
+			NaNLayout:      NaN,
+			DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+			ColumnIndex:    make(map[string]int),
 		}
 	}
-	return data
-}
-
-// exportCSV To export a dataframe to CSV file
-func exportCSV(filename string, data [][]string, opts ...CSVOption) {
-	csvInternal := &CSV{}
-	csvInternal.Sep = ','
-
-	for _, opt := range opts {
-		opt(csvInternal)
+	df := DataFrame{
+		NaNLayout:      NaN,
+		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+		ColumnIndex:    make(map[string]int),
+		Columns:        input[0],
+	}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+	df.Shape[0] = len(df.Values)
+	df.Shape[1] = len(df.Columns)
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
 	}
 
-	csvFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, os.ModePerm)
-	ErrorChecker(err)
-	defer csvFile.Close()
-
-	csvWriter := csv.NewWriter(csvFile)
-	csvWriter.Comma = csvInternal.Sep
-	err = csvWriter.WriteAll(data)
-	ErrorChecker(err)
-
+	return df
 }
 
+// Stringer
 func (df DataFrame) String() string {
+	data := [][]string{}
+	for i, v := range df.Values {
+		dataInternal := []string{}
+		dataInternal = append(dataInternal, fmt.Sprint(df.Index[i]))
+		for _, j := range v {
+			dataInternal = append(dataInternal, fmt.Sprint(j))
+		}
+
+		data = append(data, dataInternal)
+	}
 	tableString := &strings.Builder{}
-	data := trasposeRows(df)
 	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(df.Columns)
+	header := []string{""}
+	header = append(header, df.Columns...)
+	table.SetHeader(header)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 	table.AppendBulk(data)
 	table.SetBorder(true)
 	table.SetCenterSeparator("+")
+	table.SetAutoFormatHeaders(false)
 
 	table.Render()
 
 	return tableString.String()
 }
 
-// ToCSV Export DataFrame to CSV
-func (df DataFrame) ToCSV(filename string) {
-	data := [][]string{}
-	data = append(data, df.Columns)
-
-	dfInternal := DataFrame{
-		Columns: df.Columns,
-		Values:  df.Values,
-		Shape:   df.Shape,
-	}
-
-	data = append(data, dfInternal.GetValues()...)
-	exportCSV(filename, data)
+func (w WordNaN) String() string {
+	return "NaN"
 }
 
-// Head get first 5 rows
-func (df DataFrame) Head() DataFrame {
-	valuesInternal := Book{}
-	numberToHead := 5
-	if df.Shape[0] > numberToHead {
-		for _, v := range df.Values {
-			switch v.(type) {
-			case PageString:
-				valuesInternal = append(valuesInternal, v.(PageString)[:numberToHead])
-			case PageFloat64:
-				valuesInternal = append(valuesInternal, v.(PageFloat64)[:numberToHead])
-			case PageBool:
-				valuesInternal = append(valuesInternal, v.(PageBool)[:numberToHead])
-			case PageAny:
-				valuesInternal = append(valuesInternal, v.(PageAny)[:numberToHead])
-			case PageDatetime:
-				valuesInternal = append(valuesInternal, v.(PageDatetime)[:numberToHead])
-			}
-		}
+func (w WordString) String() string {
+	return w.value
+}
 
+func (w WordBool) String() string {
+	return strconv.FormatBool(w.value)
+}
+
+func (w WordFloat64) String() string {
+	return fmt.Sprintf("%g", w.value)
+}
+
+func (w WordDatetime) String() string {
+	return fmt.Sprintf("%v", w.value)
+}
+
+// NewWordBool To create a WordBool
+func NewWordBool(value bool) WordBool {
+	return WordBool{value: value}
+}
+
+// NewWordString To create a WordString
+func NewWordString(value string) WordString {
+	return WordString{value: value}
+}
+
+// NewWordFloat64 To create a WordFloat64
+func NewWordFloat64(value float64) WordFloat64 {
+	return WordFloat64{value: value}
+}
+
+// NewWordDatetime To create WordDatetime
+func NewWordDatetime(format, value string) WordDatetime {
+	timeParsed, err := time.Parse(format, value)
+	if err != nil {
+		panic(err)
+	}
+
+	return WordDatetime{value: timeParsed}
+}
+
+// Head Save first 10 dataframe rows
+func (df DataFrame) Head(rowsLimit ...int) DataFrame {
+	// Return 10 first rows
+	if len(rowsLimit) == 0 {
+		if len(df.Values) >= 10 {
+			df.Values = df.Values[:10]
+		}
+		df.Shape[0] = len(df.Values)
 	} else {
-		for _, v := range df.Values {
-			switch v.(type) {
-			case PageString:
-				valuesInternal = append(valuesInternal, v.(PageString))
-			case PageFloat64:
-				valuesInternal = append(valuesInternal, v.(PageFloat64))
-			case PageBool:
-				valuesInternal = append(valuesInternal, v.(PageBool))
-			case PageAny:
-				valuesInternal = append(valuesInternal, v.(PageAny))
-			case PageDatetime:
-				valuesInternal = append(valuesInternal, v.(PageDatetime))
-			}
+		if len(df.Values) >= rowsLimit[0] {
+			df.Values = df.Values[:rowsLimit[0]]
 		}
-
+		df.Shape[0] = len(df.Values)
 	}
 
-	dfInternal := DataFrame{
-		Columns: df.Columns,
-		Values:  valuesInternal,
-		Shape:   [2]int{numberToHead, df.Shape[1]},
+	return df
+}
+
+// Tail Save the last 10 dataframe rows
+func (df DataFrame) Tail(rowsLimit ...int) DataFrame {
+	if len(rowsLimit) == 0 {
+		if len(df.Values) >= 10 {
+			df.Values = df.Values[len(df.Values)-10:]
+			df.Index = df.Index[len(df.Index)-10:]
+		}
+		df.Shape[0] = len(df.Values)
+	} else {
+		if len(df.Values) >= rowsLimit[0] {
+			df.Values = df.Values[len(df.Values)-rowsLimit[0]:]
+			df.Index = df.Index[len(df.Index)-rowsLimit[0]:]
+		}
+		df.Shape[0] = len(df.Values)
 	}
 
-	return dfInternal
+	return df
 
 }
 
-// Tail to get last five rows
-func (df DataFrame) Tail() DataFrame {
-	valuesInternal := Book{}
-	numberToTail := 5
-	totalRows := df.Shape[0]
-	if totalRows > numberToTail {
-		for _, v := range df.Values {
-			switch v.(type) {
-			case PageString:
-				valuesInternal = append(valuesInternal, v.(PageString)[totalRows-numberToTail:])
-			case PageFloat64:
-				valuesInternal = append(valuesInternal, v.(PageFloat64)[totalRows-numberToTail:])
-			case PageBool:
-				valuesInternal = append(valuesInternal, v.(PageBool)[totalRows-numberToTail])
-			case PageAny:
-				valuesInternal = append(valuesInternal, v.(PageAny)[totalRows-numberToTail:])
-			case PageDatetime:
-				valuesInternal = append(valuesInternal, v.(PageDatetime)[totalRows-numberToTail:])
-			}
-		}
+// TODO: Apply concurrency and implement errors for keys not find
+// findIndex to find index
+func findIndex(columnIndex map[string]int, columnName string) int {
+	index, ok := columnIndex[columnName]
 
-	} else {
-		for _, v := range df.Values {
-			switch v.(type) {
-			case PageString:
-				valuesInternal = append(valuesInternal, v.(PageString))
-			case PageFloat64:
-				valuesInternal = append(valuesInternal, v.(PageFloat64))
-			case PageBool:
-				valuesInternal = append(valuesInternal, v.(PageBool))
-			case PageAny:
-				valuesInternal = append(valuesInternal, v.(PageAny))
-			case PageDatetime:
-				valuesInternal = append(valuesInternal, v.(PageDatetime))
-			}
-		}
-
+	if ok != true {
+		panic(fmt.Sprintf(`Column: "%s" doesn't exists`, columnName))
 	}
 
-	dfInternal := DataFrame{
-		Columns: df.Columns,
-		Values:  valuesInternal,
-		Shape:   [2]int{numberToTail, df.Shape[1]},
+	return index
+}
+
+// Select to select a row
+func (df DataFrame) Select(columns ...string) DataFrame {
+	indexs := []int{}
+	for _, v := range columns {
+		indexs = append(indexs, findIndex(df.ColumnIndex, v))
 	}
 
-	return dfInternal
+	book := make(Book, len(df.Values))
 
+	for _, v := range indexs {
+		for j, k := range df.Values {
+			book[j] = append(book[j], k[v])
+		}
+	}
+
+	df.Values = book
+	df.Columns = columns
+	df.Shape[1] = len(df.Columns)
+
+	df.ColumnIndex = make(map[string]int)
+
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+
+	return df
+}
+
+// Column To select DataFrame with one column
+func (df DataFrame) Column(columnName string) ColumnType {
+	index := df.ColumnIndex[columnName]
+	columnType := ColumnType{}
+	for _, v := range df.Values {
+		columnType.values = append(columnType.values, v[index])
+	}
+	columnType.colName = columnName
+
+	return columnType
+}
+
+// TODO: Implement errors for columns not find
+// Drop to delete a row
+func (df *DataFrame) Drop(columns ...string) {
+	indexs := []int{}
+	for _, v := range columns {
+		indexs = append(indexs, findIndex(df.ColumnIndex, v))
+	}
+
+	for _, v := range indexs {
+		// Remove values
+		for j, k := range df.Values {
+			df.Values[j] = append(k[:v], k[v+1:]...)
+		}
+
+		// Remove columns
+		df.Columns = append(df.Columns[:v], df.Columns[v+1:]...)
+	}
+
+	df.Shape[1] = len(df.Columns)
+
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+
+	df.ColumnIndex = make(map[string]int)
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+}
+
+// Insert to add a new column with its values
+func (df *DataFrame) Insert(colName string, values []Word) {
+	// TODO: Warning for values len more or less than df.Values
+	df.Columns = append(df.Columns, colName)
+	df.Shape[1] += 1
+	for i := range df.Values {
+		df.Values[i] = append(df.Values[i], values[i])
+	}
+	df.ColumnIndex[colName] = len(df.ColumnIndex)
+}
+
+// WhereEqual To find elements with == comparator
+func (df DataFrame) WhereEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordBool:
+			if v[colIndex].(WordBool).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordString:
+			if v[colIndex].(WordString).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value == filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereNotEqual To find elements with != comparator
+func (df DataFrame) WhereNotEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordBool:
+			if v[colIndex].(WordBool).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordString:
+			if v[colIndex].(WordString).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value != filterValue {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereLess To find elements with <
+func (df DataFrame) WhereLess(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value < filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.Before(filterValue.(time.Time)) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereGreater To find elements with >
+func (df DataFrame) WhereGreater(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value > filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.After(filterValue.(time.Time)) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereLessOrEqual To find elements with <
+func (df DataFrame) WhereOrEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value <= filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.Before(filterValue.(time.Time)) || v[colIndex].(WordDatetime).value == filterValue.(time.Time) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// WhereGreaterOrEqual To find elements with >
+func (df DataFrame) WhereGreaterOrEqual(colName string, filterValue interface{}) DataFrame {
+	book := Book{}
+	newIndex := []uint{}
+	colIndex := findIndex(df.ColumnIndex, colName)
+
+	for i, v := range df.Values {
+		switch v[colIndex].(type) {
+		case WordFloat64:
+			if v[colIndex].(WordFloat64).value >= filterValue.(float64) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		case WordDatetime:
+			if v[colIndex].(WordDatetime).value.After(filterValue.(time.Time)) || v[colIndex].(WordDatetime).value == filterValue.(time.Time) {
+				book = append(book, v)
+				newIndex = append(newIndex, df.Index[i])
+			}
+		}
+	}
+	df.Values = book
+	df.Shape[0] = len(df.Values)
+	df.Index = newIndex
+
+	return df
+}
+
+// Add to add elements
+func (ct ColumnType) Add(valueInput interface{}) []Word {
+	for i, v := range ct.values {
+		switch v.(type) {
+		case WordString:
+			ct.values[i] = NewWordString(v.(WordString).value + valueInput.(string))
+		case WordFloat64:
+			ct.values[i] = NewWordFloat64(v.(WordFloat64).value + valueInput.(float64))
+		}
+	}
+
+	return ct.values
 }

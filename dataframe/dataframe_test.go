@@ -1,590 +1,619 @@
 package dataframe
 
 import (
-	"encoding/csv"
-	"io/ioutil"
-	"log"
-	"math"
-	"os"
+	"fmt"
 	"reflect"
 	"testing"
 	"time"
 )
 
-func TestErrorChecker(t *testing.T) {
-	ErrorChecker(nil)
+func TestWriteWordString(t *testing.T) {
+
+	textInput := "Hello Higor"
+
+	// Normal input
+	wordStringResult := WriteWordString(textInput)
+	wordStringExpected := WordString{value: textInput}
+
+	if wordStringResult.value != wordStringExpected.value {
+		t.Errorf("Error wordString. Expected: %+v Result: %+v", wordStringExpected, wordStringResult)
+	}
 }
 
-func TestErrorSchema(t *testing.T) {
-	ErrorSchema("", "", nil, nil)
-}
+func TestWriteWordBool(t *testing.T) {
+	textInputFalse := "false"
+	textInputTrue := "true"
 
-//////////////////
-// Export CSVs //
-////////////////
-func TestToCSVNormal(t *testing.T) {
+	// Input true
+	wordBoolResultTrue := WriteWordBool(textInputTrue)
+	wordBoolExpectedTrue := WordBool{value: true}
 
-	filename := "higorToCSVNormalExpected.csv"
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-
-	dfResult := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			PageString{"row11", "row21"},
-			PageString{"row12", "row22"},
-			PageString{"row13", "row23"},
-		},
-		Shape: [2]int{2, 3},
+	if !reflect.DeepEqual(wordBoolResultTrue, wordBoolExpectedTrue) {
+		t.Errorf("Both words are different but equal expected. Expected: %+v, Result: %+v", wordBoolExpectedTrue, wordBoolResultTrue)
 	}
 
-	dfResult.ToCSV(filename)
+	// Input false
+	wordBoolResultFalse := WriteWordBool(textInputFalse)
+	wordBoolExpectedFalse := WordBool{value: false}
 
-	// Read the CSV content
-	csvOpen, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer csvOpen.Close()
-	csvReader := csv.NewReader(csvOpen)
-	dataResult, err := csvReader.ReadAll()
-	CSVChecker(dataExpected, dataResult, t)
-
-	// Delete file created
-	defer os.Remove(filename)
-
-}
-
-/////////////////////////
-// TrasposeRows //
-////////////////////////
-func TestTrasposeRowsMultipleDataType(t *testing.T) {
-	dataExpected := [][]string{{"1", "NaN", "row13"}, {"row21", "row22", "row23"}}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			PageAny{1, "row21"},
-			PageAny{math.NaN(), "row22"},
-			PageString{"row13", "row23"},
-		},
-		Shape: [2]int{2, 3},
-	}
-
-	dataResult := trasposeRows(dfExpected)
-
-	CSVChecker(dataExpected, dataResult, t)
-
-}
-func TestTrasposeRowsString(t *testing.T) {
-	dataExpected := [][]string{{"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			PageString{"row11", "row21"},
-			PageString{"row12", "row22"},
-			PageString{"row13", "row23"},
-		},
-		Shape: [2]int{2, 3},
-	}
-
-	dataResult := trasposeRows(dfExpected)
-
-	CSVChecker(dataExpected, dataResult, t)
-
-}
-
-func TestValuesNormal(t *testing.T) {
-	dataExpected := [][]string{{"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-
-	dfExpected := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values: Book{
-			PageString{"row11", "row21"},
-			PageString{"row12", "row22"},
-			PageString{"row13", "row23"},
-		},
-		Shape: [2]int{2, 3},
-	}
-
-	dataResult := dfExpected.GetValues()
-
-	CSVChecker(dataExpected, dataResult, t)
-
-}
-
-func TestSep(t *testing.T) {
-	separator := ';'
-	csvResult := &CSV{}
-	csvOptionInternal := Sep(separator)
-	csvOptionInternal(csvResult)
-
-	if csvResult.Sep != separator {
-		t.Errorf("Sep error. Expected: ';'. But result: %v", csvResult.Sep)
+	if !reflect.DeepEqual(wordBoolResultFalse, wordBoolExpectedFalse) {
+		t.Errorf("Both words are different but equal expected. Expected: %+v, Result: %+v", wordBoolExpectedFalse, wordBoolResultFalse)
 	}
 
 }
 
-func TestSchema(t *testing.T) {
-	schema := Book{
-		PageString{},
-		PageBool{},
-		PageFloat64{},
+func TestWriteLine(t *testing.T) {
+
+	nanLayout := ""
+	layoutDatetime := "2006-01-02"
+
+	// Input with String
+	var1 := "Higor"
+	var2 := "Higor2"
+	var3 := "Higor3"
+	var4NaN := nanLayout
+
+	inputLine := []string{var1, var2, var3, var4NaN}
+	lineExpected := Lines{WordString{value: var1}, WordString{value: var2}, WordString{value: var3}, WordNaN{}}
+
+	lineResult := WriteLine(inputLine, nanLayout, layoutDatetime)
+
+	if !reflect.DeepEqual(lineExpected, lineResult) {
+		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected, lineResult)
 	}
-	csvResult := &CSV{}
-	csvOptionInternal := Schema(schema)
-	csvOptionInternal(csvResult)
 
-	if !reflect.DeepEqual(schema, csvResult.Schema) {
-		t.Errorf("Schema error. Expected: %v. But result: %v", schema, csvResult.Sep)
-	}
+	// All values
+	inputLine2 := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
+	datetime2, _ := time.Parse(layoutDatetime, "2020-01-01")
+	lineExpected2 := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime2}}
+	lineResult2 := WriteLine(inputLine2, nanLayout, layoutDatetime)
 
-}
-
-func TestNone(t *testing.T) {
-	none := "none"
-	csvResult := &CSV{}
-	csvOptionInternal := None(none)
-	csvOptionInternal(csvResult)
-
-	if csvResult.None != none {
-		t.Errorf("None error. Expected: %v - But result: %v", none, csvResult.None)
-	}
-}
-
-func TestDataformat(t *testing.T) {
-	dateformat := "YYYY-MM-DD"
-	csvResult := &CSV{}
-	csvOptionInternal := Dateformat(dateformat)
-	csvOptionInternal(csvResult)
-
-	if !reflect.DeepEqual(dateformat, csvResult.Dateformat) {
-		t.Errorf("Schema error. Expected: %v. But result: %v", dateformat, csvResult.Dateformat)
+	if !reflect.DeepEqual(lineExpected2, lineResult2) {
+		t.Errorf("Both lines are different but equal expected.\nExpected: %v\nResult: %v", lineExpected2, lineResult2)
 	}
 
 }
 
-func TestEqualDataFrame(t *testing.T) {
+func TestTranslateWord(t *testing.T) {
+	nanLayout := ""
+	layoutDatetime := "2006-01-02"
+	variables := []string{nanLayout, "Higor", "1", "1.2", "true", "True", "False", "false", "2020-02-01"}
+	result := []string{"NaN", "string", "float64", "float64", "bool", "bool", "bool", "bool", "datetime"}
 
-	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := Book{
-		PageFloat64{1, math.NaN(), 2, 3},
-		PageAny{"hola", "que", "hace", math.NaN()},
-		PageAny{math.NaN(), true, false, math.NaN()},
-		PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
-	}
-	df1 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-	df2 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
+	for i, v := range variables {
+		trans, _ := translateWord(v, nanLayout, layoutDatetime)
 
-	isEqual, message := IsEqual(df1, df2)
-
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
-	}
-}
-
-// Diferent DataFrame
-func TestDifferentlDataFrame(t *testing.T) {
-	columns := []string{"colInt", "colString", "colBool", "colFloat"}
-	chapters := Book{
-		PageFloat64{1, math.NaN(), 2, 3},
-		PageAny{"hola", "que", "hace", math.NaN()},
-		PageAny{math.NaN(), true, false, math.NaN()},
-		PageFloat64{3.2, 5.4, math.NaN(), math.NaN()},
-	}
-
-	df1 := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-	}
-	df2 := DataFrame{
-		Columns: []string{"col1", "col2", "col3"},
-		Values:  chapters,
-	}
-
-	isEqual, _ := IsEqual(df1, df2)
-
-	if isEqual {
-		t.Errorf("Error differentDataframe. df1 and df2 are eual! But different expected!")
-	}
-}
-
-/////////////////////
-// Print DataFrame /
-///////////////////
-
-func TestPrintDataFrame(t *testing.T) {
-	columns := []string{"col1", "col2", "col3"}
-	chapters := Book{
-		PageString{"row11", "row21"},
-		PageString{"row12", "row22"},
-		PageBool{true, false},
-	}
-
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-		Shape:   [2]int{2, 3},
-	}
-
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| row11 | row12 | true  |\n| row21 | row22 | false |\n+-------+-------+-------+\n"
-
-	tableResultFormat := df.String()
-
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+		if trans != result[i] {
+			t.Errorf("Both different but equal result. Expected: %s, Result: %s", result[i], trans)
+		}
 	}
 
 }
 
-func TestPrintDataFrameWithNaN(t *testing.T) {
-	columns := []string{"col1", "col2", "col3"}
-	chapters := Book{
-		PageAny{math.NaN(), "row21"},
-		PageString{"row12", "row22"},
-		PageString{"row13", "row23"},
-	}
+func TestAddLine(t *testing.T) {
+	dfExpected := NewDataFrame(nil, "")
+	dfResult := NewDataFrame(nil, "")
 
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-		Shape:   [2]int{2, 3},
-	}
+	datetime, _ := time.Parse("2006-01-02", "2020-01-01")
+	inputLine := []string{"Higor", "1", "2.2", "false", "", "2020-01-01"}
+	lineExpected := Lines{WordString{value: "Higor"}, WordFloat64{value: float64(1)}, WordFloat64{value: float64(2.2)}, WordBool{value: false}, WordNaN{}, WordDatetime{value: datetime}}
 
-	tableExpectedFormat := "+-------+-------+-------+\n| COL1  | COL2  | COL3  |\n+-------+-------+-------+\n| NaN   | row12 | row13 |\n| row21 | row22 | row23 |\n+-------+-------+-------+\n"
+	dfExpected.Values = Book{lineExpected}
+	dfExpected.Index = []uint{0}
 
-	tableResultFormat := df.String()
+	dfResult.AddLine(inputLine)
 
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	if !reflect.DeepEqual(dfExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected: %#v\nResult: %#v", dfExpected, dfResult)
 	}
 
 }
 
-func TestIsNaNPageDatetimeFalse(t *testing.T) {
-	layout := "2006-01-02"
-	dateNaNFalse, _ := time.Parse(layout, "2020-01-02")
-	//dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
-	resultExpectedFalse := IsNaN(dateNaNFalse)
+func TestNewDataFrame(t *testing.T) {
+	dfExpected := DataFrame{}
+	dfExpected.NaNLayout = ""
+	dfExpected.DatetimeLayout = "2006-01-02"
+	dfExpected.ColumnIndex = make(map[string]int)
+	dfResult := NewDataFrame(nil, "")
 
-	if resultExpectedFalse != false {
-		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
+	if !reflect.DeepEqual(dfExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected: %#v\nResult: %#v", dfExpected, dfResult)
 	}
 
 }
 
-func TestIsNaNPageDatetimeTrue(t *testing.T) {
-	dateNaNTrue := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
-	resultExpectedTrue := IsNaN(dateNaNTrue)
+func TestString(t *testing.T) {
+	input := [][]string{{"NAME", "AGE"}, {"pepito", "21"}, {"juanito", "22"}, {"pepita", "2.3"}, {"juanita", ""}}
+	df := NewDataFrame(input, "")
 
-	if resultExpectedTrue != true {
-		t.Errorf("IsNaN Error. Expected: True | but Result: %t", resultExpectedTrue)
+	expected := `+---+---------+-----+
+|   |  NAME   | AGE |
++---+---------+-----+
+| 0 | pepito  | 21  |
+| 1 | juanito | 22  |
+| 2 | pepita  | 2.3 |
+| 3 | juanita | NaN |
++---+---------+-----+
+`
+	result := fmt.Sprint(df)
+
+	if expected != result {
+		t.Errorf("Dataframe Print Different.\nExpected:\n%s\nResult:\n%s", expected, result)
+	}
+}
+
+func TestHead(t *testing.T) {
+	input := [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	df := NewDataFrame(input, "")
+
+	dfHead := df.Head()
+	dfHeadExpected := df
+	dfHeadExpected.Values = df.Values[:10]
+	dfHeadExpected.Shape[0] = 10
+
+	if !reflect.DeepEqual(dfHeadExpected, dfHead) {
+		t.Errorf("DataFrame different but equal expected.")
+	}
+
+	dfHead5 := df.Head(5)
+	dfHeadExpected5 := df
+	dfHeadExpected5.Values = df.Values[:5]
+	dfHeadExpected5.Shape[0] = 5
+
+	if !reflect.DeepEqual(dfHead5, dfHeadExpected5) {
+		t.Errorf("DataFrame different but equal expected.\nExpected:%+v\nResult:\n%+v", dfHeadExpected5, dfHead5)
+	}
+
+	// Less than 10 rows
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfLess := NewDataFrame(input, "")
+
+	dfLessHead := dfLess.Head()
+	if !reflect.DeepEqual(dfLess, dfLessHead) {
+		t.Errorf("Dataframes different but equal expected")
+	}
+}
+
+func TestTail(t *testing.T) {
+	input := [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	df := NewDataFrame(input, "")
+
+	dfTail := df.Tail()
+	dfTailExpected := df
+	dfTailExpected.Values = df.Values[4:]
+	dfTailExpected.Shape[0] = 10
+	dfTailExpected.Index = []uint{4, 5, 6, 7, 8, 9, 10, 11, 12, 13}
+
+	if !reflect.DeepEqual(dfTail, dfTailExpected) {
+		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected, dfTail)
+	}
+
+	dfTail5 := df.Tail(5)
+	dfTailExpected5 := df
+	dfTailExpected5.Values = df.Values[9:]
+	dfTailExpected5.Shape[0] = 5
+	dfTailExpected5.Index = []uint{9, 10, 11, 12, 13}
+
+	if !reflect.DeepEqual(dfTail5, dfTailExpected5) {
+		t.Errorf("DataFrame different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfTailExpected5, dfTail5)
+	}
+
+	// Less than 10 rows
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfLess := NewDataFrame(input, "")
+
+	dfLessTail := dfLess.Tail()
+	if !reflect.DeepEqual(dfLess, dfLessTail) {
+		t.Errorf("Dataframes different but equal expected")
+	}
+}
+
+func TestSelect(t *testing.T) {
+	// Base
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	df := NewDataFrame(input, "")
+
+	// Select two columns
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfSelect := NewDataFrame(input, "")
+
+	dfSelected2 := df.Select("name", "age")
+	dfSelected2.Shape[1] = 2
+
+	if !reflect.DeepEqual(dfSelected2, dfSelect) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfSelect, dfSelected2)
+	}
+
+	// Select one columns
+	input = [][]string{
+		{"name"},
+		{"pepito"},
+		{"juanito"},
+		{"pepita"},
+		{"juanita"},
+	}
+	dfSelect1 := NewDataFrame(input, "")
+
+	dfSelected1 := df.Select("name")
+	dfSelected1.Shape[1] = 1
+
+	if !reflect.DeepEqual(dfSelected1, dfSelect1) {
+		t.Errorf("Dataframe different but equal expected.\nExpected:\n%#v\nResult:\n%#v", dfSelect1, dfSelected1)
 	}
 
 }
 
-func TestIsNaNPageStringFalse(t *testing.T) {
-	stringNaNFalse := "isFalse"
-	resultExpectedFalse := IsNaN(stringNaNFalse)
-	if resultExpectedFalse != false {
-		t.Errorf("IsNaN Error. Expected: False | but Result: %t", resultExpectedFalse)
-	}
-}
-
-func TestIsNaNPageStringTrue(t *testing.T) {
-	stringNaNTrue := ""
-	resultExpectedTrue := IsNaN(stringNaNTrue)
-	if resultExpectedTrue != true {
-		t.Errorf("IsNaN Error. Expected: true | but Result: %t", resultExpectedTrue)
-	}
-}
-
-func TestPrintDataFrameDateWithNaN(t *testing.T) {
-	columns := []string{"colDate", "colString1", "colString2"}
-	layout := "2006-01-02"
-	date1, _ := time.Parse(layout, "2020-01-02")
-	dateNaN := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
-	chapters := Book{
-		PageDatetime{date1, dateNaN},
-		PageString{"hola1", "hola2"},
-		PageString{"hola1", "hola2"},
+func TestFindIndex(t *testing.T) {
+	//	listBase := []string{"col1", "col2", "col3"}
+	listFind := []string{"col1", "col3", "col2"}
+	expected := []int{0, 2, 1}
+	result := []int{}
+	columnIndex := make(map[string]int)
+	columnIndex["col1"] = 0
+	columnIndex["col3"] = 2
+	columnIndex["col2"] = 1
+	for _, v := range listFind {
+		result = append(result, findIndex(columnIndex, v))
 	}
 
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-		Shape:   [2]int{2, 3},
-	}
-	tableExpectedFormat := "+-------------------------------+------------+------------+\n|            COLDATE            | COLSTRING1 | COLSTRING2 |\n+-------------------------------+------------+------------+\n| 2020-01-02 00:00:00 +0000 UTC | hola1      | hola1      |\n| NaN                           | hola2      | hola2      |\n+-------------------------------+------------+------------+\n"
-
-	tableResultFormat := df.String()
-
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	if !reflect.DeepEqual(expected, result) {
+		t.Errorf("Index Failed.\nExpected:\n%v\nResult:\n%v", expected, result)
 	}
 
 }
 
-func TestPrintPageStringWithNaN(t *testing.T) {
-	columns := []string{"colString1", "colString2", "colstring3"}
-	chapters := Book{
-		PageString{"hola1", ""},
-		PageString{"", "hola2"},
-		PageString{"", ""},
+func TestDrop(t *testing.T) {
+	// Base
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	df := NewDataFrame(input, "")
+
+	// Drop column "data"
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
+	}
+	dfDrop1 := NewDataFrame(input, "")
+
+	df.Drop("data")
+
+	if !reflect.DeepEqual(df, dfDrop1) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfDrop1, df)
 	}
 
-	df := DataFrame{
-		Columns: columns,
-		Values:  chapters,
-		Shape:   [2]int{2, 3},
+	// Drop columns "data" and "age"
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
 	}
-	tableExpectedFormat := "+------------+------------+------------+\n| COLSTRING1 | COLSTRING2 | COLSTRING3 |\n+------------+------------+------------+\n| hola1      | NaN        | NaN        |\n| NaN        | hola2      | NaN        |\n+------------+------------+------------+\n"
+	df = NewDataFrame(input, "")
 
-	tableResultFormat := df.String()
+	df.Drop("data", "age")
 
-	if tableExpectedFormat != tableResultFormat {
-		t.Errorf("Table format error.\nExpected:\n%v\nResult:\n%v", tableExpectedFormat, tableResultFormat)
+	input = [][]string{
+		{"name"},
+		{"pepito"},
+		{"juanito"},
+		{"pepita"},
+		{"juanita"},
 	}
+	dfDrop2 := NewDataFrame(input, "")
 
-}
-
-///////////////
-// ExportCSV /
-/////////////
-
-func TestExportCSVFileExists(t *testing.T) {
-
-	// Temp file
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTestExport-*.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	filename := tmpFile.Name()
-
-	if err := tmpFile.Close(); err != nil {
-		log.Fatal(err)
-	}
-
-	// Export to CSV
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	exportCSV(filename, dataExpected)
-
-	// Read the CSV content
-	csvOpen, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer csvOpen.Close()
-	csvReader := csv.NewReader(csvOpen)
-	dataResult, _ := csvReader.ReadAll()
-	CSVChecker(dataExpected, dataResult, t)
-	defer os.Remove(filename)
-}
-
-func TestExportCSVDoesNotExists(t *testing.T) {
-	filename := "higorCSVTestExport-DoesNotExists.csv"
-
-	// Export to CSV
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	exportCSV(filename, dataExpected)
-
-	// Read the CSV content
-	csvOpen, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer csvOpen.Close()
-	csvReader := csv.NewReader(csvOpen)
-	dataResult, _ := csvReader.ReadAll()
-	CSVChecker(dataExpected, dataResult, t)
-
-	// Delete file created
-	defer os.Remove(filename)
-
-}
-
-func TestExportCSVAnotherSeparator(t *testing.T) {
-	// Separator
-	separator := '|'
-
-	// Temp file
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "higorCSVTestExport-*.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	filename := tmpFile.Name()
-
-	if err := tmpFile.Close(); err != nil {
-		log.Fatal(err)
-	}
-
-	// Export to CSV
-	dataExpected := [][]string{{"col1", "col2", "col3"}, {"row11", "row12", "row13"}, {"row21", "row22", "row23"}}
-	exportCSV(filename, dataExpected, Sep(separator))
-
-	// Read the CSV content
-	csvOpen, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer csvOpen.Close()
-	csvReader := csv.NewReader(csvOpen)
-	csvReader.Comma = separator
-	dataResult, _ := csvReader.ReadAll()
-	CSVChecker(dataExpected, dataResult, t)
-	defer os.Remove(filename)
-}
-
-/////////////////////////////
-// Head and Tail function //
-///////////////////////////
-
-func TestTailWithDataframeMore5Rows(t *testing.T) {
-	columns := []string{"col1", "col2"}
-	pageStringOriginal := PageString{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
-
-	chaptersOriginal := Book{
-		pageStringOriginal,
-		pageStringOriginal,
-	}
-
-	chaptersHeadExpected := Book{
-		pageStringOriginal[:5],
-		pageStringOriginal[:5],
-	}
-
-	dfOriginal := DataFrame{
-		Columns: columns,
-		Values:  chaptersOriginal,
-		Shape:   [2]int{2, 20},
-	}
-
-	dfHeadExpected := DataFrame{
-		Columns: columns,
-		Values:  chaptersHeadExpected,
-		Shape:   [2]int{2, 5},
-	}
-
-	dfHeadResult := dfOriginal.Head()
-
-	isEqual, message := IsEqual(dfHeadExpected, dfHeadResult)
-
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	if !reflect.DeepEqual(dfDrop2, df) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%#v\nResult:\n%#v", dfDrop2, df)
 	}
 
 }
 
-func TestHeadWithDataframeLess5Rows(t *testing.T) {
-	columns := []string{"col1", "col2"}
-	pageStringOriginal := PageString{"1", "2", "3"}
+func TestInsert(t *testing.T) {
 
-	chaptersOriginal := Book{
-		pageStringOriginal,
-		pageStringOriginal,
+	input := [][]string{
+		{"name", "age", "data", "last_name", "year_experience", "birthdate"},
+		{"pepito", "21", "true", "pepote", "2", "2020-01-02"},
+		{"juanito", "22", "false", "susano", "3", "2021-02-04"},
+		{"pepita", "2.3", "true", "mulano", "8", "2019-04-02"},
+		{"juanita", "", "false", "pentano", "100", "2018-12-30"},
 	}
+	dfExpected := NewDataFrame(input, "")
 
-	chaptersHeadExpected := Book{
-		pageStringOriginal,
-		pageStringOriginal,
+	input = [][]string{
+		{"name", "age"},
+		{"pepito", "21"},
+		{"juanito", "22"},
+		{"pepita", "2.3"},
+		{"juanita", ""},
 	}
+	dfBase := NewDataFrame(input, "")
 
-	dfOriginal := DataFrame{
-		Columns: columns,
-		Values:  chaptersOriginal,
-		Shape:   [2]int{2, 3},
-	}
+	// Bool inserts
+	dfBase.Insert("data", []Word{NewWordBool(true), NewWordBool(false), NewWordBool(true), NewWordBool(false)})
 
-	dfHeadExpected := DataFrame{
-		Columns: columns,
-		Values:  chaptersHeadExpected,
-		Shape:   [2]int{2, 3},
-	}
+	// String inserts
+	dfBase.Insert("last_name", []Word{NewWordString("pepote"), NewWordString("susano"), NewWordString("mulano"), NewWordString("pentano")})
 
-	dfHeadResult := dfOriginal.Head()
+	// Float64 inserts
+	dfBase.Insert("year_experience", []Word{NewWordFloat64(float64(2)), NewWordFloat64(float64(3)), NewWordFloat64(float64(8)), NewWordFloat64(float64(100))})
 
-	isEqual, message := IsEqual(dfHeadExpected, dfHeadResult)
+	// Datetime inserts
+	dfBase.Insert("birthdate", []Word{NewWordDatetime(dfBase.DatetimeLayout, "2020-01-02"), NewWordDatetime(dfBase.DatetimeLayout, "2021-02-04"), NewWordDatetime(dfBase.DatetimeLayout, "2019-04-02"), NewWordDatetime(dfBase.DatetimeLayout, "2018-12-30")})
 
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
-	}
-
-}
-
-func TestHeadWithDataframeMore5Rows(t *testing.T) {
-	columns := []string{"col1", "col2"}
-	pageStringOriginal := PageString{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}
-
-	chaptersOriginal := Book{
-		pageStringOriginal,
-		pageStringOriginal,
-	}
-
-	chaptersTailExpected := Book{
-		pageStringOriginal[15:],
-		pageStringOriginal[15:],
-	}
-
-	dfOriginal := DataFrame{
-		Columns: columns,
-		Values:  chaptersOriginal,
-		Shape:   [2]int{20, 2},
-	}
-
-	dfTailExpected := DataFrame{
-		Columns: columns,
-		Values:  chaptersTailExpected,
-		Shape:   [2]int{5, 2},
-	}
-
-	dfTailResult := dfOriginal.Tail()
-
-	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
-
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	if !reflect.DeepEqual(dfExpected, dfBase) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%#v\nResult:\n%#v", dfExpected, dfBase)
 	}
 
 }
 
-func TestTailWithDataframeLess5Rows(t *testing.T) {
-	columns := []string{"col1", "col2"}
-	pageStringOriginal := PageString{"1", "2", "3"}
+func TestWhereEqual(t *testing.T) {
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase := NewDataFrame(input, "")
 
-	chaptersOriginal := Book{
-		pageStringOriginal,
-		pageStringOriginal,
+	// Where equal Bool
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"pepita", "2.3", "true"},
+	}
+	dfBaseWhereDataTrue := NewDataFrame(input, "")
+	dfBaseWhereDataTrue.Index = []uint{0, 2}
+	dfResult := dfBase.WhereEqual("data", true)
+	if !reflect.DeepEqual(dfBaseWhereDataTrue, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue, dfResult)
 	}
 
-	chaptersTailExpected := Book{
-		pageStringOriginal,
-		pageStringOriginal,
+	// Where equal String
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+	}
+	dfBaseWhereString := NewDataFrame(input, "")
+	dfBaseWhereString.Index = []uint{0}
+	dfResult = dfBase.WhereEqual("name", "pepito")
+	if !reflect.DeepEqual(dfBaseWhereString, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseWhereDataTrue, dfResult)
 	}
 
-	dfOriginal := DataFrame{
-		Columns: columns,
-		Values:  chaptersOriginal,
-		Shape:   [2]int{3, 2},
+	// Where equal float64
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+	}
+	dfBaseFloat64 := NewDataFrame(input, "")
+	dfBaseFloat64.Index = []uint{0}
+	dfResult = dfBase.WhereEqual("age", float64(21))
+	if !reflect.DeepEqual(dfBaseFloat64, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfBaseFloat64, dfResult)
 	}
 
-	dfTailExpected := DataFrame{
-		Columns: columns,
-		Values:  chaptersTailExpected,
-		Shape:   [2]int{3, 2},
+}
+
+func TestWhereNotEqual(t *testing.T) {
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase := NewDataFrame(input, "")
+
+	input = [][]string{
+		{"name", "age", "data"},
+		{"juanito", "22", "false"},
+		{"juanita", "", "false"},
+	}
+	dfWhereNotEqualBool := NewDataFrame(input, "")
+	dfWhereNotEqualBool.Index = []uint{1, 3}
+	dfResult := dfBase.WhereNotEqual("data", true)
+	if !reflect.DeepEqual(dfWhereNotEqualBool, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereNotEqualBool, dfResult)
 	}
 
-	dfTailResult := dfOriginal.Tail()
+}
 
-	isEqual, message := IsEqual(dfTailExpected, dfTailResult)
+func TestWhereLess(t *testing.T) {
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase := NewDataFrame(input, "")
 
-	if !isEqual {
-		t.Errorf("Error equalDataframe. df1 and df2 are different! But equal expected!: %s", message)
+	// Float64 comparison
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepita", "2.3", "true"},
+	}
+	dfWhereLessExpected := NewDataFrame(input, "")
+	dfWhereLessExpected.Index = []uint{2}
+	dfResult := dfBase.WhereLess("age", float64(3))
+	if !reflect.DeepEqual(dfWhereLessExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereLessExpected, dfResult)
+	}
+
+	// TODO: Datetime comparison Test
+
+}
+
+func TestWhereGreater(t *testing.T) {
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase := NewDataFrame(input, "")
+
+	// Float64 comparison
+	input = [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+	}
+	dfWhereGreaterExpected := NewDataFrame(input, "")
+	dfWhereGreaterExpected.Index = []uint{0, 1}
+
+	dfResult := dfBase.WhereGreater("age", float64(3))
+	if !reflect.DeepEqual(dfWhereGreaterExpected, dfResult) {
+		t.Errorf("Dataframes different but equal expected.\nExpected:\n%+v\nResult:\n%+v", dfWhereGreaterExpected, dfResult)
+	}
+
+}
+
+func TestNewWordBool(t *testing.T) {
+	// Word True
+	wordTrue := NewWordBool(true)
+
+	if wordTrue.value == false {
+		t.Errorf("Expected True but result: %t", wordTrue)
+	}
+
+	wordFalse := NewWordBool(false)
+
+	if wordFalse.value == true {
+		t.Errorf("Expected False but result: %t", wordFalse)
+	}
+}
+
+func TestNewWordString(t *testing.T) {
+	value := "Hello"
+	wordString := NewWordString(value)
+
+	if wordString.value != value {
+		t.Errorf("Error on string creation. Expected: %s. But result: %s", value, wordString.value)
+	}
+}
+
+func TestNewWordFloat64(t *testing.T) {
+	value := float64(4)
+	wordFloat64 := NewWordFloat64(value)
+
+	if wordFloat64.value != value {
+		t.Errorf("Error on Float64 creation. Expected: %v. But result: %v", value, wordFloat64)
+	}
+}
+
+func TestNewDatetime(t *testing.T) {
+	df := DataFrame{}
+	df.DatetimeLayout = "2006-01-02"
+	timeValue := "2020-01-02"
+	value, _ := time.Parse(df.DatetimeLayout, timeValue)
+	wordDatetime := NewWordDatetime(df.DatetimeLayout, timeValue)
+
+	if value != wordDatetime.value {
+		t.Errorf("Error on Datetime. Expected: %v. But result: %v", value, wordDatetime.value)
+	}
+
+}
+
+func TestAdd(t *testing.T) {
+	// dfExpectedString
+	dfExpectedString := ColumnType{
+		colName: "name",
+		values:  []Word{NewWordString("pepito2"), NewWordString("juanito2"), NewWordString("pepita2"), NewWordString("juanita2")},
+	}
+
+	// dfExpectedFloat
+	dfExpectedFloat := ColumnType{
+		colName: "age",
+		values:  []Word{NewWordFloat64(float64(23)), NewWordFloat64(float64(24)), NewWordFloat64(float64(4.3)), WordNaN{}},
+	}
+
+	// Base
+	input := [][]string{
+		{"name", "age", "data"},
+		{"pepito", "21", "true"},
+		{"juanito", "22", "false"},
+		{"pepita", "2.3", "true"},
+		{"juanita", "", "false"},
+	}
+	dfBase := NewDataFrame(input, "")
+
+	// Add String
+	dfAddString := dfBase.Column("name").Add("2")
+	if !reflect.DeepEqual(dfExpectedString.values, dfAddString) {
+		t.Errorf("Add function error.\nExpected:\n%v\nResult:\n%v", dfExpectedString, dfAddString)
+	}
+
+	// Add float64
+	dfAddFloat := dfBase.Column("age").Add(float64(2))
+	if !reflect.DeepEqual(dfExpectedFloat.values, dfAddFloat) {
+		t.Errorf("Add function error.\nEpected:\n%v\nResult:\n%v", dfExpectedFloat, dfAddFloat)
 	}
 
 }
