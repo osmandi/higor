@@ -55,8 +55,7 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 		csvLines = append(csvLines, line)
 
 	}
-	df := dataframe.NewDataFrame(csvLines)
-	df.NaNLayout = csvInternal.NaNLayout
+	df := dataframe.NewDataFrame(csvLines, csvInternal.NaNLayout)
 
 	return df
 }

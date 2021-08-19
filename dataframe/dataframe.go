@@ -138,9 +138,16 @@ func (df *DataFrame) AddLine(inputText []string) {
 }
 
 // NewDataFrame Create a DataFrame with default values
-func NewDataFrame(input [][]string) DataFrame {
+func NewDataFrame(input [][]string, NaN string) DataFrame {
+	if input == nil {
+		return DataFrame{
+			NaNLayout:      NaN,
+			DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+			ColumnIndex:    make(map[string]int),
+		}
+	}
 	df := DataFrame{
-		NaNLayout:      "",
+		NaNLayout:      NaN,
 		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
 		ColumnIndex:    make(map[string]int),
 		Columns:        input[0],
@@ -299,6 +306,8 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 	df.Columns = columns
 	df.Shape[1] = len(df.Columns)
 
+	df.ColumnIndex = make(map[string]int)
+
 	for i, v := range df.Columns {
 		df.ColumnIndex[v] = i
 	}
@@ -342,6 +351,10 @@ func (df *DataFrame) Drop(columns ...string) {
 		df.ColumnIndex[v] = i
 	}
 
+	df.ColumnIndex = make(map[string]int)
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
 }
 
 // Insert to add a new column with its values
@@ -352,6 +365,7 @@ func (df *DataFrame) Insert(colName string, values []Word) {
 	for i := range df.Values {
 		df.Values[i] = append(df.Values[i], values[i])
 	}
+	df.ColumnIndex[colName] = len(df.ColumnIndex)
 }
 
 // WhereEqual To find elements with == comparator
