@@ -281,7 +281,7 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 }
 
 type ColumnType struct {
-	values  Lines
+	values  []Word
 	colName string
 }
 
@@ -520,16 +520,16 @@ func (df DataFrame) GetValues() []Word {
 }
 
 // Add to add elements
-func (df DataFrame) Add(valueInput interface{}) DataFrame {
+func (ct ColumnType) Add(valueInput interface{}) []Word {
 	// TODO: Create error for more than one columns
-	for _, v := range df.Values {
-		switch v[0].(type) {
+	for i, v := range ct.values {
+		switch v.(type) {
 		case WordString:
-			v[0] = NewWordString(v[0].(WordString).value + valueInput.(string))
+			ct.values[i] = NewWordString(v.(WordString).value + valueInput.(string))
 		case WordFloat64:
-			v[0] = NewWordFloat64(v[0].(WordFloat64).value + valueInput.(float64))
+			ct.values[i] = NewWordFloat64(v.(WordFloat64).value + valueInput.(float64))
 		}
 	}
 
-	return df
+	return ct.values
 }

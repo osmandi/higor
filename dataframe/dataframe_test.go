@@ -720,38 +720,20 @@ func TestGetValues(t *testing.T) {
 
 func TestAdd(t *testing.T) {
 	// dfExpectedString
-	dfExpectedString := NewDataFrame()
-	input := [][]string{
-		{"name"},
-		{"pepito2"},
-		{"juanito2"},
-		{"pepita2"},
-		{"juanita2"},
-	}
-	dfExpectedString.Columns = input[0]
-	dfExpectedString.Shape = [2]int{4, 1}
-	for _, v := range input[1:] {
-		dfExpectedString.AddLine(v)
+	dfExpectedString := ColumnType{
+		colName: "name",
+		values:  []Word{NewWordString("pepito2"), NewWordString("juanito2"), NewWordString("pepita2"), NewWordString("juanita2")},
 	}
 
 	// dfExpectedFloat
-	dfExpectedFloat := NewDataFrame()
-	input = [][]string{
-		{"age"},
-		{"23"},
-		{"24"},
-		{"4.3"},
-		{""},
-	}
-	dfExpectedFloat.Columns = input[0]
-	dfExpectedFloat.Shape = [2]int{4, 1}
-	for _, v := range input[1:] {
-		dfExpectedFloat.AddLine(v)
+	dfExpectedFloat := ColumnType{
+		colName: "age",
+		values:  []Word{NewWordFloat64(float64(23)), NewWordFloat64(float64(24)), NewWordFloat64(float64(4.3)), WordNaN{}},
 	}
 
 	// Base
 	dfBase := NewDataFrame()
-	input = [][]string{
+	input := [][]string{
 		{"name", "age", "data"},
 		{"pepito", "21", "true"},
 		{"juanito", "22", "false"},
@@ -765,14 +747,14 @@ func TestAdd(t *testing.T) {
 	}
 
 	// Add String
-	dfAddString := dfBase.Select("name").Add("2")
-	if !reflect.DeepEqual(dfExpectedString, dfAddString) {
+	dfAddString := dfBase.Column("name").Add("2")
+	if !reflect.DeepEqual(dfExpectedString.values, dfAddString) {
 		t.Errorf("Add function error.\nExpected:\n%v\nResult:\n%v", dfExpectedString, dfAddString)
 	}
 
 	// Add float64
-	dfAddFloat := dfBase.Select("age").Add(float64(2))
-	if !reflect.DeepEqual(dfExpectedFloat, dfAddFloat) {
+	dfAddFloat := dfBase.Column("age").Add(float64(2))
+	if !reflect.DeepEqual(dfExpectedFloat.values, dfAddFloat) {
 		t.Errorf("Add function error.\nEpected:\n%v\nResult:\n%v", dfExpectedFloat, dfAddFloat)
 	}
 
