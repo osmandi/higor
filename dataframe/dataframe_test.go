@@ -721,6 +721,10 @@ func TestAdd(t *testing.T) {
 	for _, v := range input[1:] {
 		dfBase.AddLine(v)
 	}
+	dfBase.ColumnIndex = make(map[string]int)
+	dfBase.ColumnIndex["name"] = 0
+	dfBase.ColumnIndex["age"] = 1
+	dfBase.ColumnIndex["data"] = 2
 
 	// Add String
 	dfAddString := dfBase.Column("name").Add("2")

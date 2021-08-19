@@ -55,6 +55,7 @@ type DataFrame struct {
 	NaNLayout      string
 	DatetimeLayout string
 	Index          []uint
+	ColumnIndex    map[string]int
 }
 
 // ColumnType Operations by column
@@ -288,7 +289,11 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 
 // Column To select DataFrame with one column
 func (df DataFrame) Column(columnName string) ColumnType {
-	index := findIndex(df.Columns, []string{columnName})[0]
+	index, ok := df.ColumnIndex[columnName]
+	if ok != true {
+		panic(fmt.Sprintf("Column: %s doesn't exists", columnName))
+	}
+
 	columnType := ColumnType{}
 	for _, v := range df.Values {
 		columnType.values = append(columnType.values, v[index])
