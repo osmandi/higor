@@ -57,6 +57,12 @@ type DataFrame struct {
 	Index          []uint
 }
 
+// ColumnType Operations by column
+type ColumnType struct {
+	values  []Word
+	colName string
+}
+
 func WriteWordString(text string) WordString {
 	wordString := WordString{value: text}
 	return wordString
@@ -278,11 +284,6 @@ func (df DataFrame) Select(columns ...string) DataFrame {
 	df.Shape[1] = len(df.Columns)
 
 	return df
-}
-
-type ColumnType struct {
-	values  []Word
-	colName string
 }
 
 // Column To select DataFrame with one column
