@@ -9,53 +9,60 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-type Word interface {
-}
+// ColumnString Column with string values
+type ColumnString []string
 
-// WordNaN to save NaN values
-type WordNaN struct {
-	Word
-}
+// ColumnFloat columns with float64 values
+type ColumnFloat []float64
 
-// wordString Data type for string values with support for NaN values
-type WordString struct {
-	Word
-	value string
-}
+// ColumnTime columns with time values
+type ColumnTime []time.Time
 
-// wordBool Data type for boolean values. Not support for NaN values
-type WordBool struct {
-	Word
-	value bool
-}
+// ColumnTime columns with bool values
+type ColumnBool map[int]bool
 
-// wordFloat64 Data type for numbers and float values with support for NaN values
-type WordFloat64 struct {
-	Word
-	value float64
-}
+// ColumnInt columns with int values
+type ColumnInt []int
 
-// wordDatetime To date dates with support for NaN values
-type WordDatetime struct {
-	Word
-	value time.Time
-}
+// Values save all columns types
+type Values []interface{}
 
-// Lines It's a row
-type Lines []Word
-
-// Book save multiple lines
-type Book []Lines
-
-// DataFrame Structure for DataFrame
+// DataFrame DatFrame struct
 type DataFrame struct {
 	Columns        []string
-	Values         Book
+	Values         Values
 	Shape          [2]int // [rowsNumber, columnsNumber]
 	NaNLayout      string
 	DatetimeLayout string
 	Index          []uint
 	ColumnIndex    map[string]int
+}
+
+// NewDataFrame Create a DataFrame with default values
+func NewDataFrame(input [][]string, NaN string) DataFrame {
+	if input == nil {
+		return DataFrame{
+			NaNLayout:      NaN,
+			DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+			ColumnIndex:    make(map[string]int),
+		}
+	}
+	df := DataFrame{
+		NaNLayout:      NaN,
+		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
+		ColumnIndex:    make(map[string]int),
+		Columns:        input[0],
+	}
+	for _, v := range input[1:] {
+		df.AddLine(v)
+	}
+	df.Shape[0] = len(df.Values)
+	df.Shape[1] = len(df.Columns)
+	for i, v := range df.Columns {
+		df.ColumnIndex[v] = i
+	}
+
+	return df
 }
 
 // ColumnType Operations by column
@@ -135,33 +142,6 @@ func (df *DataFrame) AddLine(inputText []string) {
 		df.Index = append(df.Index, df.Index[len(df.Index)-1]+1)
 	}
 
-}
-
-// NewDataFrame Create a DataFrame with default values
-func NewDataFrame(input [][]string, NaN string) DataFrame {
-	if input == nil {
-		return DataFrame{
-			NaNLayout:      NaN,
-			DatetimeLayout: "2006-01-02", // YYYY-MM-DD
-			ColumnIndex:    make(map[string]int),
-		}
-	}
-	df := DataFrame{
-		NaNLayout:      NaN,
-		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
-		ColumnIndex:    make(map[string]int),
-		Columns:        input[0],
-	}
-	for _, v := range input[1:] {
-		df.AddLine(v)
-	}
-	df.Shape[0] = len(df.Values)
-	df.Shape[1] = len(df.Columns)
-	for i, v := range df.Columns {
-		df.ColumnIndex[v] = i
-	}
-
-	return df
 }
 
 // Stringer
