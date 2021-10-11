@@ -1,12 +1,16 @@
 package dataframe
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/olekukonko/tablewriter"
+)
+
+const (
+	nanValueString = "NaN"
 )
 
 // ColumnString Column with string values
@@ -24,46 +28,182 @@ type ColumnBool map[int]bool
 // ColumnInt columns with int values
 type ColumnInt []int
 
-// Values save all columns types
-type Values []interface{}
+type StructString struct{}
+type StructInt struct{}
+type StructFloat struct{}
+type StructBool struct{}
+type StructTime struct{}
 
 // DataFrame DatFrame struct
 type DataFrame struct {
-	Columns        []string
-	Values         Values
-	Shape          [2]int // [rowsNumber, columnsNumber]
-	NaNLayout      string
-	DatetimeLayout string
-	Index          []uint
-	ColumnIndex    map[string]int
+	Columns     []string
+	Values      []interface{}
+	Index       []uint
+	ColumnIndex map[string]int
+}
+
+func addColumnType(v interface{}) interface{} {
+	switch v.(type) {
+	case StructString:
+		return ColumnString{}
+	case StructInt:
+		return ColumnInt{}
+	case StructFloat:
+		return ColumnFloat{}
+	case StructBool:
+		return make(ColumnBool)
+	case StructTime:
+		return ColumnTime{}
+	}
+	return nil
+}
+
+func (df *DataFrame) addValueType(indexCol, indexRow int, valueCol, valueNaN string) {
+	switch df.Values[indexCol].(type) {
+	case ColumnString:
+		if valueCol == valueNaN {
+			df.Values[indexCol] = append(df.Values[indexCol].(ColumnString), nanValueString)
+		} else {
+			df.Values[indexCol] = append(df.Values[indexCol].(ColumnString), valueCol)
+		}
+	case ColumnInt:
+		value, err := strconv.Atoi(valueCol)
+		if err != nil {
+			log.Fatal(err)
+		}
+		df.Values[indexCol] = append(df.Values[indexCol].(ColumnInt), value)
+	case ColumnBool:
+		if valueCol != valueNaN {
+			value, err := strconv.ParseBool(valueCol)
+			if err != nil {
+				log.Fatal(err)
+			}
+			df.Values[indexCol].(ColumnBool)[indexRow] = value
+		}
+
+	}
 }
 
 // NewDataFrame Create a DataFrame with default values
-func NewDataFrame(input [][]string, NaN string) DataFrame {
-	if input == nil {
-		return DataFrame{
-			NaNLayout:      NaN,
-			DatetimeLayout: "2006-01-02", // YYYY-MM-DD
-			ColumnIndex:    make(map[string]int),
-		}
-	}
+func NewDataFrame(input [][]string, columns []string, schema map[int]interface{}, valueNaN string) DataFrame {
+
+	// Sample df
 	df := DataFrame{
-		NaNLayout:      NaN,
-		DatetimeLayout: "2006-01-02", // YYYY-MM-DD
-		ColumnIndex:    make(map[string]int),
-		Columns:        input[0],
+		Values:      []interface{}{},
+		ColumnIndex: make(map[string]int),
+		Columns:     columns,
 	}
-	for _, v := range input[1:] {
-		df.AddLine(v)
+
+	// Set schema
+	for i := range columns {
+		df.Values = append(df.Values, addColumnType(schema[i]))
 	}
-	df.Shape[0] = len(df.Values)
-	df.Shape[1] = len(df.Columns)
+
+	// Save values
+	for indexRow, valueRow := range input {
+		for indexCol, valueCol := range valueRow {
+			df.addValueType(indexCol, indexRow, valueCol, valueNaN)
+		}
+
+		df.Index = append(df.Index, uint(indexRow))
+	}
+
+	// Set columnIndex
 	for i, v := range df.Columns {
 		df.ColumnIndex[v] = i
 	}
 
 	return df
 }
+
+func columnsToString(values interface{}, index []uint) []string {
+	data := []string{}
+
+	switch values.(type) {
+	case ColumnString:
+		for _, v := range values.(ColumnString) {
+			data = append(data, v)
+		}
+	case ColumnInt:
+		for _, v := range values.(ColumnInt) {
+			data = append(data, strconv.Itoa(v))
+		}
+	case ColumnBool:
+		for _, v := range index {
+			value, ok := values.(ColumnBool)[int(v)]
+			if ok {
+				data = append(data, strconv.FormatBool(value))
+			} else {
+				data = append(data, nanValueString)
+			}
+		}
+
+	}
+
+	return data
+}
+
+func trasponseColumnsToRows(values [][]string, index []uint) [][]string {
+	data := make([][]string, len(index))
+	for _, v := range index {
+		data[int(v)] = append(data[int(v)], strconv.Itoa(int(v)))
+		for _, k := range values {
+			data[int(v)] = append(data[int(v)], k[int(v)])
+		}
+	}
+
+	return data
+}
+
+// String Stringer for custom DataFrame printer
+func (df DataFrame) String() string {
+	dataString := [][]string{}
+	for _, v := range df.Values {
+		dataString = append(dataString, columnsToString(v, df.Index))
+	}
+
+	data := trasponseColumnsToRows(dataString, df.Index)
+
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
+	header := []string{""}
+	header = append(header, df.Columns...)
+	table.SetHeader(header)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.AppendBulk(data)
+	table.SetBorder(true)
+	table.SetCenterSeparator("+")
+	table.SetAutoFormatHeaders(false)
+
+	table.Render()
+
+	return tableString.String()
+}
+
+func (df DataFrame) getIndex(column string) int {
+	index, ok := df.ColumnIndex[column]
+
+	if !ok {
+		log.Fatal("This columns does not exists")
+	}
+
+	return index
+
+}
+
+func (df DataFrame) GetColumnString(column string) []string {
+	index := df.getIndex(column)
+	return df.Values[index].(ColumnString)
+}
+
+func (df DataFrame) GetColumnInt(column string) []int {
+	index := df.getIndex(column)
+	return df.Values[index].(ColumnInt)
+
+}
+
+/*
+
 
 // ColumnType Operations by column
 type ColumnType struct {
@@ -143,35 +283,6 @@ func (df *DataFrame) AddLine(inputText []string) {
 	}
 
 }
-
-// Stringer
-func (df DataFrame) String() string {
-	data := [][]string{}
-	for i, v := range df.Values {
-		dataInternal := []string{}
-		dataInternal = append(dataInternal, fmt.Sprint(df.Index[i]))
-		for _, j := range v {
-			dataInternal = append(dataInternal, fmt.Sprint(j))
-		}
-
-		data = append(data, dataInternal)
-	}
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	header := []string{""}
-	header = append(header, df.Columns...)
-	table.SetHeader(header)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.AppendBulk(data)
-	table.SetBorder(true)
-	table.SetCenterSeparator("+")
-	table.SetAutoFormatHeaders(false)
-
-	table.Render()
-
-	return tableString.String()
-}
-
 func (w WordNaN) String() string {
 	return "NaN"
 }
@@ -545,3 +656,4 @@ func (ct ColumnType) Add(valueInput interface{}) []Word {
 
 	return ct.values
 }
+*/

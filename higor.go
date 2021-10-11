@@ -1,15 +1,8 @@
 package higor
 
-import (
-	"encoding/csv"
-	"io"
-	"os"
-
-	c "github.com/osmandi/higor/csv"
-	"github.com/osmandi/higor/dataframe"
-)
-
 const Version string = "v0.5.0"
+
+/*
 
 // ReadCSV Read a file with CSV format
 func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
@@ -59,3 +52,5 @@ func ReadCSV(filename string, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	return df
 }
+
+*/
