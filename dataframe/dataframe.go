@@ -34,6 +34,8 @@ type StructFloat struct{}
 type StructBool struct{}
 type StructTime struct{}
 
+type Schema map[int]interface{}
+
 // DataFrame DatFrame struct
 type DataFrame struct {
 	Columns     []string
@@ -67,6 +69,9 @@ func (df *DataFrame) addValueType(indexCol, indexRow int, valueCol, valueNaN str
 			df.Values[indexCol] = append(df.Values[indexCol].(ColumnString), valueCol)
 		}
 	case ColumnInt:
+		if valueCol == "" {
+			log.Fatal("This columnt don't accept null values")
+		}
 		value, err := strconv.Atoi(valueCol)
 		if err != nil {
 			log.Fatal(err)
@@ -85,7 +90,7 @@ func (df *DataFrame) addValueType(indexCol, indexRow int, valueCol, valueNaN str
 }
 
 // NewDataFrame Create a DataFrame with default values
-func NewDataFrame(input [][]string, columns []string, schema map[int]interface{}, valueNaN string) DataFrame {
+func NewDataFrame(input [][]string, columns []string, schema Schema, valueNaN string) DataFrame {
 
 	// Sample df
 	df := DataFrame{

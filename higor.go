@@ -9,10 +9,10 @@ import (
 	"github.com/osmandi/higor/dataframe"
 )
 
-const Version string = "v0.5.0"
+const Version string = "v0.6.0"
 
 // ReadCSV Read a file with CSV format
-func ReadCSV(filename string, schema map[int]interface{}, csvOptions ...c.CSVOptions) dataframe.DataFrame {
+func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	csvInternal := &c.CSV{}
 	// Default values
