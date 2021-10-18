@@ -16,6 +16,7 @@ func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOption
 
 	csvInternal := &c.CSV{}
 	// Default values
+	csvInternal.Sep = ','
 
 	for _, csvOption := range csvOptions {
 		csvOption(csvInternal)
@@ -30,6 +31,7 @@ func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOption
 	defer csvFile.Close()
 
 	records := csv.NewReader(csvFile)
+	records.Comma = csvInternal.Sep
 
 	csvLines, err := records.ReadAll()
 	if err != nil {
