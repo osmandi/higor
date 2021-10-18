@@ -196,15 +196,29 @@ func (df DataFrame) getIndex(column string) int {
 
 }
 
-func (df DataFrame) GetColumnString(column string) []string {
+func (df DataFrame) GetColumnString(column string) ColumnString {
 	index := df.getIndex(column)
 	return df.Values[index].(ColumnString)
 }
 
-func (df DataFrame) GetColumnInt(column string) []int {
+func (df DataFrame) GetColumnInt(column string) ColumnInt {
 	index := df.getIndex(column)
 	return df.Values[index].(ColumnInt)
 
+}
+
+// Unique Return unique values from a slice
+func (cs ColumnString) Unique() ColumnString {
+	uniqueItem := ColumnString{}
+	uniqueItemMap := make(map[string]struct{})
+	for _, v := range cs {
+		if _, ok := uniqueItemMap[v]; !ok {
+			uniqueItemMap[v] = struct{}{}
+			uniqueItem = append(uniqueItem, v)
+		}
+	}
+
+	return uniqueItem
 }
 
 /*
