@@ -2,8 +2,10 @@ package higor
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	c "github.com/osmandi/higor/csv"
 	"github.com/osmandi/higor/dataframe"
@@ -11,8 +13,7 @@ import (
 
 const Version string = "v0.6.0"
 
-// ReadCSV Read a file with CSV format
-func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOptions) dataframe.DataFrame {
+func loadDataFrame(filename string, schema dataframe.Schema, csvOptions ...c.CSVOptions) dataframe.DataFrame {
 
 	csvInternal := &c.CSV{}
 	// Default values
@@ -41,4 +42,22 @@ func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOption
 	df := dataframe.NewDataFrame(csvLines[1:], csvLines[0], schema, "")
 
 	return df
+}
+
+// ReadCSV Read a file with CSV format
+func ReadCSV(filename string, schema dataframe.Schema, csvOptions ...c.CSVOptions) dataframe.DataFrame {
+	filesMatch, _ := filepath.Glob(filename)
+	df := dataframe.DataFrame{}
+	dfs := []dataframe.DataFrame{}
+
+	for _, v := range filesMatch {
+		fmt.Printf("Loading... %s\n", v)
+		dfIterator := loadDataFrame(v, schema, csvOptions...)
+		dfs = append(dfs, dfIterator)
+	}
+
+	df = dataframe.Concat(dfs...)
+
+	return df
+
 }

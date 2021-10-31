@@ -1,6 +1,7 @@
 package dataframe
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -219,6 +220,12 @@ func (cs ColumnString) Unique() ColumnString {
 	}
 
 	return uniqueItem
+}
+
+func Concat(dfs ...DataFrame) DataFrame {
+	df := dfs[0]
+	fmt.Println(dfs[1].Values)
+	return df
 }
 
 /*
